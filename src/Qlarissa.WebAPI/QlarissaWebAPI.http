@@ -1,0 +1,6 @@
+@QlarissaWebAPI_HostAddress = http://localhost:5105
+
+GET {{QlarissaWebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
