@@ -1,0 +1,22 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Qlarissa.Application.Interfaces;
+using Qlarissa.WebAPI.Models;
+
+namespace Qlarissa.WebAPI.Controllers;
+
+[ApiController]
+[Route("api/[controller]/[action]")]
+public class AccountController(IQlarissaUserManager qlarissaUserManager) : ControllerBase
+{
+    readonly IQlarissaUserManager _qlarissaUserManager = qlarissaUserManager;
+
+    [HttpPost]
+    public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserRequest request)
+    {
+        var result = await _qlarissaUserManager.RegisterAsync(request.Username, request.Email, request.Password);
+        if (result.IsSuccess)
+            return Ok();
+
+        return BadRequest(string.Join("\n", result.Errors.Select(e => e.Message)));
+    }
+}
