@@ -1,7 +1,10 @@
 
-using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Qlarissa.Domain.Entities;
+using Qlarissa.Infrastructure.Persistence;
 
-namespace QlarissaWebAPI;
+namespace Qlarissa.WebAPI;
 
 public class Program
 {
@@ -10,6 +13,9 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
+
+        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+        builder.Services.AddIdentity<QlarissaUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
         builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
