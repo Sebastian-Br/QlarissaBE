@@ -17,6 +17,18 @@ public class AccountController(IQlarissaUserManager qlarissaUserManager) : Contr
         if (result.IsSuccess)
             return Ok();
 
-        return BadRequest(string.Join("\n", result.Errors.Select(e => e.Message)));
+        string errors = string.Join("\n", result.Errors.Select(e => e.Message));
+        return BadRequest(errors);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> LoginAsync([FromBody] UserLoginRequest request)
+    {
+        var result = await _qlarissaUserManager.LoginAsync(request.Username, request.Password);
+
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        return Unauthorized(result.Errors.Select(e => e.Message));
     }
 }

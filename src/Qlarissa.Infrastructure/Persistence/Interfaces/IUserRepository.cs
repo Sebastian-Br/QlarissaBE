@@ -5,5 +5,7 @@ namespace Qlarissa.Infrastructure.Persistence.Interfaces;
 
 public interface IUserRepository
 {
-    public Task<IdentityResult> CreateAsync(QlarissaUser user, string password);
+    Task<IdentityResult> CreateAsync(QlarissaUser user, string password);
+    Task<QlarissaUser?> GetAsync(string username);
+    Task<bool> CheckPasswordAsync(QlarissaUser user, string password);
 }

@@ -12,4 +12,14 @@ public sealed class UserRepository(UserManager<QlarissaUser> userManager) : IUse
     {
         return await _identityUserManager.CreateAsync(user, password);
     }
+
+    public async Task<QlarissaUser?> GetAsync(string username)
+    {
+        return await _identityUserManager.FindByNameAsync(username);
+    }
+
+    public Task<bool> CheckPasswordAsync(QlarissaUser user, string password)
+    {
+        return _identityUserManager.CheckPasswordAsync(user, password);
+    }
 }
