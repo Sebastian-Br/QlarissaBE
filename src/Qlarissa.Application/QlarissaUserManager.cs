@@ -1,8 +1,8 @@
 ﻿using Qlarissa.Domain.Entities;
-using Qlarissa.Infrastructure.Persistence.Interfaces;
 using FluentResults;
 using Qlarissa.Application.Interfaces;
 using Qlarissa.Infrastructure.Authorization;
+using Qlarissa.Infrastructure.DB.Repositories.Interfaces;
 
 namespace Qlarissa.Application;
 

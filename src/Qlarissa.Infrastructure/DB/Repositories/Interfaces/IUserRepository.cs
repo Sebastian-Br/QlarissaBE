@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Qlarissa.Domain.Entities;
 
-namespace Qlarissa.Infrastructure.Persistence.Interfaces;
+namespace Qlarissa.Infrastructure.DB.Repositories.Interfaces;
 
 public interface IUserRepository
 {

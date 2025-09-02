@@ -12,8 +12,8 @@ using Qlarissa.Infrastructure.DB;
 namespace Qlarissa.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250726112050_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250812020406_SecurityBaseFix")]
+    partial class SecurityBaseFix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -227,6 +227,155 @@ namespace Qlarissa.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Base.SecurityBase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(34)
+                        .HasColumnType("nvarchar(34)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CurrencyId");
+
+                    b.ToTable("SecurityBase");
+
+                    b.HasDiscriminator().HasValue("SecurityBase");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.DailyPrice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Average")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<decimal>("Close")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("High")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<decimal>("Low")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<decimal>("Open")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<int>("SecurityId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SecurityId");
+
+                    b.ToTable("DailyPrices");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Portfolio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountCurrencyId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountCurrencyId");
+
+                    b.ToTable("Portfolios");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.StockHolding", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PortfolioId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StockId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PortfolioId");
+
+                    b.HasIndex("StockId");
+
+                    b.ToTable("StockHoldings");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Base.PubliclyTradedSecurityBase", b =>
+                {
+                    b.HasBaseType("Qlarissa.Infrastructure.DB.Entities.Base.SecurityBase");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<string>("Symbol")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasDiscriminator().HasValue("PubliclyTradedSecurityBase");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Currency", b =>
+                {
+                    b.HasBaseType("Qlarissa.Infrastructure.DB.Entities.Base.PubliclyTradedSecurityBase");
+
+                    b.HasDiscriminator().HasValue("Currency");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Stock", b =>
+                {
+                    b.HasBaseType("Qlarissa.Infrastructure.DB.Entities.Base.PubliclyTradedSecurityBase");
+
+                    b.Property<string>("InvestorRelationsURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasDiscriminator().HasValue("Stock");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -276,6 +425,66 @@ namespace Qlarissa.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Base.SecurityBase", b =>
+                {
+                    b.HasOne("Qlarissa.Infrastructure.DB.Entities.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Currency");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.DailyPrice", b =>
+                {
+                    b.HasOne("Qlarissa.Infrastructure.DB.Entities.Base.PubliclyTradedSecurityBase", "Security")
+                        .WithMany("PriceHistory")
+                        .HasForeignKey("SecurityId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("Security");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Portfolio", b =>
+                {
+                    b.HasOne("Qlarissa.Infrastructure.DB.Entities.Currency", "AccountCurrency")
+                        .WithMany()
+                        .HasForeignKey("AccountCurrencyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("AccountCurrency");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.StockHolding", b =>
+                {
+                    b.HasOne("Qlarissa.Infrastructure.DB.Entities.Portfolio", null)
+                        .WithMany("StockHoldings")
+                        .HasForeignKey("PortfolioId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("Qlarissa.Infrastructure.DB.Entities.Stock", "Stock")
+                        .WithMany()
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("Stock");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Portfolio", b =>
+                {
+                    b.Navigation("StockHoldings");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Base.PubliclyTradedSecurityBase", b =>
+                {
+                    b.Navigation("PriceHistory");
                 });
 #pragma warning restore 612, 618
         }

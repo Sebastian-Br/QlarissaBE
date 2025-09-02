@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Qlarissa.Domain.Entities;
-using Qlarissa.Infrastructure.Persistence.Interfaces;
+using Qlarissa.Infrastructure.DB.Repositories.Interfaces;
 
-namespace Qlarissa.Infrastructure.Persistence;
+namespace Qlarissa.Infrastructure.DB.Repositories;
 
 public sealed class UserRepository(UserManager<QlarissaUser> userManager) : IUserRepository
 {

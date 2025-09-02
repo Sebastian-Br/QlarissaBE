@@ -6,8 +6,9 @@ using Qlarissa.Application;
 using Qlarissa.Application.Interfaces;
 using Qlarissa.Domain.Entities;
 using Qlarissa.Infrastructure.Authorization;
-using Qlarissa.Infrastructure.Persistence;
-using Qlarissa.Infrastructure.Persistence.Interfaces;
+using Qlarissa.Infrastructure.DB;
+using Qlarissa.Infrastructure.DB.Repositories;
+using Qlarissa.Infrastructure.DB.Repositories.Interfaces;
 using System.Text;
 
 namespace Qlarissa.WebAPI;
@@ -25,7 +26,9 @@ public class Program
         builder.Services.AddIdentity<QlarissaUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<ISecurityRepository, SecurityRepository>();
         builder.Services.AddScoped<IQlarissaUserManager, QlarissaUserManager>();
+        builder.Services.AddScoped<ISecurityManager, SecurityManager>();
         builder.Services.AddScoped<IJwtService, JwtService>();
 
         builder.Services.AddControllers();
@@ -70,6 +73,7 @@ public class Program
             app.UseSwaggerUI(); // https://localhost:7145/swagger
         }
 
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
