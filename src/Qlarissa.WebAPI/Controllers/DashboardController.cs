@@ -14,13 +14,7 @@ public class DashboardController(ISecurityManager qlarissaSecurityManager) : Con
     [HttpGet]
     public async Task<IActionResult> SeedAsync()
     {
-        var priceHistoryListCurrency = new List<DailyPrice>
-        {
-            new() { Average = 1, Close = 1, Open = 1, Low = 1, High = 1, Date = new(2022, 12, 1) },
-            new() { Average = 1, Close = 1, Open = 1, Low = 1, High = 1, Date = new(2022, 12, 2) },
-            new() { Average = 1, Close = 1, Open = 1, Low = 1, High = 1, Date = new(2022, 12, 3) }
-        };
-        var currency = new Currency() { Currency = null, Name = "US Dollar", Symbol = "USD", Price = 1, PriceHistoryForRegression = null, PriceHistory = [.. priceHistoryListCurrency] };
+        var currency = new Currency() { Id = 0, Name = "US Dollar", Symbol = "USD" };
         var priceHistoryList = new List<DailyPrice>
         {
             new() { Average = 400, Close = 392, Open = 398, Low = 390, High = 410, Date = new(2022, 12, 1) },
