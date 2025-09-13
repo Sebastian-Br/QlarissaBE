@@ -2,7 +2,9 @@
 
 public abstract class SecurityBase
 {
-    public required string Name { get; set; }
+    public int Id { get; set; }
 
-    public required Currency Currency { get; set; }
+    public string Name { get; set; }
+
+    public Currency Currency { get; set; }
 }

@@ -16,11 +16,19 @@ public sealed class DividendPayout
 
     public PubliclyTradedSecurityBase Security { get; set; }
 
-    public static DividendPayout FromBusinessEntity(Domain.Entities.Securities.MarketData.DividendPayout payout)
+    public static DividendPayout FromDomainEntity(Domain.Entities.Securities.MarketData.DividendPayout payout, Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security)
         => new()
         {
             PayoutDate = payout.PayoutDate,
             PayoutAmount = payout.PayoutAmount,
+            SecurityId = security.Id
+        };
+
+    public static Domain.Entities.Securities.MarketData.DividendPayout ToDomainEntity(DividendPayout dbEntity)
+        => new()
+        {
+            PayoutDate = dbEntity.PayoutDate,
+            PayoutAmount = dbEntity.PayoutAmount,
         };
 }
 

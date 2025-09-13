@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Emit;
 
 namespace Qlarissa.Infrastructure.DB.Entities.Base;
 
 public class SecurityBase
 {
     public int Id { get; set; }
+
     public string Name { get; set; }
 
     public int? CurrencyId { get; set; }

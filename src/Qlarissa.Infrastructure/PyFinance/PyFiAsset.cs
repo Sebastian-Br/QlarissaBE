@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Qlarissa.Infrastructure.PyFinance;
+﻿namespace Qlarissa.Infrastructure.PyFinance;
 
 public class PyFiAsset
 {
     public string Symbol { get; set; }
     public string Name { get; set; }
+    public string ISIN { get; set; }
     public string Currency { get; set; }
     public long MarketCapitalization { get; set; }
     public double TrailingPE { get; set; }
