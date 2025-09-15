@@ -7,5 +7,5 @@ public sealed class QlarissaUser : IdentityUser
 {
     public string DisplayName { get; set; } = string.Empty;
 
-    public Currency DisplayCurrency { get; set; }
+    public int DisplayCurrencyId { get; set; }
 }

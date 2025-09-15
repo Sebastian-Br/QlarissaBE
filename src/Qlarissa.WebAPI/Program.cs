@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -23,7 +22,10 @@ public class Program
         // Add services to the container.
 
         builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-        builder.Services.AddIdentity<QlarissaUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+        builder.Services.AddIdentityCore<QlarissaUser>()
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<ISecurityRepository, SecurityRepository>();
@@ -75,10 +77,10 @@ public class Program
 
         app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseHttpsRedirection();
+        app.UseCors("AllowFrontend");
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-        app.UseCors("AllowFrontend");
 
         app.Run();
     }

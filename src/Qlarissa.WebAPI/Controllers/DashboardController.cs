@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Qlarissa.Application.Interfaces;
 using Qlarissa.Domain.Entities.Securities;
 using Qlarissa.Domain.Entities.Securities.MarketData;
@@ -26,5 +27,18 @@ public class DashboardController(ISecurityManager qlarissaSecurityManager) : Con
         await _qlarissaSecurityManager.AddSecurityAsync(security);
 
         return Ok();
+    }
+
+    [HttpGet]
+    [Authorize]
+    public IActionResult GetBasicInformation()
+    {
+        var userName = User.Identity?.Name ?? "unknown user";
+
+        return Ok(new
+        {
+            Message = $"Hello {userName}!",
+            SecretData = "This is protected data, only available with a valid JWT."
+        });
     }
 }
