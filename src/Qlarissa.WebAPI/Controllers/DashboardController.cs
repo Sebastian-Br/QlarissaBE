@@ -8,9 +8,10 @@ namespace Qlarissa.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class DashboardController(ISecurityManager qlarissaSecurityManager) : ControllerBase
+public class DashboardController(ISecurityManager securityManager, IQlarissaUserManager userManager) : ControllerBase
 {
-    readonly ISecurityManager _qlarissaSecurityManager = qlarissaSecurityManager;
+    readonly ISecurityManager _securityManager = securityManager ?? throw new ArgumentNullException(nameof(securityManager));
+    readonly IQlarissaUserManager _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
 
     [HttpGet]
     public async Task<IActionResult> SeedAsync()
@@ -24,21 +25,21 @@ public class DashboardController(ISecurityManager qlarissaSecurityManager) : Con
             new() { Average = 405, Close = 403, Open = 403, Low = 400, High = 410, Date = new(2022, 12, 4) }
         };
         var security = new Stock() { Name = "Microsoft Corporation", Symbol = "MSFT", Currency = currency, PriceHistory = [.. priceHistoryList], PriceHistoryForRegression = null, InvestorRelationsURL = "https://investors.microsoft.com", Price = 405 };
-        await _qlarissaSecurityManager.AddSecurityAsync(security);
+        await _securityManager.AddSecurityAsync(security);
 
         return Ok();
     }
 
     [HttpGet]
     [Authorize]
-    public IActionResult GetBasicInformation()
+    public async Task<IActionResult> GetBasicInformation()
     {
         var userName = User.Identity?.Name ?? "unknown user";
-
+        var user = await _userManager.GetAsync(User);
         return Ok(new
         {
             Message = $"Hello {userName}!",
-            SecretData = "This is protected data, only available with a valid JWT."
+            SecretData = $"This is protected data, only available with a valid JWT. Your email is {user.Value.Email}"
         });
     }
 }

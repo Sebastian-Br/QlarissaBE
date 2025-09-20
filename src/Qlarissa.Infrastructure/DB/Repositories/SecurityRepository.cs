@@ -8,9 +8,9 @@ namespace Qlarissa.Infrastructure.DB.Repositories;
 
 public sealed class SecurityRepository(ILogger<SecurityRepository> logger, ApplicationDbContext context) : ISecurityRepository
 {
-    private readonly ILogger<SecurityRepository> _logger = logger;
+    private readonly ILogger<SecurityRepository> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    private readonly ApplicationDbContext _context = context;
+    private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
     public async Task<T?> GetByIdAsync<T>(int id) where T : PubliclyTradedSecurityBase
     {

@@ -3,13 +3,14 @@ using FluentResults;
 using Qlarissa.Application.Interfaces;
 using Qlarissa.Infrastructure.Authorization;
 using Qlarissa.Infrastructure.DB.Repositories.Interfaces;
+using System.Security.Claims;
 
 namespace Qlarissa.Application;
 
 public class QlarissaUserManager(IUserRepository userRepository, IJwtService jwtService) : IQlarissaUserManager
 {
-    private readonly IUserRepository _userRepository = userRepository;
-    private readonly IJwtService _jwtService = jwtService;
+    private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+    private readonly IJwtService _jwtService = jwtService ?? throw new ArgumentNullException(nameof(jwtService));
 
     public async Task<Result> RegisterAsync(string username, string email, string password)
     {
@@ -36,5 +37,21 @@ public class QlarissaUserManager(IUserRepository userRepository, IJwtService jwt
             return Result.Fail("Invalid username & password combination or user does not exist.");
 
         return Result.Ok(_jwtService.GenerateToken(user));
+    }
+
+    public async Task<Result<QlarissaUser>> GetAsync(ClaimsPrincipal user)
+    {
+        if (user.Identity == null || user.Identity.Name == null)
+        {
+            return Result.Fail("Error retrieving user.");
+        }
+
+        var resultUser = await _userRepository.GetAsync(user.Identity.Name);
+        if (resultUser == null)
+        {
+            return Result.Fail("Error retrieving user.");
+        }
+
+        return resultUser;
     }
 }

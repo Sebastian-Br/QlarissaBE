@@ -8,7 +8,7 @@ namespace Qlarissa.WebAPI.Controllers;
 [Route("api/[controller]/[action]")]
 public class AccountController(IQlarissaUserManager qlarissaUserManager) : ControllerBase
 {
-    readonly IQlarissaUserManager _qlarissaUserManager = qlarissaUserManager;
+    readonly IQlarissaUserManager _qlarissaUserManager = qlarissaUserManager ?? throw new ArgumentNullException(nameof(qlarissaUserManager));
 
     [HttpPost]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserRequest request)

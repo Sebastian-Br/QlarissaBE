@@ -6,7 +6,7 @@ namespace Qlarissa.Infrastructure.DB.Repositories;
 
 public sealed class UserRepository(UserManager<QlarissaUser> userManager) : IUserRepository
 {
-    readonly UserManager<QlarissaUser> _identityUserManager = userManager;
+    readonly UserManager<QlarissaUser> _identityUserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
 
     public async Task<IdentityResult> CreateAsync(QlarissaUser user, string password)
     {

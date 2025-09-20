@@ -25,10 +25,13 @@ public class Program
         builder.Services.AddIdentityCore<QlarissaUser>()
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddSignInManager()
+        .AddUserManager<UserManager<QlarissaUser>>()
         .AddDefaultTokenProviders();
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<ISecurityRepository, SecurityRepository>();
+
         builder.Services.AddScoped<IQlarissaUserManager, QlarissaUserManager>();
         builder.Services.AddScoped<ISecurityManager, SecurityManager>();
         builder.Services.AddScoped<IJwtService, JwtService>();

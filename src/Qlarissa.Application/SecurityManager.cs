@@ -7,7 +7,7 @@ namespace Qlarissa.Application;
 
 public sealed class SecurityManager(ISecurityRepository securityRepository) : ISecurityManager
 {
-    readonly ISecurityRepository _securityRepository = securityRepository;
+    readonly ISecurityRepository _securityRepository = securityRepository ?? throw new ArgumentNullException(nameof(securityRepository));
 
     public async Task AddSecurityAsync(PubliclyTradedSecurityBase security)
     {
