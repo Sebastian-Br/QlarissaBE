@@ -6,9 +6,9 @@ namespace Qlarissa.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class AccountController(IQlarissaUserManager qlarissaUserManager) : ControllerBase
+public class AccountController(IQlarissaUserManager userManager) : ControllerBase
 {
-    readonly IQlarissaUserManager _qlarissaUserManager = qlarissaUserManager ?? throw new ArgumentNullException(nameof(qlarissaUserManager));
+    readonly IQlarissaUserManager _qlarissaUserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
 
     [HttpPost]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserRequest request)
@@ -25,7 +25,6 @@ public class AccountController(IQlarissaUserManager qlarissaUserManager) : Contr
     public async Task<IActionResult> LoginAsync([FromBody] UserLoginRequest request)
     {
         var result = await _qlarissaUserManager.LoginAsync(request.Username, request.Password);
-
         if (result.IsSuccess)
             return Ok(result.Value);
 
