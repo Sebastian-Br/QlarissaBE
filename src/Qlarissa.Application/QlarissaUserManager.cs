@@ -21,7 +21,6 @@ public class QlarissaUserManager(IUserRepository userRepository, IJwtService jwt
         };
 
         var identityResult = await _userRepository.CreateAsync(user, password);
-
         if (identityResult.Succeeded)
             return Result.Ok();
 
@@ -41,7 +40,7 @@ public class QlarissaUserManager(IUserRepository userRepository, IJwtService jwt
 
     public async Task<Result<QlarissaUser>> GetAsync(ClaimsPrincipal user)
     {
-        if (user.Identity == null || user.Identity.Name == null)
+        if (user?.Identity?.Name == null)
         {
             return Result.Fail("Error retrieving user.");
         }
