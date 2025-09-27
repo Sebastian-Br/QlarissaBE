@@ -8,8 +8,6 @@ public class PubliclyTradedSecurityBase : SecurityBase
 {
     public string Symbol { get; set; }
 
-    public string ISIN { get; set; }
-
     public decimal Price { get; set; }
 
     public DateTime PriceLastUpdatedTime { get; set; }
@@ -29,7 +27,6 @@ public class PubliclyTradedSecurityBase : SecurityBase
         dbEntity.Name = domainEntity.Name;
         dbEntity.CurrencyId = domainEntity.Currency.Id; // When adding a security, the currency must have been added before
         dbEntity.Symbol = domainEntity.Symbol;
-        dbEntity.ISIN = domainEntity.ISIN;
         dbEntity.Price = domainEntity.Price;
         dbEntity.PriceLastUpdatedTime = domainEntity.PriceLastUpdatedTime;
         dbEntity.LastCompleteUpdateTime = domainEntity.LastCompleteUpdateTime;
@@ -40,9 +37,8 @@ public class PubliclyTradedSecurityBase : SecurityBase
     {
         domainEntity.Id = dbEntity.Id;
         domainEntity.Name = dbEntity.Name;
-        domainEntity.Currency = dbEntity.Currency?.ToDomainEntity();
+        domainEntity.Currency = dbEntity.Currency.ToDomainEntity();
         domainEntity.Symbol = dbEntity.Symbol;
-        domainEntity.ISIN = dbEntity.ISIN;
         domainEntity.Price = dbEntity.Price;
         domainEntity.PriceLastUpdatedTime = dbEntity.PriceLastUpdatedTime;
         domainEntity.LastCompleteUpdateTime = dbEntity.LastCompleteUpdateTime;

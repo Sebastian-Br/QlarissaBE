@@ -9,8 +9,6 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
     /// </summary>
     public string Symbol { get; set; }
 
-    public string ISIN { get; set; }
-
     /// <summary>
     /// The first array corresponds to the Date (after it was converted to a double, e.g. January 1st 2024 -> ~2024.1)
     /// The second array is the price history

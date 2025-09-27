@@ -9,9 +9,9 @@ public class SecurityBase
 
     public string Name { get; set; }
 
-    public int? CurrencyId { get; set; }
+    public int CurrencyId { get; set; }
 
-    public Currency? Currency { get; set; }
+    public Currency Currency { get; set; }
 }
 
 public class SecurityBaseConfiguration : IEntityTypeConfiguration<SecurityBase>

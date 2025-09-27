@@ -19,6 +19,7 @@ public sealed class DailyPrice
     public static DailyPrice FromDomainEntity(Domain.Entities.Securities.MarketData.DailyPrice domainEntity, Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security) =>
         new()
         {
+            Id = domainEntity.Id,
             SecurityId = security.Id,
             Open = domainEntity.Open,
             Close = domainEntity.Close,
@@ -31,6 +32,7 @@ public sealed class DailyPrice
     public static Domain.Entities.Securities.MarketData.DailyPrice ToDomainEntity(DailyPrice dbEntity) =>
         new()
         {
+            Id = dbEntity.Id,
             Open = dbEntity.Open,
             Close = dbEntity.Close,
             High = dbEntity.High,

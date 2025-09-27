@@ -1,5 +1,7 @@
-﻿namespace Qlarissa.Domain.Entities.Securities;
+﻿using Qlarissa.Domain.Entities.Securities.Base;
 
-public sealed class Commodity
+namespace Qlarissa.Domain.Entities.Securities;
+
+public sealed class Commodity : PubliclyTradedSecurityBase
 {
 }

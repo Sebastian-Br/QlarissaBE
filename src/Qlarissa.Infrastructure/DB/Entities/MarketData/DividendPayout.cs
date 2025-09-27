@@ -19,6 +19,7 @@ public sealed class DividendPayout
     public static DividendPayout FromDomainEntity(Domain.Entities.Securities.MarketData.DividendPayout payout, Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security)
         => new()
         {
+            Id = payout.Id,
             PayoutDate = payout.PayoutDate,
             PayoutAmount = payout.PayoutAmount,
             SecurityId = security.Id
@@ -27,6 +28,7 @@ public sealed class DividendPayout
     public static Domain.Entities.Securities.MarketData.DividendPayout ToDomainEntity(DividendPayout dbEntity)
         => new()
         {
+            Id = dbEntity.Id,
             PayoutDate = dbEntity.PayoutDate,
             PayoutAmount = dbEntity.PayoutAmount,
         };
