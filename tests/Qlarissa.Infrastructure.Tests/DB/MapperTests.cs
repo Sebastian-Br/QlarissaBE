@@ -36,7 +36,6 @@ public class MapperTests
             Currency = new() { Id = 1, Name = "United States Dollar", Symbol = "USD" }, 
             Symbol="ETFSymbol", Price = 666.6m, PriceLastUpdatedTime = new(2025,1,1), LastCompleteUpdateTime = new(2024, 12,30),
             PriceHistory = GetSimplePriceHistoryTestData_DomainEntity(),
-            // DistributionEvents = GetSimpleDividendPayoutsTestData() -- tested on Stock/ETF entities.
         };
 
         PubliclyTradedSecurityBase dbEntity = new();
