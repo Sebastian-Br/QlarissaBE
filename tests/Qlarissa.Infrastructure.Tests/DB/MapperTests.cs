@@ -162,9 +162,9 @@ public class MapperTests
         };
 
         dbEntity.PriceHistory = GetSimplePriceHistoryTestData_DbEntity(dbEntity);
+        dbEntity.DividendPayouts = GetSimpleDividendPayoutsTestData_DbEntity(dbEntity);
 
-        Domain.Entities.Securities.Stock domainEntity = new();
-        PubliclyTradedSecurityBase.ToDomainEntity(domainEntity, dbEntity);
+        Domain.Entities.Securities.ETF domainEntity = dbEntity.ToDomainEntity();
 
         Assert.Equal(dbEntity.Id, domainEntity.Id);
         Assert.Equal(dbEntity.Name, domainEntity.Name);
@@ -186,6 +186,14 @@ public class MapperTests
             Assert.Equal(dbEntity.PriceHistory.ElementAt(i).Average, domainEntity.PriceHistory[i].Average);
             Assert.Equal(dbEntity.PriceHistory.ElementAt(i).Date, domainEntity.PriceHistory[i].Date);
             Assert.Equal(dbEntity.PriceHistory.ElementAt(i).SecurityId, domainEntity.Id);
+        }
+
+        for (int i = 0; i < dbEntity.DividendPayouts.Count; i++)
+        {
+            Assert.Equal(dbEntity.DividendPayouts.ElementAt(i).Id, domainEntity.DistributionEvents[i].Id);
+            Assert.Equal(dbEntity.DividendPayouts.ElementAt(i).PayoutAmount, domainEntity.DistributionEvents[i].PayoutAmount);
+            Assert.Equal(dbEntity.DividendPayouts.ElementAt(i).PayoutDate, domainEntity.DistributionEvents[i].PayoutDate);
+            Assert.Equal(dbEntity.DividendPayouts.ElementAt(i).SecurityId, domainEntity.Id);
         }
     }
 

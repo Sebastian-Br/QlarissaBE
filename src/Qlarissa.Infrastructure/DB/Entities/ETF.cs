@@ -18,6 +18,7 @@ public sealed class ETF : PubliclyTradedSecurityBase
     {
         Domain.Entities.Securities.ETF domainEntity = new();
         PubliclyTradedSecurityBase.ToDomainEntity(domainEntity, this);
+        domainEntity.DistributionEvents = this.DividendPayouts.Select(DividendPayout.ToDomainEntity).ToArray();
         return domainEntity;
     }
 }
