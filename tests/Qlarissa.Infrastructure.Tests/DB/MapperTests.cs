@@ -25,9 +25,6 @@ public class MapperTests
         Assert.Equal(dbEntity.Name, domainEntity.Name);
     }
 
-    /// <summary>
-    /// Not testing dividend history - those will be tested for Stock/ETF entities
-    /// </summary>
     [Fact]
     public void MapPubliclyTradedSecurityBase_FromDomainEntity()
     {
