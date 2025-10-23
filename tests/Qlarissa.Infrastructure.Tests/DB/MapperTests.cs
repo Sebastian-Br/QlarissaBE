@@ -196,6 +196,109 @@ public class MapperTests
         }
     }
 
+    [Fact]
+    public void MapStock_FromDomainEntity()
+    {
+
+        Domain.Entities.Securities.Stock domainEntity = new()
+        {
+            Id = 9,
+            Name = "Microsoft",
+            Currency = new() { Id = 1, Name = "United States Dollar", Symbol = "USD" },
+            Symbol = "MSFT",
+            Price = 555.5m,
+            PriceLastUpdatedTime = new(2025, 1, 1),
+            LastCompleteUpdateTime = new(2024, 12, 30),
+            PriceHistory = GetSimplePriceHistoryTestData_DomainEntity(),
+            DividendPayouts = GetSimpleDividendPayoutsTestData_DomainEntity(),
+            InvestorRelationsURL = "https://www.microsoft.com/en-us/investor/default"
+        };
+
+        Infrastructure.DB.Entities.Stock dbEntity = Infrastructure.DB.Entities.Stock.FromDomainEntity(domainEntity);
+
+        Assert.Equal(domainEntity.Id, dbEntity.Id);
+        Assert.Equal(domainEntity.Name, dbEntity.Name);
+        Assert.Equal(domainEntity.Currency.Id, dbEntity.CurrencyId);
+        Assert.Equal(domainEntity.Symbol, dbEntity.Symbol);
+        Assert.Equal(domainEntity.Price, dbEntity.Price);
+        Assert.Equal(domainEntity.PriceLastUpdatedTime, dbEntity.PriceLastUpdatedTime);
+        Assert.Equal(domainEntity.LastCompleteUpdateTime, dbEntity.LastCompleteUpdateTime);
+        Assert.Equal(domainEntity.InvestorRelationsURL, dbEntity.InvestorRelationsURL);
+
+        for (int i = 0; i < domainEntity.PriceHistory.Length; i++)
+        {
+            Assert.Equal(domainEntity.PriceHistory[i].Id, dbEntity.PriceHistory.ElementAt(i).Id);
+            Assert.Equal(domainEntity.PriceHistory[i].Low, dbEntity.PriceHistory.ElementAt(i).Low);
+            Assert.Equal(domainEntity.PriceHistory[i].High, dbEntity.PriceHistory.ElementAt(i).High);
+            Assert.Equal(domainEntity.PriceHistory[i].Open, dbEntity.PriceHistory.ElementAt(i).Open);
+            Assert.Equal(domainEntity.PriceHistory[i].Close, dbEntity.PriceHistory.ElementAt(i).Close);
+            Assert.Equal(domainEntity.PriceHistory[i].Average, dbEntity.PriceHistory.ElementAt(i).Average);
+            Assert.Equal(domainEntity.PriceHistory[i].Date, dbEntity.PriceHistory.ElementAt(i).Date);
+            Assert.Equal(domainEntity.Id, dbEntity.PriceHistory.ElementAt(i).SecurityId);
+        }
+
+        for (int i = 0; i < domainEntity.DividendPayouts.Length; i++)
+        {
+            Assert.Equal(domainEntity.DividendPayouts[i].Id, dbEntity.DividendPayouts.ElementAt(i).Id);
+            Assert.Equal(domainEntity.DividendPayouts[i].PayoutAmount, dbEntity.DividendPayouts.ElementAt(i).PayoutAmount);
+            Assert.Equal(domainEntity.DividendPayouts[i].PayoutDate, dbEntity.DividendPayouts.ElementAt(i).PayoutDate);
+            Assert.Equal(domainEntity.Id, dbEntity.DividendPayouts.ElementAt(i).SecurityId);
+        }
+    }
+
+    [Fact]
+    public void MapStock_ToDomainEntity()
+    {
+        Infrastructure.DB.Entities.Stock dbEntity = new()
+        {
+            Id = 9,
+            Name = "Microsoft",
+            CurrencyId = 10,
+            Currency = new() { Id = 10, Symbol = "USD", Name = "US Dollar" },
+            Symbol = "MSFT",
+            Price = 555.5m,
+            PriceLastUpdatedTime = new(2025, 1, 15),
+            LastCompleteUpdateTime = new(2025, 1, 1),
+            InvestorRelationsURL = "https://www.microsoft.com/en-us/investor/default"
+        };
+
+        dbEntity.PriceHistory = GetSimplePriceHistoryTestData_DbEntity(dbEntity);
+        dbEntity.DividendPayouts = GetSimpleDividendPayoutsTestData_DbEntity(dbEntity);
+
+        Domain.Entities.Securities.Stock domainEntity = dbEntity.ToDomainEntity();
+
+        Assert.Equal(dbEntity.Id, domainEntity.Id);
+        Assert.Equal(dbEntity.Name, domainEntity.Name);
+        Assert.Equal(dbEntity.Currency.Id, domainEntity.Currency.Id);
+        Assert.Equal(dbEntity.Currency.Symbol, domainEntity.Currency.Symbol);
+        Assert.Equal(dbEntity.Currency.Name, domainEntity.Currency.Name);
+        Assert.Equal(dbEntity.Symbol, domainEntity.Symbol);
+        Assert.Equal(dbEntity.Price, domainEntity.Price);
+        Assert.Equal(dbEntity.PriceLastUpdatedTime, domainEntity.PriceLastUpdatedTime);
+        Assert.Equal(dbEntity.LastCompleteUpdateTime, domainEntity.LastCompleteUpdateTime);
+        Assert.Equal(dbEntity.InvestorRelationsURL, domainEntity.InvestorRelationsURL);
+
+        for (int i = 0; i < dbEntity.PriceHistory.Count; i++)
+        {
+            Assert.Equal(dbEntity.PriceHistory.ElementAt(i).Id, domainEntity.PriceHistory[i].Id);
+            Assert.Equal(dbEntity.PriceHistory.ElementAt(i).Low, domainEntity.PriceHistory[i].Low);
+            Assert.Equal(dbEntity.PriceHistory.ElementAt(i).High, domainEntity.PriceHistory[i].High);
+            Assert.Equal(dbEntity.PriceHistory.ElementAt(i).Open, domainEntity.PriceHistory[i].Open);
+            Assert.Equal(dbEntity.PriceHistory.ElementAt(i).Close, domainEntity.PriceHistory[i].Close);
+            Assert.Equal(dbEntity.PriceHistory.ElementAt(i).Average, domainEntity.PriceHistory[i].Average);
+            Assert.Equal(dbEntity.PriceHistory.ElementAt(i).Date, domainEntity.PriceHistory[i].Date);
+            Assert.Equal(dbEntity.PriceHistory.ElementAt(i).SecurityId, domainEntity.Id);
+        }
+
+        for (int i = 0; i < dbEntity.DividendPayouts.Count; i++)
+        {
+            Assert.Equal(dbEntity.DividendPayouts.ElementAt(i).Id, domainEntity.DividendPayouts[i].Id);
+            Assert.Equal(dbEntity.DividendPayouts.ElementAt(i).PayoutAmount, domainEntity.DividendPayouts[i].PayoutAmount);
+            Assert.Equal(dbEntity.DividendPayouts.ElementAt(i).PayoutDate, domainEntity.DividendPayouts[i].PayoutDate);
+            Assert.Equal(dbEntity.DividendPayouts.ElementAt(i).SecurityId, domainEntity.Id);
+        }
+    }
+
     private static Domain.Entities.Securities.MarketData.DailyPrice[] GetSimplePriceHistoryTestData_DomainEntity()
     {
         Domain.Entities.Securities.MarketData.DailyPrice[] priceHistory = [

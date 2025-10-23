@@ -15,4 +15,13 @@ public sealed class Stock : PubliclyTradedSecurityBase
         stock.InvestorRelationsURL = domainEntity.InvestorRelationsURL;
         return stock;
     }
+
+    public Domain.Entities.Securities.Stock ToDomainEntity()
+    {
+        Domain.Entities.Securities.Stock domainEntity = new();
+        PubliclyTradedSecurityBase.ToDomainEntity(domainEntity, this);
+        domainEntity.DividendPayouts = DividendPayouts.Select(DividendPayout.ToDomainEntity).ToArray();
+        domainEntity.InvestorRelationsURL = InvestorRelationsURL;
+        return domainEntity;
+    }
 }
