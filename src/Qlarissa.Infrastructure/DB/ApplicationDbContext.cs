@@ -13,6 +13,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<DailyPrice> DailyPrices { get; set; }
     public DbSet<StockHolding> StockHoldings { get; set; }
     public DbSet<Stock> Stocks { get; set; }
+    public DbSet<ETF> ETFs { get; set; }
+    public DbSet<ETFHolding> ETFHoldingss { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

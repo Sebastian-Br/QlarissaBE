@@ -13,7 +13,7 @@ public sealed class SecurityManager(ISecurityRepository securityRepository) : IS
     {
         if (security is Domain.Entities.Securities.Stock)
         {
-            var addedCurrency = await _securityRepository.GetBasicCurrencyAsync(security.Currency.Symbol);
+            var addedCurrency = await _securityRepository.GetCurrencyAsync(security.Currency.Symbol);
 
             var dbEntity = new Stock
             {

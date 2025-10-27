@@ -4,7 +4,6 @@ public class PyFiAsset
 {
     public string Symbol { get; set; }
     public string Name { get; set; }
-    public string ISIN { get; set; }
     public string Currency { get; set; }
     public long MarketCapitalization { get; set; }
     public double TrailingPE { get; set; }

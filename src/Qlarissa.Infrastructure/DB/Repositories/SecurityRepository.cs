@@ -12,19 +12,9 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
 
     private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
-    public async Task<T?> GetByIdAsync<T>(int id) where T : PubliclyTradedSecurityBase
+    public async Task<Domain.Entities.Securities.Currency?> GetCurrencyAsync(string symbol)
     {
-        return await _context.Set<T>().FindAsync(id);
-    }
-
-    public async Task<Currency?> GetBasicCurrencyAsync(string symbol)
-    {
-        return await _context.Currencies.AsNoTracking().FirstAsync(c => c.Symbol == symbol);
-    }
-
-    public async Task<IEnumerable<T>> GetAllAsync<T>() where T : PubliclyTradedSecurityBase
-    {
-        return await _context.Set<T>().ToListAsync();
+        return (await _context.Currencies.AsNoTracking().FirstOrDefaultAsync(c => c.Symbol == symbol))?.ToDomainEntity();
     }
 
     public async Task AddSecurityAsync(PubliclyTradedSecurityBase security)

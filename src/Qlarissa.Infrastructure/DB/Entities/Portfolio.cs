@@ -8,6 +8,7 @@ public sealed class Portfolio
     public int Id { get; set; }
 
     public ICollection<StockHolding> StockHoldings { get; set; } = [];
+    public ICollection<ETFHolding> ETFHoldings { get; set; } = [];
 
     public int AccountCurrencyId { get; set; }
 
