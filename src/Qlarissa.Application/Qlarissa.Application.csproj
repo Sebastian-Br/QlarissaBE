@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Qlarissa.Domain\Qlarissa.Domain.csproj" />
-    <ProjectReference Include="..\Qlarissa.Infrastructure\Qlarissa.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

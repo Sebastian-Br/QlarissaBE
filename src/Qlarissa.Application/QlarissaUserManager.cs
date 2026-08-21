@@ -1,9 +1,9 @@
 ﻿using Qlarissa.Domain.Entities;
 using FluentResults;
 using Qlarissa.Application.Interfaces;
-using Qlarissa.Infrastructure.Authorization;
-using Qlarissa.Infrastructure.DB.Repositories.Interfaces;
 using System.Security.Claims;
+using Qlarissa.Application.Interfaces.Repositories;
+using Qlarissa.Application.Interfaces.Authorization;
 
 namespace Qlarissa.Application;
 

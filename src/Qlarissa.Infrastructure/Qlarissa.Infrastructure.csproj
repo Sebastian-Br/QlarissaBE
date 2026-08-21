@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Qlarissa.Application\Qlarissa.Application.csproj" />
     <ProjectReference Include="..\Qlarissa.Domain\Qlarissa.Domain.csproj" />
   </ItemGroup>
 

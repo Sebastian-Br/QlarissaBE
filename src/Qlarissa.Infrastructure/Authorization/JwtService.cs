@@ -1,19 +1,16 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Qlarissa.Domain.Entities;
-using System;
-using System.Collections.Generic;
+using Qlarissa.Application.Interfaces.Authorization;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Qlarissa.Infrastructure.Authorization;
 
 public sealed class JwtService(IConfiguration config) : IJwtService
 {
-    private readonly IConfiguration _config = config;
+    private readonly IConfiguration _configuration = config;
 
     public string GenerateToken(QlarissaUser user)
     {
@@ -23,12 +20,12 @@ public sealed class JwtService(IConfiguration config) : IJwtService
             new Claim(ClaimTypes.Email, user.Email!),
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Audience"],
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
             claims: claims,
             expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: creds);

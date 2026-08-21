@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Infrastructure.DB.Entities.Base;
-using Qlarissa.Infrastructure.DB.Repositories.Interfaces;
+using Qlarissa.Application.Interfaces.Repositories;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
@@ -17,17 +17,33 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         return (await _context.Currencies.AsNoTracking().FirstOrDefaultAsync(c => c.Symbol == symbol))?.ToDomainEntity();
     }
 
-    public async Task AddSecurityAsync(PubliclyTradedSecurityBase security)
+    public async Task AddSecurityAsync(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security)
     {
-        _context.Set<PubliclyTradedSecurityBase>().Add(security);
+        PubliclyTradedSecurityBase dbEntity;
+
+        if (security is Domain.Entities.Securities.Stock)
+        {
+            var existingCurrency = await GetCurrencyAsync(security.Currency.Symbol);
+
+            dbEntity = new Stock();
+            Stock.FromDomainEntity(security, dbEntity);
+            
+        }
+        else
+        {
+            throw new InvalidOperationException("Unsupported security type.");
+        }
+
+        _context.Set<PubliclyTradedSecurityBase>().Add(dbEntity);
         await _context.SaveChangesAsync();
     }
 
-    public async Task AddCurrencyAsync(Currency security)
+    public async Task AddCurrencyAsync(Domain.Entities.Securities.Currency security)
     {
         try
         {
-            _context.Set<Currency>().Add(security);
+            var dbEntity = Currency.FromDomainEntity(security);
+            _context.Set<Currency>().Add(dbEntity);
             await _context.SaveChangesAsync();
         }
         catch (DbUpdateException ex)

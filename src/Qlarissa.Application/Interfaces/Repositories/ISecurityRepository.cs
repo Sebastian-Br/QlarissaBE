@@ -1,11 +1,11 @@
-﻿using Qlarissa.Infrastructure.DB.Entities;
-using Qlarissa.Infrastructure.DB.Entities.Base;
+﻿using Qlarissa.Domain.Entities.Securities;
+using Qlarissa.Domain.Entities.Securities.Base;
 
-namespace Qlarissa.Infrastructure.DB.Repositories.Interfaces;
+namespace Qlarissa.Application.Interfaces.Repositories;
 
 public interface ISecurityRepository
 {
-    Task<Domain.Entities.Securities.Currency?> GetCurrencyAsync(string symbol);
+    Task<Currency?> GetCurrencyAsync(string symbol);
 
     Task AddCurrencyAsync(Currency security);
 

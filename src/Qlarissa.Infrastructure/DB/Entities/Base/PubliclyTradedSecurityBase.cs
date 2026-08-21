@@ -25,7 +25,7 @@ public class PubliclyTradedSecurityBase : SecurityBase
     {
         dbEntity.Id = domainEntity.Id;
         dbEntity.Name = domainEntity.Name;
-        dbEntity.CurrencyId = domainEntity.Currency.Id; // When adding a security, the currency must have been added before
+        dbEntity.CurrencyId = domainEntity.Currency.Id; // When adding a security, the currency must already exist in the database.
         dbEntity.Symbol = domainEntity.Symbol;
         dbEntity.Price = domainEntity.Price;
         dbEntity.PriceLastUpdatedTime = domainEntity.PriceLastUpdatedTime;

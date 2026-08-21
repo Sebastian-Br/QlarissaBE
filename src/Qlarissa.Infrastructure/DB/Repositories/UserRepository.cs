@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Qlarissa.Domain.Entities;
-using Qlarissa.Infrastructure.DB.Repositories.Interfaces;
+using Qlarissa.Application.Interfaces.Repositories;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 

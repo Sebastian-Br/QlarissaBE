@@ -3,11 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Qlarissa.Application;
 using Qlarissa.Application.Interfaces;
+using Qlarissa.Application.Interfaces.Authorization;
+using Qlarissa.Application.Interfaces.Repositories;
 using Qlarissa.Domain.Entities;
-using Qlarissa.Infrastructure.Authorization;
 using Qlarissa.Infrastructure.DB;
 using Qlarissa.Infrastructure.DB.Repositories;
-using Qlarissa.Infrastructure.DB.Repositories.Interfaces;
+using Qlarissa.Infrastructure.Authorization;
 using System.Text;
 
 namespace Qlarissa.WebAPI;
