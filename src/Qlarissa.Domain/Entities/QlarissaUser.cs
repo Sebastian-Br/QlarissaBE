@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Qlarissa.Domain.Entities.Securities;
 
 namespace Qlarissa.Domain.Entities;
 

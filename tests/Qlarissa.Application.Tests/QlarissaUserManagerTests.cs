@@ -1,7 +1,7 @@
 ﻿using Moq;
 using Qlarissa.Domain.Entities;
-using Qlarissa.Infrastructure.Authorization;
-using Qlarissa.Infrastructure.DB.Repositories.Interfaces;
+using Qlarissa.Application.Interfaces.Authorization;
+using Qlarissa.Application.Interfaces.Repositories;
 using System.Security.Claims;
 
 namespace Qlarissa.Application.Tests;
