@@ -2,11 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Qlarissa.Infrastructure.DB.Entities;
-using QlarissaUser = Qlarissa.Domain.Entities.QlarissaUser;
 
 namespace Qlarissa.Infrastructure.DB;
 
-public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<QlarissaUser>(options)
+public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<Domain.Entities.QlarissaUser>(options)
 {
     public DbSet<Portfolio> Portfolios { get; set; }
     public DbSet<Currency> Currencies { get; set; }
@@ -14,7 +13,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<StockHolding> StockHoldings { get; set; }
     public DbSet<Stock> Stocks { get; set; }
     public DbSet<ETF> ETFs { get; set; }
-    public DbSet<ETFHolding> ETFHoldingss { get; set; }
+    public DbSet<ETFHolding> ETFHoldings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
