@@ -22,5 +22,15 @@ public class CurrencyConfiguration : IEntityTypeConfiguration<Currency>
     public void Configure(EntityTypeBuilder<Currency> builder)
     {
         builder.Property(s => s.Id).ValueGeneratedOnAdd();
+        builder.HasData(
+            new Currency { Id = 1, Symbol = "USD", Name = "United States Dollar" },
+            new Currency { Id = 2, Symbol = "EUR", Name = "Euro" },
+            new Currency { Id = 3, Symbol = "JPY", Name = "Japanese Yen" },
+            new Currency { Id = 4, Symbol = "GBP", Name = "British Pound Sterling" },
+            new Currency { Id = 5, Symbol = "AUD", Name = "Australian Dollar" },
+            new Currency { Id = 6, Symbol = "CAD", Name = "Canadian Dollar" },
+            new Currency { Id = 7, Symbol = "CHF", Name = "Swiss Franc" },
+            new Currency { Id = 8, Symbol = "CNY", Name = "Chinese Yuan" }
+        );
     }
 }
