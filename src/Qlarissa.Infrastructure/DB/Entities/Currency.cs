@@ -14,7 +14,7 @@ public sealed class Currency
         => new() { Id = domainEntity.Id, Symbol = domainEntity.Symbol, Name = domainEntity.Name };
 
     public Domain.Entities.Securities.Currency ToDomainEntity() 
-        => new() { Id = this.Id, Symbol = this.Symbol, Name = this.Name };
+        => new() { Id = Id, Symbol = Symbol, Name = Name };
 }
 
 public class CurrencyConfiguration : IEntityTypeConfiguration<Currency>
