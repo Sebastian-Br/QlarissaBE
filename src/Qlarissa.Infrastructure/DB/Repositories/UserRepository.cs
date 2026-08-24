@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Qlarissa.Domain.Entities;
 using Qlarissa.Application.Interfaces.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
@@ -21,5 +22,17 @@ public sealed class UserRepository(UserManager<QlarissaUser> userManager) : IUse
     public Task<bool> CheckPasswordAsync(QlarissaUser user, string password)
     {
         return _identityUserManager.CheckPasswordAsync(user, password);
+    }
+
+    public Task<bool> UsernameExistsAsync(string username, CancellationToken cancellationToken)
+    {
+        var normalizedName = _identityUserManager.NormalizeName(username);
+        return _identityUserManager.Users.AnyAsync(u => u.NormalizedUserName == normalizedName, cancellationToken);
+    }
+
+    public Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken)
+    {
+        var normalizedEmail = _identityUserManager.NormalizeEmail(email);
+        return _identityUserManager.Users.AnyAsync(u => u.NormalizedEmail == normalizedEmail, cancellationToken);
     }
 }

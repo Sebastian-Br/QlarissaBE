@@ -30,4 +30,24 @@ public class AccountController(IQlarissaUserManager userManager) : ControllerBas
 
         return Unauthorized(result.Errors.Select(e => e.Message));
     }
+
+    [HttpGet]
+    public async Task<ActionResult<AvailabilityResponse>> CheckUsernameAvailabilityAsync(
+        [FromQuery] string username,
+        CancellationToken cancellationToken)
+    {
+        var available = !await _qlarissaUserManager.UsernameExistsAsync(username, cancellationToken);
+
+        return Ok(new AvailabilityResponse { Available = available });
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<AvailabilityResponse>> CheckEmailAvailabilityAsync(
+        [FromQuery] string email,
+        CancellationToken cancellationToken)
+    {
+        var available = !await _qlarissaUserManager.EmailExistsAsync(email, cancellationToken);
+
+        return Ok(new AvailabilityResponse { Available = available });
+    }
 }

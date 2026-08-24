@@ -53,4 +53,10 @@ public class QlarissaUserManager(IUserRepository userRepository, IJwtService jwt
 
         return resultUser;
     }
+
+    public Task<bool> UsernameExistsAsync(string username, CancellationToken cancellationToken)
+        => _userRepository.UsernameExistsAsync(username, cancellationToken);
+
+    public Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken)
+        => _userRepository.EmailExistsAsync(email, cancellationToken);
 }
