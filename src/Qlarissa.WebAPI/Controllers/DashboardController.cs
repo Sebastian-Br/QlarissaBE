@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Qlarissa.Application.Interfaces;
 using Qlarissa.Domain.Entities.Securities;
-using Qlarissa.Domain.Entities.Securities.MarketData;
 
 namespace Qlarissa.WebAPI.Controllers;
 

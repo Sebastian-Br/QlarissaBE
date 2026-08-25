@@ -10,10 +10,10 @@ public sealed class Currency
     public string Symbol { get; set; }
 
     public string Name { get; set; }
-    public static Currency FromDomainEntity(Domain.Entities.Securities.Currency domainEntity)
+    public static Currency FromDomainEntity(Domain.Entities.Currency domainEntity)
         => new() { Id = domainEntity.Id, Symbol = domainEntity.Symbol, Name = domainEntity.Name };
 
-    public Domain.Entities.Securities.Currency ToDomainEntity() 
+    public Domain.Entities.Currency ToDomainEntity() 
         => new() { Id = Id, Symbol = Symbol, Name = Name };
 }
 

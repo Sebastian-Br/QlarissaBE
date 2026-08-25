@@ -28,7 +28,7 @@ public class QlarissaUserManagerTests
         string testUserPassword = "testPassword1!";
         userRepositoryMock.Setup(x => x.CreateAsync(It.IsAny<QlarissaUser>(), "testPassword1!")).ReturnsAsync(Microsoft.AspNetCore.Identity.IdentityResult.Failed());
         var sut = new QlarissaUserManager(userRepositoryMock.Object, jwtServiceMock.Object);
-        var result = await sut.RegisterAsync(testUserName, testUserEmail, testUserPassword);
+        var result = await sut.RegisterAsync(testUserName, testUserEmail, 1, testUserPassword);
         Assert.True(result.IsFailed);
     }
 
@@ -42,7 +42,7 @@ public class QlarissaUserManagerTests
         string testUserPassword = "testPassword1!";
         userRepositoryMock.Setup(x => x.CreateAsync(It.IsAny<QlarissaUser>(), "testPassword1!")).ReturnsAsync(Microsoft.AspNetCore.Identity.IdentityResult.Success);
         var sut = new QlarissaUserManager(userRepositoryMock.Object, jwtServiceMock.Object);
-        var result = await sut.RegisterAsync(testUserName, testUserEmail, testUserPassword);
+        var result = await sut.RegisterAsync(testUserName, testUserEmail, 1, testUserPassword);
         Assert.True(result.IsSuccess);
     }
 

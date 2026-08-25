@@ -31,11 +31,12 @@ public class Program
         .AddDefaultTokenProviders();
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
-        builder.Services.AddScoped<ISecurityRepository, SecurityRepository>();
-
         builder.Services.AddScoped<IQlarissaUserManager, QlarissaUserManager>();
-        builder.Services.AddScoped<ISecurityManager, SecurityManager>();
         builder.Services.AddScoped<IJwtService, JwtService>();
+        builder.Services.AddScoped<ISecurityRepository, SecurityRepository>();
+        builder.Services.AddScoped<ISecurityManager, SecurityManager>();
+        builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+        builder.Services.AddScoped<ICurrencyManager, CurrencyManager>();
 
         builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

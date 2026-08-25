@@ -1,5 +1,4 @@
-﻿using Qlarissa.Domain.Entities.Securities;
-using Qlarissa.Domain.Entities.Securities.Holdings;
+﻿using Qlarissa.Domain.Entities.Securities.Holdings;
 
 namespace Qlarissa.Domain.Entities;
 

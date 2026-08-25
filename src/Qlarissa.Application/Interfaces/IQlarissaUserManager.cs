@@ -10,7 +10,7 @@ public interface IQlarissaUserManager
 
     Task<Result<QlarissaUser>> GetAsync(ClaimsPrincipal user);
 
-    Task<Result> RegisterAsync(string username, string email, string password);
+    Task<Result> RegisterAsync(string username, string email, int displayCurrencyId, string password);
 
     /// <summary>
     /// Checks if the given username exists in the system.

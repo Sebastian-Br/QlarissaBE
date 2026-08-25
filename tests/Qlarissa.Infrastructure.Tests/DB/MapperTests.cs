@@ -1,4 +1,5 @@
 ﻿
+using Qlarissa.Domain.Entities;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 
 namespace Qlarissa.Infrastructure.Tests.DB;
@@ -8,7 +9,7 @@ public class MapperTests
     [Fact]
     public void MapCurrency_FromDomainEntity()
     {
-        Domain.Entities.Securities.Currency domainEntity = new() { Id = 1, Symbol = "USD", Name = "US Dollar" };
+        Currency domainEntity = new() { Id = 1, Symbol = "USD", Name = "US Dollar" };
         var dbEntity = Infrastructure.DB.Entities.Currency.FromDomainEntity(domainEntity);
         Assert.Equal(domainEntity.Id, dbEntity.Id);
         Assert.Equal(domainEntity.Symbol, dbEntity.Symbol);

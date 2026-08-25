@@ -13,7 +13,7 @@ public class AccountController(IQlarissaUserManager userManager) : ControllerBas
     [HttpPost]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserRequest request)
     {
-        var result = await _qlarissaUserManager.RegisterAsync(request.Username, request.Email, request.Password);
+        var result = await _qlarissaUserManager.RegisterAsync(request.Username, request.Email, request.DisplayCurrencyId, request.Password);
         if (result.IsSuccess)
             return Ok();
 

@@ -12,12 +12,13 @@ public class QlarissaUserManager(IUserRepository userRepository, IJwtService jwt
     private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     private readonly IJwtService _jwtService = jwtService ?? throw new ArgumentNullException(nameof(jwtService));
 
-    public async Task<Result> RegisterAsync(string username, string email, string password)
+    public async Task<Result> RegisterAsync(string username, string email, int displayCurrencyId, string password)
     {
         var user = new QlarissaUser
         {
             UserName = username,
-            Email = email
+            Email = email,
+            DisplayCurrencyId = displayCurrencyId
         };
 
         var identityResult = await _userRepository.CreateAsync(user, password);

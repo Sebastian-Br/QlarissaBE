@@ -25,10 +25,11 @@ public class AccountControllerTests
         {
             Username = "test",
             Email = "test@test.com",
+            DisplayCurrencyId = 1,
             Password = "Test1!"
         };
 
-        qlarissaUserManagerMock.Setup(mgr => mgr.RegisterAsync(request.Username, request.Email, request.Password)).ReturnsAsync(FluentResults.Result.Ok());
+        qlarissaUserManagerMock.Setup(mgr => mgr.RegisterAsync(request.Username, request.Email, request.DisplayCurrencyId, request.Password)).ReturnsAsync(FluentResults.Result.Ok());
         var controller = new AccountController(qlarissaUserManagerMock.Object);
         var result = await controller.RegisterAsync(request);
         Assert.IsType<OkResult>(result);
@@ -43,10 +44,11 @@ public class AccountControllerTests
         {
             Username = "test",
             Email = "test@test.com",
+            DisplayCurrencyId = 1,
             Password = "Test1!"
         };
 
-        qlarissaUserManagerMock.Setup(mgr => mgr.RegisterAsync(request.Username, request.Email, request.Password)).ReturnsAsync(FluentResults.Result.Fail(""));
+        qlarissaUserManagerMock.Setup(mgr => mgr.RegisterAsync(request.Username, request.Email, request.DisplayCurrencyId, request.Password)).ReturnsAsync(FluentResults.Result.Fail(""));
         var controller = new AccountController(qlarissaUserManagerMock.Object);
         var result = await controller.RegisterAsync(request);
         Assert.IsType<BadRequestObjectResult>(result);
