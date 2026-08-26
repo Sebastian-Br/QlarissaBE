@@ -10,6 +10,8 @@ using Qlarissa.Infrastructure.DB;
 using Qlarissa.Infrastructure.DB.Repositories;
 using Qlarissa.Infrastructure.Authorization;
 using System.Text;
+using Qlarissa.Application.Interfaces.MarketData;
+using Qlarissa.Infrastructure;
 
 namespace Qlarissa.WebAPI;
 
@@ -34,6 +36,7 @@ public class Program
         builder.Services.AddScoped<IQlarissaUserManager, QlarissaUserManager>();
         builder.Services.AddScoped<IJwtService, JwtService>();
         builder.Services.AddScoped<ISecurityRepository, SecurityRepository>();
+        builder.Services.AddScoped<ISecurityDataProvider, SecurityDataProvider>();
         builder.Services.AddScoped<ISecurityManager, SecurityManager>();
         builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
         builder.Services.AddScoped<ICurrencyManager, CurrencyManager>();

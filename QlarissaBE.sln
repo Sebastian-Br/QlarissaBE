@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36301.6
+# Visual Studio Version 18
+VisualStudioVersion = 18.9.12120.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
@@ -22,6 +22,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qlarissa.Infrastructure.Tests", "tests\Qlarissa.Infrastructure.Tests\Qlarissa.Infrastructure.Tests.csproj", "{BEEFCB0E-904E-DAF2-1460-40CC0BFDF0A2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qlarissa.WebAPI.Tests", "tests\Qlarissa.WebAPI.Tests\Qlarissa.WebAPI.Tests.csproj", "{21655E5F-907B-8133-CEB9-26519FE342BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "yfinanceInspector", "src\yfinanceInspector\yfinanceInspector.csproj", "{2F0556F2-AD85-4549-9148-82F06B2C587D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,6 +131,18 @@ Global
 		{21655E5F-907B-8133-CEB9-26519FE342BB}.Release|x64.Build.0 = Release|Any CPU
 		{21655E5F-907B-8133-CEB9-26519FE342BB}.Release|x86.ActiveCfg = Release|Any CPU
 		{21655E5F-907B-8133-CEB9-26519FE342BB}.Release|x86.Build.0 = Release|Any CPU
+		{2F0556F2-AD85-4549-9148-82F06B2C587D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F0556F2-AD85-4549-9148-82F06B2C587D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F0556F2-AD85-4549-9148-82F06B2C587D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2F0556F2-AD85-4549-9148-82F06B2C587D}.Debug|x64.Build.0 = Debug|Any CPU
+		{2F0556F2-AD85-4549-9148-82F06B2C587D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2F0556F2-AD85-4549-9148-82F06B2C587D}.Debug|x86.Build.0 = Debug|Any CPU
+		{2F0556F2-AD85-4549-9148-82F06B2C587D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F0556F2-AD85-4549-9148-82F06B2C587D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F0556F2-AD85-4549-9148-82F06B2C587D}.Release|x64.ActiveCfg = Release|Any CPU
+		{2F0556F2-AD85-4549-9148-82F06B2C587D}.Release|x64.Build.0 = Release|Any CPU
+		{2F0556F2-AD85-4549-9148-82F06B2C587D}.Release|x86.ActiveCfg = Release|Any CPU
+		{2F0556F2-AD85-4549-9148-82F06B2C587D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,6 +156,7 @@ Global
 		{422F4D93-8526-E4E8-1958-59A70B90F996} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{BEEFCB0E-904E-DAF2-1460-40CC0BFDF0A2} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{21655E5F-907B-8133-CEB9-26519FE342BB} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{2F0556F2-AD85-4549-9148-82F06B2C587D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1ADBF578-257C-438D-922C-EF9EEAF4F427}

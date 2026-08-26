@@ -1,9 +1,8 @@
 ﻿using Qlarissa.Domain.Entities.Securities;
-using Qlarissa.Domain.Entities.Securities.Base;
 
-namespace Qlarissa.Application.Interfaces;
+namespace Qlarissa.Application.Interfaces.MarketData;
 
-public interface ISecurityManager
+public interface ISecurityDataProvider
 {
     public Task AddSecurityAsync(string securityTickerSymbol);
 

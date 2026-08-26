@@ -1,16 +1,18 @@
 ﻿using Qlarissa.Application.Interfaces;
+using Qlarissa.Application.Interfaces.MarketData;
 using Qlarissa.Application.Interfaces.Repositories;
 using Qlarissa.Domain.Entities.Securities;
 using Qlarissa.Domain.Entities.Securities.Base;
 
 namespace Qlarissa.Application;
 
-public sealed class SecurityManager(ISecurityRepository securityRepository) : ISecurityManager
+public sealed class SecurityManager(ISecurityDataProvider securityDataProvider) : ISecurityManager
 {
-    readonly ISecurityRepository _securityRepository = securityRepository ?? throw new ArgumentNullException(nameof(securityRepository));
+    readonly ISecurityDataProvider _securityDataProvider = securityDataProvider ?? throw new ArgumentNullException(nameof(securityDataProvider));
 
-    public async Task AddSecurityAsync(PubliclyTradedSecurityBase security)
-    {
-        await _securityRepository.AddSecurityAsync(security);
-    }
+    public Task<IEnumerable<SearchResult>> SearchSecuritiesAsync(string userQuery)
+        => _securityDataProvider.SearchSecuritiesAsync(userQuery);
+
+    Task ISecurityManager.AddSecurityAsync(string securityTickerSymbol)
+        => _securityDataProvider.AddSecurityAsync(securityTickerSymbol);
 }
