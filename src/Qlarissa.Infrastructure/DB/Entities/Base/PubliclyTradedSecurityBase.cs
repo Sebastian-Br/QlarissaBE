@@ -6,6 +6,10 @@ namespace Qlarissa.Infrastructure.DB.Entities.Base;
 
 public class PubliclyTradedSecurityBase : SecurityBase
 {
+    public string ExchangeName { get; set; }
+
+    public string ExchangeShortName { get; set; }
+
     public string Symbol { get; set; }
 
     public decimal Price { get; set; }
@@ -26,6 +30,9 @@ public class PubliclyTradedSecurityBase : SecurityBase
         dbEntity.Id = domainEntity.Id;
         dbEntity.Name = domainEntity.Name;
         dbEntity.CurrencyId = domainEntity.Currency.Id; // When adding a security, the currency must already exist in the database.
+        dbEntity.SecurityType = (SecurityType)domainEntity.SecurityType;
+        dbEntity.ExchangeName = domainEntity.ExchangeName;
+        dbEntity.ExchangeShortName = domainEntity.ExchangeShortName;
         dbEntity.Symbol = domainEntity.Symbol;
         dbEntity.Price = domainEntity.Price;
         dbEntity.PriceLastUpdatedTime = domainEntity.PriceLastUpdatedTime;
@@ -38,6 +45,9 @@ public class PubliclyTradedSecurityBase : SecurityBase
         domainEntity.Id = dbEntity.Id;
         domainEntity.Name = dbEntity.Name;
         domainEntity.Currency = dbEntity.Currency.ToDomainEntity();
+        domainEntity.SecurityType = (Domain.Entities.Securities.Base.SecurityType)dbEntity.SecurityType;
+        domainEntity.ExchangeName = dbEntity.ExchangeName;
+        domainEntity.ExchangeShortName= dbEntity.ExchangeShortName;
         domainEntity.Symbol = dbEntity.Symbol;
         domainEntity.Price = dbEntity.Price;
         domainEntity.PriceLastUpdatedTime = dbEntity.PriceLastUpdatedTime;

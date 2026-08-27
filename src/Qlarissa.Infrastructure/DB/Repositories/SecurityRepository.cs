@@ -30,4 +30,24 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         _context.Set<PubliclyTradedSecurityBase>().Add(dbEntity);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<IEnumerable<Domain.Entities.Securities.SearchResult>> SearchSecuritiesAsync(string userQuery, CancellationToken cancellationToken)
+    {
+        var pattern = $"%{userQuery}%";
+
+        var result = await _context.Set<PubliclyTradedSecurityBase>()
+            .Where(s => EF.Functions.Like(s.Name, pattern) || EF.Functions.Like(s.Symbol, pattern))
+            .Select(s => new Domain.Entities.Securities.SearchResult
+            {
+                Name = s.Name,
+                Symbol = s.Symbol,
+                SecurityType = (Domain.Entities.Securities.Base.SecurityType)s.SecurityType,
+                Exchange = s.ExchangeName,
+                ExchangeShortName = s.ExchangeShortName,
+                IsDbSearchResult = true
+            })
+            .ToListAsync(cancellationToken);
+
+        return result;
+    }
 }

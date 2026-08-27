@@ -7,4 +7,6 @@ public abstract class SecurityBase
     public string Name { get; set; }
 
     public Currency Currency { get; set; }
+
+    public SecurityType SecurityType { get; set; }
 }

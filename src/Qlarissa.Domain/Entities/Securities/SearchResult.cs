@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Qlarissa.Domain.Entities.Securities.Base;
 
 namespace Qlarissa.Domain.Entities.Securities;
 
@@ -15,4 +13,6 @@ public class SearchResult
     public string Exchange { get; set; }
 
     public string ExchangeShortName { get; set; }
+
+    public bool IsDbSearchResult { get; set; }
 }

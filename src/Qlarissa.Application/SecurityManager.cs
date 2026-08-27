@@ -10,9 +10,16 @@ public sealed class SecurityManager(ISecurityDataProvider securityDataProvider) 
 {
     readonly ISecurityDataProvider _securityDataProvider = securityDataProvider ?? throw new ArgumentNullException(nameof(securityDataProvider));
 
-    public Task<IEnumerable<SearchResult>> SearchSecuritiesAsync(string userQuery)
-        => _securityDataProvider.SearchSecuritiesAsync(userQuery);
-
     Task ISecurityManager.AddSecurityAsync(string securityTickerSymbol)
         => _securityDataProvider.AddSecurityAsync(securityTickerSymbol);
+
+    Task<IEnumerable<SearchResult>> ISecurityManager.SearchSecuritiesExternallyAsync(string userQuery)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<IEnumerable<SearchResult>> ISecurityManager.SearchSecuritiesInternallyAsync(string userQuery)
+    {
+        throw new NotImplementedException();
+    }
 }

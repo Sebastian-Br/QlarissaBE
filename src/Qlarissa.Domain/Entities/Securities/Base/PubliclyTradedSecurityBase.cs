@@ -4,6 +4,10 @@ namespace Qlarissa.Domain.Entities.Securities.Base;
 
 public abstract class PubliclyTradedSecurityBase : SecurityBase
 {
+    public string ExchangeName { get; set; }
+
+    public string ExchangeShortName { get; set; }
+
     /// <summary>
     /// e.g. MSFT for Microsoft.
     /// </summary>
