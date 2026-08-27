@@ -1,25 +1,23 @@
 ﻿using Qlarissa.Application.Interfaces;
-using Qlarissa.Application.Interfaces.MarketData;
+using Qlarissa.Application.Interfaces.ExternalAPI;
 using Qlarissa.Application.Interfaces.Repositories;
 using Qlarissa.Domain.Entities.Securities;
 using Qlarissa.Domain.Entities.Securities.Base;
 
 namespace Qlarissa.Application;
 
-public sealed class SecurityManager(ISecurityDataProvider securityDataProvider) : ISecurityManager
+public sealed class SecurityManager(ISecurityRepository securityRepository, IMarketDataClient marketDataClient) : ISecurityManager
 {
-    readonly ISecurityDataProvider _securityDataProvider = securityDataProvider ?? throw new ArgumentNullException(nameof(securityDataProvider));
+    readonly ISecurityRepository _securityRepository = securityRepository ?? throw new ArgumentNullException(nameof(securityRepository));
+
+    readonly IMarketDataClient _marketDataClient = marketDataClient ?? throw new ArgumentNullException(nameof(marketDataClient));
 
     Task ISecurityManager.AddSecurityAsync(string securityTickerSymbol)
-        => _securityDataProvider.AddSecurityAsync(securityTickerSymbol);
+        => throw new NotImplementedException();
 
-    Task<IEnumerable<SearchResult>> ISecurityManager.SearchSecuritiesExternallyAsync(string userQuery)
-    {
-        throw new NotImplementedException();
-    }
+    Task<IEnumerable<SearchResult>> ISecurityManager.SearchSecuritiesExternallyAsync(string userQuery, CancellationToken cancellationToken)
+        => _marketDataClient.SearchSecuritiesAsync(userQuery, cancellationToken);
 
-    Task<IEnumerable<SearchResult>> ISecurityManager.SearchSecuritiesInternallyAsync(string userQuery)
-    {
-        throw new NotImplementedException();
-    }
+    Task<IEnumerable<SearchResult>> ISecurityManager.SearchSecuritiesInternallyAsync(string userQuery, CancellationToken cancellationToken)
+        => _securityRepository.SearchSecuritiesAsync(userQuery, cancellationToken);
 }

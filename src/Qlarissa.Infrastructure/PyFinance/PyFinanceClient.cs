@@ -1,9 +1,9 @@
-﻿using Qlarissa.Infrastructure.Interfaces;
+﻿using Qlarissa.Application.Interfaces.ExternalAPI;
 using System.Net.Http.Json;
 
 namespace Qlarissa.Infrastructure.PyFinance;
 
-public class PyFinanceClient(IHttpClientFactory httpClientFactory) : IPyFinanceClient
+public class PyFinanceClient(IHttpClientFactory httpClientFactory) : IMarketDataClient
 {
     readonly HttpClient _searchClient = httpClientFactory.CreateClient("PyFinanceSearch");
 

@@ -1,8 +1,8 @@
 ﻿using Qlarissa.Domain.Entities.Securities;
 
-namespace Qlarissa.Infrastructure.Interfaces;
+namespace Qlarissa.Application.Interfaces.ExternalAPI;
 
-public interface IPyFinanceClient
+public interface IMarketDataClient
 {
     public Task<IEnumerable<SearchResult>> SearchSecuritiesAsync(string userQuery, CancellationToken cancellationToken);
 }

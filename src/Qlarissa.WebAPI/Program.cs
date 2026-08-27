@@ -5,14 +5,13 @@ using Microsoft.IdentityModel.Tokens;
 using Qlarissa.Application;
 using Qlarissa.Application.Interfaces;
 using Qlarissa.Application.Interfaces.Authorization;
-using Qlarissa.Application.Interfaces.MarketData;
+using Qlarissa.Application.Interfaces.ExternalAPI;
 using Qlarissa.Application.Interfaces.Repositories;
 using Qlarissa.Domain.Entities;
 using Qlarissa.Infrastructure;
 using Qlarissa.Infrastructure.Authorization;
 using Qlarissa.Infrastructure.DB;
 using Qlarissa.Infrastructure.DB.Repositories;
-using Qlarissa.Infrastructure.Interfaces;
 using Qlarissa.Infrastructure.PyFinance;
 using Qlarissa.Infrastructure.PyFinance.Options;
 using System.Text;
@@ -40,7 +39,6 @@ public class Program
         builder.Services.AddScoped<IQlarissaUserManager, QlarissaUserManager>();
         builder.Services.AddScoped<IJwtService, JwtService>();
         builder.Services.AddScoped<ISecurityRepository, SecurityRepository>();
-        builder.Services.AddScoped<ISecurityDataProvider, SecurityDataProvider>();
         builder.Services.AddScoped<ISecurityManager, SecurityManager>();
         builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
         builder.Services.AddScoped<ICurrencyManager, CurrencyManager>();
@@ -64,7 +62,7 @@ public class Program
             client.BaseAddress = new Uri(options.MarketDataAPI.BaseUrl);
         });
 
-        builder.Services.AddScoped<IPyFinanceClient, PyFinanceClient>();
+        builder.Services.AddScoped<IMarketDataClient, PyFinanceClient>();
 
         builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
