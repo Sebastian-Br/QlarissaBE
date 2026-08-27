@@ -13,6 +13,4 @@ public class SearchResult
     public string Exchange { get; set; }
 
     public string ExchangeShortName { get; set; }
-
-    public bool IsDbSearchResult { get; set; }
 }

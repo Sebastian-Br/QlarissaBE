@@ -20,8 +20,7 @@ public class SearchResult
             Symbol = Symbol,
             SecurityType = Enum.TryParse<Domain.Entities.Securities.Base.SecurityType>(SecurityType, true, out var securityType) ? securityType : throw new ArgumentException("Invalid security type"),
             Exchange = Exchange,
-            ExchangeShortName = ExchangeShortName,
-            IsDbSearchResult = false
+            ExchangeShortName = ExchangeShortName
         };
     }
 }

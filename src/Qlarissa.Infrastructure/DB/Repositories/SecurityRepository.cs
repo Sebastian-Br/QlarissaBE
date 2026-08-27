@@ -43,8 +43,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
                 Symbol = s.Symbol,
                 SecurityType = (Domain.Entities.Securities.Base.SecurityType)s.SecurityType,
                 Exchange = s.ExchangeName,
-                ExchangeShortName = s.ExchangeShortName,
-                IsDbSearchResult = true
+                ExchangeShortName = s.ExchangeShortName
             })
             .ToListAsync(cancellationToken);
 
