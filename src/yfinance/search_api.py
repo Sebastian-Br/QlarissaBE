@@ -28,12 +28,12 @@ def search_assets(query):
     results = []
 
     for quote in search.quotes:
-        if quote.get("typeDisp") == "Futures" or quote.get("typeDisp") == "Fund" :
+        if quote.get("typeDisp") in ("Futures", "Fund", "Option", "MoneyMarket"):
             continue
         
         results.append({
             "symbol": quote.get("symbol"),
-            "name": quote.get("shortname"),
+            "name": quote.get("shortname") or quote.get("longname"),
             "typeDisp": quote.get("typeDisp"),
             #"quoteType": quote.get("quoteType"),
             "exchange": quote.get("exchange"),
@@ -63,11 +63,7 @@ def search():
     try:
         results = search_assets(query)
 
-        return jsonify({
-            "query": query,
-            "count": len(results),
-            "results": results
-        })
+        return jsonify(results)
 
     except Exception as exc:
         return jsonify({

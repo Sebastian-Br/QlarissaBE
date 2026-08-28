@@ -6,21 +6,43 @@ public class SearchResult
 
     public string Symbol { get; set; }
 
-    public string SecurityType { get; set; }
+    public string typeDisp { get; set; }
 
-    public string Exchange { get; set; }
+    public string exchange { get; set; }
 
-    public string ExchangeShortName { get; set; }
+    public string exchDisp { get; set; }
 
     public Domain.Entities.Securities.SearchResult ToDomainEntity()
     {
-        return new Domain.Entities.Securities.SearchResult
+        var domainEntity = new Domain.Entities.Securities.SearchResult
         {
             Name = Name,
             Symbol = Symbol,
-            SecurityType = Enum.TryParse<Domain.Entities.Securities.Base.SecurityType>(SecurityType, true, out var securityType) ? securityType : throw new ArgumentException("Invalid security type"),
-            Exchange = Exchange,
-            ExchangeShortName = ExchangeShortName
+            Exchange = exchange,
+            ExchangeShortName = exchDisp
         };
+
+        if (typeDisp == "Equity")
+        {
+            domainEntity.SecurityType = Domain.Entities.Securities.Base.SecurityType.Stock;
+        }
+        else if (typeDisp == "ETF")
+        {
+            domainEntity.SecurityType = Domain.Entities.Securities.Base.SecurityType.ETF;
+        }
+        else if (typeDisp == "Cryptocurrency")
+        {
+            domainEntity.SecurityType = Domain.Entities.Securities.Base.SecurityType.Cryptocurrency;
+        }
+        else if (typeDisp == "Currency")
+        {
+            domainEntity.SecurityType = Domain.Entities.Securities.Base.SecurityType.CurrencyPair;
+        }
+        else
+        {
+            throw new ArgumentException("Invalid security type");
+        }
+
+        return domainEntity;
     }
 }
