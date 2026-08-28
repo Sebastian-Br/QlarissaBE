@@ -30,7 +30,8 @@ public class CurrencyConfiguration : IEntityTypeConfiguration<Currency>
             new Currency { Id = 5, Symbol = "AUD", Name = "Australian Dollar" },
             new Currency { Id = 6, Symbol = "CAD", Name = "Canadian Dollar" },
             new Currency { Id = 7, Symbol = "CHF", Name = "Swiss Franc" },
-            new Currency { Id = 8, Symbol = "CNY", Name = "Chinese Yuan" }
+            new Currency { Id = 8, Symbol = "CNY", Name = "Chinese Yuan" },
+            new Currency { Id = 9, Symbol = "KRW", Name = "South Korean Won" }
         );
     }
 }
