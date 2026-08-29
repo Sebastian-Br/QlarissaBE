@@ -1,6 +1,6 @@
 ﻿namespace Qlarissa.Infrastructure.PyFinance;
 
-public class PyFiDailyPrice
+public class DailyPrice
 {
     public decimal High { get; set; }
     public decimal Low { get; set; }
