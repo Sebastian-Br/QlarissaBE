@@ -24,7 +24,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         }
         else
         {
-            throw new InvalidOperationException("Unsupported security type.");
+            throw new NotImplementedException("Unsupported security type.");
         }
 
         _context.Set<PubliclyTradedSecurityBase>().Add(dbEntity);

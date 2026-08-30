@@ -2,6 +2,10 @@
 
 public sealed class AnalystRating
 {
+    public int Id { get; set; }
+
+    public DateOnly Date { get; set; }
+
     public int NumberOfAnalystOpinions { get; set; }
 
     public double TargetMeanPrice { get; set; }

@@ -1,6 +1,7 @@
 ﻿
 using Qlarissa.Domain.Entities;
 using Qlarissa.Infrastructure.DB.Entities.Base;
+using Qlarissa.Infrastructure.DB.Entities.MarketData;
 
 namespace Qlarissa.Infrastructure.Tests.DB;
 
@@ -235,7 +236,7 @@ public class MapperTests
             Assert.Equal(domainEntity.Id, dbEntity.PriceHistory.ElementAt(i).SecurityId);
         }
 
-        for (int i = 0; i < domainEntity.DividendPayouts.Length; i++)
+        for (int i = 0; i < domainEntity.DividendPayouts.Count; i++)
         {
             Assert.Equal(domainEntity.DividendPayouts[i].Id, dbEntity.DividendPayouts.ElementAt(i).Id);
             Assert.Equal(domainEntity.DividendPayouts[i].PayoutAmount, dbEntity.DividendPayouts.ElementAt(i).PayoutAmount);
@@ -307,9 +308,9 @@ public class MapperTests
         return priceHistory;
     }
 
-    private static ICollection<Infrastructure.DB.Entities.DailyPrice> GetSimplePriceHistoryTestData_DbEntity(PubliclyTradedSecurityBase dbEntity)
+    private static ICollection<DailyPrice> GetSimplePriceHistoryTestData_DbEntity(PubliclyTradedSecurityBase dbEntity)
     {
-        Infrastructure.DB.Entities.DailyPrice[] priceHistory = [
+        DailyPrice[] priceHistory = [
             new() { Id = 100, Date = new(2024, 12, 1), Average = 630, Close = 635, Open = 625, High = 627, Low = 624, Security = dbEntity, SecurityId = dbEntity.Id },
             new() { Id = 101, Date = new(2024, 12, 2), Average = 631, Close = 636, Open = 626, High = 628, Low = 625, Security = dbEntity, SecurityId = dbEntity.Id },
             new() { Id = 102, Date = new(2024, 12, 3), Average = 632, Close = 637, Open = 627, High = 629, Low = 626, Security = dbEntity, SecurityId = dbEntity.Id },
@@ -321,8 +322,8 @@ public class MapperTests
     {
         Domain.Entities.Securities.MarketData.DividendPayout[] payouts = [
             new() { Id = 1, PayoutDate = new(2024,06, 24), PayoutAmount = 6 },
-            new() { Id = 2, PayoutDate = new(2024,09, 27), PayoutAmount = 6.2m },
-            new() { Id = 3, PayoutDate = new(2024,12, 30), PayoutAmount = 6.5m },
+            new() { Id = 2, PayoutDate = new(2024,09, 27), PayoutAmount = 6.2 },
+            new() { Id = 3, PayoutDate = new(2024,12, 30), PayoutAmount = 6.5 },
             ];
         return payouts;
     }
@@ -331,8 +332,8 @@ public class MapperTests
     {
         ICollection<Infrastructure.DB.Entities.MarketData.DividendPayout> payouts = [
             new() { Id = 1, PayoutDate = new(2024,06, 24), PayoutAmount = 6, Security = dbEntity, SecurityId = dbEntity.Id },
-            new() { Id = 2, PayoutDate = new(2024,09, 27), PayoutAmount = 6.2m, Security = dbEntity, SecurityId = dbEntity.Id },
-            new() { Id = 3, PayoutDate = new(2024,12, 30), PayoutAmount = 6.5m, Security = dbEntity, SecurityId = dbEntity.Id },
+            new() { Id = 2, PayoutDate = new(2024,09, 27), PayoutAmount = 6.2, Security = dbEntity, SecurityId = dbEntity.Id },
+            new() { Id = 3, PayoutDate = new(2024,12, 30), PayoutAmount = 6.5, Security = dbEntity, SecurityId = dbEntity.Id },
             ];
         return payouts;
     }

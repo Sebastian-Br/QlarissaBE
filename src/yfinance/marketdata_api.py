@@ -68,7 +68,8 @@ def get_security_data():
         # ------------------------------------------------------------------
         return jsonify({
             "info": info,
-            "history": history_data
+            "history": history_data,
+            "isin": ticker.isin
         })
 
     except Exception as exc:

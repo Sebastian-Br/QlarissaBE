@@ -3,5 +3,5 @@
 public sealed class CurrencyHolding
 {
     public required Currency Currency { get; set; }
-    public decimal Amount { get; set; }
+    public double Amount { get; set; }
 }

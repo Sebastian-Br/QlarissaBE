@@ -3,10 +3,10 @@
 public sealed class DailyPrice
 {
     public int Id { get; set; }
-    public decimal Open { get; set; }
-    public decimal Close { get; set; }
-    public decimal High { get; set; }
-    public decimal Low { get; set; }
-    public decimal Average { get; set; }
+    public double Open { get; set; }
+    public double Close { get; set; }
+    public double High { get; set; }
+    public double Low { get; set; }
+    public double Average { get; set; }
     public DateOnly Date {  get; set; }
 }

@@ -12,7 +12,7 @@ public class PubliclyTradedSecurityBase : SecurityBase
 
     public string Symbol { get; set; }
 
-    public decimal Price { get; set; }
+    public double Price { get; set; }
 
     public DateTime PriceLastUpdatedTime { get; set; }
 
@@ -21,9 +21,14 @@ public class PubliclyTradedSecurityBase : SecurityBase
     public ICollection<DailyPrice> PriceHistory { get; set; } = [];
 
     /// <summary>
-    /// Conversion handled in Stock/ETF EF classes.
+    /// Dividend payouts for ETFs and Stocks. Conversion is handled in Stock/ETF entities.
     /// </summary>
     public ICollection<DividendPayout> DividendPayouts { get; set; } = [];
+
+    /// <summary>
+    /// Split events for Stocks/ETFs.Conversion is handled in Stock/ETF entities.
+    /// </summary>
+    public ICollection<Split> Splits { get; set; } = [];
 
     public static void FromDomainEntity(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase domainEntity, PubliclyTradedSecurityBase dbEntity)
     {
@@ -52,7 +57,7 @@ public class PubliclyTradedSecurityBase : SecurityBase
         domainEntity.Price = dbEntity.Price;
         domainEntity.PriceLastUpdatedTime = dbEntity.PriceLastUpdatedTime;
         domainEntity.LastCompleteUpdateTime = dbEntity.LastCompleteUpdateTime;
-        domainEntity.PriceHistory = dbEntity.PriceHistory.Select(DailyPrice.ToDomainEntity).ToArray();
+        domainEntity.PriceHistory = dbEntity.PriceHistory.Select(DailyPrice.ToDomainEntity).ToList();
     }
 }
 

@@ -2,18 +2,18 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 
-namespace Qlarissa.Infrastructure.DB.Entities;
+namespace Qlarissa.Infrastructure.DB.Entities.MarketData;
 
 public sealed class DailyPrice
 {
     public int Id { get; set; }
     public int SecurityId { get; set; }
     public PubliclyTradedSecurityBase Security { get; set; } = default!;
-    public decimal Open { get; set; }
-    public decimal Close { get; set; }
-    public decimal High { get; set; }
-    public decimal Low { get; set; }
-    public decimal Average { get; set; }
+    public double Open { get; set; }
+    public double Close { get; set; }
+    public double High { get; set; }
+    public double Low { get; set; }
+    public double Average { get; set; }
     public DateOnly Date { get; set; }
 
     public static DailyPrice FromDomainEntity(Domain.Entities.Securities.MarketData.DailyPrice domainEntity, Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security) =>

@@ -6,5 +6,5 @@ public sealed class DividendPayout
 
     public DateOnly PayoutDate { get; set; }
 
-    public decimal PayoutAmount { get; set; }
+    public double PayoutAmount { get; set; }
 }
