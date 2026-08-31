@@ -13,14 +13,13 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
 
     private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
-    public async Task AddSecurityAsync(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security)
+    public async Task AddSecurityAsync(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security, CancellationToken cancellationToken)
     {
         PubliclyTradedSecurityBase dbEntity;
 
         if (security is Domain.Entities.Securities.Stock)
         {
-            dbEntity = new Stock();
-            Stock.FromDomainEntity(security, dbEntity);
+            dbEntity = Stock.FromDomainEntity((Domain.Entities.Securities.Stock)security);
         }
         else
         {
@@ -28,7 +27,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         }
 
         _context.Set<PubliclyTradedSecurityBase>().Add(dbEntity);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<Domain.Entities.Securities.SearchResult>> SearchSecuritiesAsync(string userQuery, CancellationToken cancellationToken)
@@ -49,4 +48,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
 
         return result;
     }
+
+    public async Task<bool> SecurityExistsAsync(string tickerSymbol)
+        => await _context.Set<PubliclyTradedSecurityBase>().AnyAsync(s => s.Symbol == tickerSymbol);
 }

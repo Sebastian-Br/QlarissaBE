@@ -11,7 +11,7 @@ public sealed class Stock : PubliclyTradedSecurityBase
 
     public string BusinessSummary { get; set; } = string.Empty;
 
-    public long MarketCapitalization { get; set; }
+    public long SharesOutstanding { get; set; }
 
     public double DividendRate { get; set; }
 

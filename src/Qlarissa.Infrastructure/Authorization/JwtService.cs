@@ -8,9 +8,9 @@ using System.Text;
 
 namespace Qlarissa.Infrastructure.Authorization;
 
-public sealed class JwtService(IConfiguration config) : IJwtService
+public sealed class JwtService(IConfiguration configuration) : IJwtService
 {
-    private readonly IConfiguration _configuration = config;
+    private readonly IConfiguration _configuration = configuration;
 
     public string GenerateToken(QlarissaUser user)
     {

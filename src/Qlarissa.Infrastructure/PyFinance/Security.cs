@@ -12,8 +12,9 @@ public class Security
 
     /// <summary>
     /// Set for some ETFs/Stocks, usually US ones. Not set for Cryptocurrencies or CurrencyPairs.
+    /// "-" is the default value the API returns when no ISIN is available.
     /// </summary>
-    public string ISIN {  get; set; }
+    public string ISIN {  get; set; } = "-";
 
     public PubliclyTradedSecurityBase ToDomainEntity()
     {
@@ -27,7 +28,7 @@ public class Security
                 ISIN = ISIN,
                 InvestorRelationsURL = Info.IrWebsite,
                 BusinessSummary = Info.LongBusinessSummary,
-                MarketCapitalization = Info.MarketCap,
+                SharesOutstanding = Info.SharesOutstanding,
                 DividendRate = Info.DividendRate,
                 TargetMeanPrice = Info.TargetMeanPrice,
                 RecommendationMean = Info.RecommendationMean,
@@ -87,7 +88,7 @@ public class Security
 
         domainEntity.Name = Info.LongName;
         domainEntity.ShortName = Info.ShortName;
-        // domainEntity.Currency -- loaded outside of mapper
+        domainEntity.Currency = new Domain.Entities.Currency { Symbol = Info.Currency }; // fully loaded later on in the application layer
         domainEntity.ExchangeName = Info.FullExchangeName;
         domainEntity.ExchangeShortName = Info.Exchange;
         domainEntity.Symbol = Info.Symbol;

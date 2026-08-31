@@ -4,7 +4,7 @@ public sealed class Currency
 {
     public int Id { get; set; }
 
-    public required string Symbol { get; set; }
+    public string Symbol { get; set; } = string.Empty;
 
-    public required string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 }

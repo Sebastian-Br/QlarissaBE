@@ -10,7 +10,9 @@ public interface ISecurityRepository
     /// </summary>
     /// <param name="security"></param>
     /// <returns></returns>
-    Task AddSecurityAsync(PubliclyTradedSecurityBase security);
+    Task AddSecurityAsync(PubliclyTradedSecurityBase security, CancellationToken cancellationToken);
+
+    Task<bool> SecurityExistsAsync(string tickerSymbol);
 
     /// <summary>
     /// Searches for securities based on the user query. The search will be performed on the name and symbol of the security.

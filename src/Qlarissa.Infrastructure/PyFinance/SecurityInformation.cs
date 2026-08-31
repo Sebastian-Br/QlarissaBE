@@ -55,6 +55,11 @@ public class SecurityInformation
     /// <summary>
     /// Filled for Stocks.
     /// </summary>
+    public long SharesOutstanding { get; init; }
+
+    /// <summary>
+    /// Filled for Stocks.
+    /// </summary>
     public double DividendRate { get; init; }
 
     /// <summary>

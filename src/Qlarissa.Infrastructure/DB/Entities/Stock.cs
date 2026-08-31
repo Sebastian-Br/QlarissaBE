@@ -10,7 +10,7 @@ public sealed class Stock : PubliclyTradedSecurityBase
 
     public string BusinessSummary { get; set; } = string.Empty;
 
-    public long MarketCapitalization { get; set; }
+    public long SharesOutstanding { get; set; }
 
     public double DividendRate { get; set; }
 
@@ -27,7 +27,7 @@ public sealed class Stock : PubliclyTradedSecurityBase
         stock.ISIN = domainEntity.ISIN;
         stock.InvestorRelationsURL = domainEntity.InvestorRelationsURL;
         stock.BusinessSummary = domainEntity.BusinessSummary;
-        stock.MarketCapitalization = domainEntity.MarketCapitalization;
+        stock.SharesOutstanding = domainEntity.SharesOutstanding;
         stock.DividendRate = domainEntity.DividendRate;
         stock.TargetMeanPrice = domainEntity.TargetMeanPrice;
         stock.RecommendationMean = domainEntity.RecommendationMean;
@@ -43,7 +43,7 @@ public sealed class Stock : PubliclyTradedSecurityBase
         domainEntity.ISIN = ISIN;
         domainEntity.InvestorRelationsURL = InvestorRelationsURL;
         domainEntity.BusinessSummary = BusinessSummary;
-        domainEntity.MarketCapitalization = MarketCapitalization;
+        domainEntity.SharesOutstanding = SharesOutstanding;
         domainEntity.DividendRate = DividendRate;
         domainEntity.TargetMeanPrice = TargetMeanPrice;
         domainEntity.RecommendationMean = RecommendationMean;
