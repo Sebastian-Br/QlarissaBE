@@ -17,9 +17,9 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
     {
         PubliclyTradedSecurityBase dbEntity;
 
-        if (security is Domain.Entities.Securities.Stock)
+        if (security is Domain.Entities.Securities.Stock stock)
         {
-            dbEntity = Stock.FromDomainEntity((Domain.Entities.Securities.Stock)security);
+            dbEntity = Stock.FromDomainEntity(stock);
         }
         else
         {
