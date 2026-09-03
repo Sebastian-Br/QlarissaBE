@@ -6,6 +6,14 @@ namespace Qlarissa.Application.Interfaces.Repositories;
 public interface ISecurityRepository
 {
     /// <summary>
+    /// Gets a security by its ID. Returns null if the security does not exist.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<PubliclyTradedSecurityBase?> GetSecurityAsync(int id, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Adds a security to the database. The currency of that security must already exist.
     /// </summary>
     /// <param name="security"></param>

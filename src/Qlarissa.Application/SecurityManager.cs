@@ -14,6 +14,9 @@ public sealed class SecurityManager(ISecurityRepository securityRepository, ICur
 
     readonly IMarketDataClient _marketDataClient = marketDataClient ?? throw new ArgumentNullException(nameof(marketDataClient));
 
+    public Task<PubliclyTradedSecurityBase?> GetSecurityAsync(int id, CancellationToken cancellationToken)
+        => _securityRepository.GetSecurityAsync(id, cancellationToken);
+
     public async Task<FluentResults.Result<string>> AddSecurityAsync(string securityTickerSymbol, CancellationToken cancellationToken)
     {
         if (await _securityRepository.SecurityExistsAsync(securityTickerSymbol))

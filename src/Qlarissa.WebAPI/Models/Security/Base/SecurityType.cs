@@ -1,4 +1,4 @@
-﻿namespace Qlarissa.WebAPI.Models;
+﻿namespace Qlarissa.WebAPI.Models.Security.Base;
 
 public enum SecurityType
 {

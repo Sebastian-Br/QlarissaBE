@@ -24,4 +24,16 @@ public class SecurityController(ISecurityManager securityManager) : ControllerBa
 
         return Ok(result.Value);
     }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> Get([FromQuery] int id, CancellationToken cancellationToken)
+    {
+        var security = await _securityManager.GetSecurityAsync(id, cancellationToken);
+        if (security == null)
+        {
+            return NotFound($"Security with ID '{id}' not found.");
+        }
+        return Ok(security);
+    }
 }

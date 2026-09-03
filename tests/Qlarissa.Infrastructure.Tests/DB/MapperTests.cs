@@ -33,7 +33,7 @@ public class MapperTests
         
         Domain.Entities.Securities.ETF domainEntity = new() { Id = 9, Name = "iShares S&P500", 
             Currency = new() { Id = 1, Name = "United States Dollar", Symbol = "USD" }, 
-            Symbol="ETFSymbol", Price = 666.6m, PriceLastUpdatedTime = new(2025,1,1), LastCompleteUpdateTime = new(2024, 12,30),
+            Symbol="ETFSymbol", Price = 666.6, PriceLastUpdatedTime = new(2025,1,1), LastCompleteUpdateTime = new(2024, 12,30),
             PriceHistory = GetSimplePriceHistoryTestData_DomainEntity(),
         };
 
@@ -47,7 +47,7 @@ public class MapperTests
         Assert.Equal(domainEntity.PriceLastUpdatedTime, dbEntity.PriceLastUpdatedTime);
         Assert.Equal(domainEntity.LastCompleteUpdateTime, dbEntity.LastCompleteUpdateTime);
 
-        for(int i = 0; i < domainEntity.PriceHistory.Length; i++)
+        for(int i = 0; i < domainEntity.PriceHistory.Count; i++)
         {
             Assert.Equal(domainEntity.PriceHistory[i].Id, dbEntity.PriceHistory.ElementAt(i).Id);
             Assert.Equal(domainEntity.PriceHistory[i].Low, dbEntity.PriceHistory.ElementAt(i).Low);
@@ -106,7 +106,7 @@ public class MapperTests
             Name = "iShares S&P500",
             Currency = new() { Id = 1, Name = "United States Dollar", Symbol = "USD" },
             Symbol = "ETFSymbol",
-            Price = 666.6m,
+            Price = 666.6,
             PriceLastUpdatedTime = new(2025, 1, 1),
             LastCompleteUpdateTime = new(2024, 12, 30),
             PriceHistory = GetSimplePriceHistoryTestData_DomainEntity(),
@@ -123,7 +123,7 @@ public class MapperTests
         Assert.Equal(domainEntity.PriceLastUpdatedTime, dbEntity.PriceLastUpdatedTime);
         Assert.Equal(domainEntity.LastCompleteUpdateTime, dbEntity.LastCompleteUpdateTime);
 
-        for (int i = 0; i < domainEntity.PriceHistory.Length; i++)
+        for (int i = 0; i < domainEntity.PriceHistory.Count; i++)
         {
             Assert.Equal(domainEntity.PriceHistory[i].Id, dbEntity.PriceHistory.ElementAt(i).Id);
             Assert.Equal(domainEntity.PriceHistory[i].Low, dbEntity.PriceHistory.ElementAt(i).Low);
@@ -135,7 +135,7 @@ public class MapperTests
             Assert.Equal(domainEntity.Id, dbEntity.PriceHistory.ElementAt(i).SecurityId);
         }
 
-        for (int i = 0; i < domainEntity.DistributionEvents.Length; i++)
+        for (int i = 0; i < domainEntity.DistributionEvents.Count; i++)
         {
             Assert.Equal(domainEntity.DistributionEvents[i].Id, dbEntity.DividendPayouts.ElementAt(i).Id);
             Assert.Equal(domainEntity.DistributionEvents[i].PayoutAmount, dbEntity.DividendPayouts.ElementAt(i).PayoutAmount);
@@ -154,7 +154,7 @@ public class MapperTests
             CurrencyId = 10,
             Currency = new() { Id = 10, Symbol = "USD", Name = "US Dollar" },
             Symbol = "ETFSymbol",
-            Price = 666.6m,
+            Price = 666.6,
             PriceLastUpdatedTime = new(2025, 1, 15),
             LastCompleteUpdateTime = new(2025, 1, 1),
         };
@@ -205,7 +205,7 @@ public class MapperTests
             Name = "Microsoft",
             Currency = new() { Id = 1, Name = "United States Dollar", Symbol = "USD" },
             Symbol = "MSFT",
-            Price = 555.5m,
+            Price = 555.5,
             PriceLastUpdatedTime = new(2025, 1, 1),
             LastCompleteUpdateTime = new(2024, 12, 30),
             PriceHistory = GetSimplePriceHistoryTestData_DomainEntity(),
@@ -224,7 +224,7 @@ public class MapperTests
         Assert.Equal(domainEntity.LastCompleteUpdateTime, dbEntity.LastCompleteUpdateTime);
         Assert.Equal(domainEntity.InvestorRelationsURL, dbEntity.InvestorRelationsURL);
 
-        for (int i = 0; i < domainEntity.PriceHistory.Length; i++)
+        for (int i = 0; i < domainEntity.PriceHistory.Count; i++)
         {
             Assert.Equal(domainEntity.PriceHistory[i].Id, dbEntity.PriceHistory.ElementAt(i).Id);
             Assert.Equal(domainEntity.PriceHistory[i].Low, dbEntity.PriceHistory.ElementAt(i).Low);
@@ -255,7 +255,7 @@ public class MapperTests
             CurrencyId = 10,
             Currency = new() { Id = 10, Symbol = "USD", Name = "US Dollar" },
             Symbol = "MSFT",
-            Price = 555.5m,
+            Price = 555.5,
             PriceLastUpdatedTime = new(2025, 1, 15),
             LastCompleteUpdateTime = new(2025, 1, 1),
             InvestorRelationsURL = "https://www.microsoft.com/en-us/investor/default"

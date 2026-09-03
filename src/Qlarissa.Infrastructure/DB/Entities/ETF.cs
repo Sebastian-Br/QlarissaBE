@@ -1,5 +1,4 @@
-﻿using Qlarissa.Domain.Entities.Securities;
-using Qlarissa.Infrastructure.DB.Entities.Base;
+﻿using Qlarissa.Infrastructure.DB.Entities.Base;
 using Qlarissa.Infrastructure.DB.Entities.MarketData;
 
 namespace Qlarissa.Infrastructure.DB.Entities;

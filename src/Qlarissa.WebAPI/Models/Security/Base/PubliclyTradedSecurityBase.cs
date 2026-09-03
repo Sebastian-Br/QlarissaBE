@@ -1,19 +1,19 @@
-﻿using Qlarissa.Domain.Entities.Securities.MarketData;
+﻿using Qlarissa.WebAPI.Models.Security.MarketData;
 
-namespace Qlarissa.Domain.Entities.Securities.Base;
+namespace Qlarissa.WebAPI.Models.Security.Base;
 
 public abstract class PubliclyTradedSecurityBase : SecurityBase
 {
-    public string ExchangeName { get; set; } = string.Empty;
+    public string ExchangeName { get; set; }
 
-    public string ExchangeShortName { get; set; } = string.Empty;
+    public string ExchangeShortName { get; set; }
 
     /// <summary>
     /// e.g. MSFT for Microsoft.
     /// </summary>
-    public string Symbol { get; set; } = string.Empty;
+    public string Symbol { get; set; }
 
-    public IReadOnlyList<DailyPrice> PriceHistory {  get; set; } = [];
+    public IReadOnlyList<DailyPrice> PriceHistory { get; set; } = [];
 
     /// <summary>
     /// The current market price.
@@ -23,10 +23,10 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
     /// <summary>
     /// The UTC time at which the Price property has last been updated. This is unrelated to the other properties.
     /// </summary>
-    public DateTime PriceLastUpdatedTime {  get; set; }
+    public DateTime PriceLastUpdatedTime { get; set; }
 
     /// <summary>
     /// The UTC time at which all properties have last been updated.
     /// </summary>
-    public DateTime LastCompleteUpdateTime {  get; set; }
+    public DateTime LastCompleteUpdateTime { get; set; }
 }
