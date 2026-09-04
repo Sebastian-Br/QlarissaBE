@@ -6,6 +6,6 @@ namespace Qlarissa.Domain.Entities.Securities;
 /// In a CurrencyPair, e.g. USD-EUR, USD would be the primary currency.
 /// this.Symbol would be USD whereas this.Currency would refer to the Euro
 /// </summary>
-public class CurrencyPair : PubliclyTradedSecurityBase
+public sealed class CurrencyPair : PubliclyTradedSecurityBase
 {
 }

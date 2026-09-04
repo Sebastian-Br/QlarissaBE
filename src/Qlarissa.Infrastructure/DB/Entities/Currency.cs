@@ -7,9 +7,9 @@ public sealed class Currency
 {
     public int Id { get; set; }
 
-    public string Symbol { get; set; }
+    public string Symbol { get; set; } = string.Empty;
 
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     public static Currency FromDomainEntity(Domain.Entities.Currency domainEntity)
         => new() { Id = domainEntity.Id, Symbol = domainEntity.Symbol, Name = domainEntity.Name };
 

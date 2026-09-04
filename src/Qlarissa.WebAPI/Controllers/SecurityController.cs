@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Qlarissa.Application.Interfaces;
+using Qlarissa.Domain.Entities.Securities.Base;
 using Qlarissa.WebAPI.Models;
 
 namespace Qlarissa.WebAPI.Controllers;
@@ -27,13 +28,15 @@ public class SecurityController(ISecurityManager securityManager) : ControllerBa
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> Get([FromQuery] int id, CancellationToken cancellationToken)
+    public async Task<ActionResult<Models.Security.Base.PubliclyTradedSecurityBase>> Get([FromQuery] int id, CancellationToken cancellationToken)
     {
         var security = await _securityManager.GetSecurityAsync(id, cancellationToken);
         if (security == null)
         {
             return NotFound($"Security with ID '{id}' not found.");
         }
-        return Ok(security);
+
+        var webApiModel = Models.Security.Base.PubliclyTradedSecurityBase.FromDomainEntity(security);
+        return Ok(webApiModel);
     }
 }

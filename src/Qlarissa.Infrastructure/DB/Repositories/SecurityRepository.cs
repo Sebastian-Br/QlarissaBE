@@ -14,29 +14,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
 
     public async Task AddSecurityAsync(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security, CancellationToken cancellationToken)
     {
-        PubliclyTradedSecurityBase dbEntity;
-
-        if (security is Domain.Entities.Securities.Stock stock)
-        {
-            dbEntity = Stock.FromDomainEntity(stock);
-        }
-        else if (security is Domain.Entities.Securities.ETF etf)
-        {
-            dbEntity = ETF.FromDomainEntity(etf);
-        }
-        else if (security is Domain.Entities.Securities.CryptoCurrency cryptoCurrency)
-        {
-            dbEntity = CryptoCurrency.FromDomainEntity(cryptoCurrency);
-        }
-        else if (security is Domain.Entities.Securities.CurrencyPair currencyPair)
-        {
-            dbEntity = CurrencyPair.FromDomainEntity(currencyPair);
-        }
-        else
-        {
-            throw new NotImplementedException("Unsupported security type.");
-        }
-
+        PubliclyTradedSecurityBase dbEntity = PubliclyTradedSecurityBase.FromDomainEntity(security);
         _context.Set<PubliclyTradedSecurityBase>().Add(dbEntity);
         await _context.SaveChangesAsync(cancellationToken);
     }
@@ -45,6 +23,10 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
     {
         var result = await _context.Set<PubliclyTradedSecurityBase>()
             .AsNoTracking()
+            .Include(s => s.PriceHistory)
+            .Include(s => s.DividendPayouts)
+            .Include(s => s.Splits)
+            .Include(s => s.Currency)
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
 
         if (result == null)
@@ -52,16 +34,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
             return null;
         }
 
-        return result switch
-        {
-            null => null,
-            Stock stock => stock.ToDomainEntity(),
-            ETF etf => etf.ToDomainEntity(),
-            CryptoCurrency cryptoCurrency => cryptoCurrency.ToDomainEntity(),
-            CurrencyPair currencyPair => currencyPair.ToDomainEntity(),
-            _ => throw new NotImplementedException(
-                $"Unsupported security type '{result.GetType().Name}'.")
-        };
+        return result.ToDomainEntity();
     }
 
     public async Task<IEnumerable<Domain.Entities.Securities.SearchResult>> SearchSecuritiesAsync(string userQuery, CancellationToken cancellationToken)

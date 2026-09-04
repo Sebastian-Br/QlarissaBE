@@ -2,7 +2,7 @@
 
 namespace Qlarissa.Domain.Entities.Securities;
 
-public class CryptoCurrency : PubliclyTradedSecurityBase
+public sealed class CryptoCurrency : PubliclyTradedSecurityBase
 {
     public double MarketCapitalization { get; set; }
 }

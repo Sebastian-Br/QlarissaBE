@@ -18,7 +18,7 @@ public sealed class Stock : PubliclyTradedSecurityBase
 
     public double RecommendationMean { get; set; }
 
-    public static Stock FromDomainEntity(Domain.Entities.Securities.Stock domainEntity)
+    internal static Stock FromDomainEntity(Domain.Entities.Securities.Stock domainEntity)
     {
         Stock stock = new();
         PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, stock);
@@ -34,7 +34,7 @@ public sealed class Stock : PubliclyTradedSecurityBase
         return stock;
     }
 
-    public Domain.Entities.Securities.Stock ToDomainEntity()
+    internal new Domain.Entities.Securities.Stock ToDomainEntity()
     {
         Domain.Entities.Securities.Stock domainEntity = new();
         PubliclyTradedSecurityBase.ToDomainEntity(domainEntity, this);

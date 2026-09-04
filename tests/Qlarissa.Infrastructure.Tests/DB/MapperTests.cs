@@ -1,5 +1,6 @@
 ﻿
 using Qlarissa.Domain.Entities;
+using Qlarissa.Domain.Entities.Securities;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 using Qlarissa.Infrastructure.DB.Entities.MarketData;
 
@@ -37,8 +38,7 @@ public class MapperTests
             PriceHistory = GetSimplePriceHistoryTestData_DomainEntity(),
         };
 
-        PubliclyTradedSecurityBase dbEntity = new();
-        PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, dbEntity);
+        PubliclyTradedSecurityBase dbEntity = PubliclyTradedSecurityBase.FromDomainEntity(domainEntity);
         Assert.Equal(domainEntity.Id, dbEntity.Id);
         Assert.Equal(domainEntity.Name, dbEntity.Name);
         Assert.Equal(domainEntity.Currency.Id, dbEntity.CurrencyId);
@@ -70,8 +70,7 @@ public class MapperTests
 
         dbEntity.PriceHistory = GetSimplePriceHistoryTestData_DbEntity(dbEntity);
 
-        Domain.Entities.Securities.Stock domainEntity = new();
-        PubliclyTradedSecurityBase.ToDomainEntity(domainEntity, dbEntity);
+        Domain.Entities.Securities.Base.PubliclyTradedSecurityBase domainEntity = dbEntity.ToDomainEntity();
 
         Assert.Equal(dbEntity.Id, domainEntity.Id);
         Assert.Equal(dbEntity.Name, domainEntity.Name);
@@ -113,7 +112,7 @@ public class MapperTests
             DistributionEvents = GetSimpleDividendPayoutsTestData_DomainEntity()
         };
 
-        Infrastructure.DB.Entities.ETF dbEntity = Infrastructure.DB.Entities.ETF.FromDomainEntity(domainEntity);
+        PubliclyTradedSecurityBase dbEntity =   PubliclyTradedSecurityBase.FromDomainEntity(domainEntity);
 
         Assert.Equal(domainEntity.Id, dbEntity.Id);
         Assert.Equal(domainEntity.Name, dbEntity.Name);
@@ -162,7 +161,7 @@ public class MapperTests
         dbEntity.PriceHistory = GetSimplePriceHistoryTestData_DbEntity(dbEntity);
         dbEntity.DividendPayouts = GetSimpleDividendPayoutsTestData_DbEntity(dbEntity);
 
-        Domain.Entities.Securities.ETF domainEntity = dbEntity.ToDomainEntity();
+        Domain.Entities.Securities.ETF? domainEntity = dbEntity.ToDomainEntity() as ETF;
 
         Assert.Equal(dbEntity.Id, domainEntity.Id);
         Assert.Equal(dbEntity.Name, domainEntity.Name);
@@ -213,8 +212,9 @@ public class MapperTests
             InvestorRelationsURL = "https://www.microsoft.com/en-us/investor/default"
         };
 
-        Infrastructure.DB.Entities.Stock dbEntity = Infrastructure.DB.Entities.Stock.FromDomainEntity(domainEntity);
+        Infrastructure.DB.Entities.Stock? dbEntity = PubliclyTradedSecurityBase.FromDomainEntity(domainEntity) as Infrastructure.DB.Entities.Stock;
 
+        Assert.NotNull(dbEntity);
         Assert.Equal(domainEntity.Id, dbEntity.Id);
         Assert.Equal(domainEntity.Name, dbEntity.Name);
         Assert.Equal(domainEntity.Currency.Id, dbEntity.CurrencyId);
@@ -264,8 +264,9 @@ public class MapperTests
         dbEntity.PriceHistory = GetSimplePriceHistoryTestData_DbEntity(dbEntity);
         dbEntity.DividendPayouts = GetSimpleDividendPayoutsTestData_DbEntity(dbEntity);
 
-        Domain.Entities.Securities.Stock domainEntity = dbEntity.ToDomainEntity();
+        Domain.Entities.Securities.Stock? domainEntity = dbEntity.ToDomainEntity() as Domain.Entities.Securities.Stock;
 
+        Assert.NotNull(domainEntity);
         Assert.Equal(dbEntity.Id, domainEntity.Id);
         Assert.Equal(dbEntity.Name, domainEntity.Name);
         Assert.Equal(dbEntity.Currency.Id, domainEntity.Currency.Id);
@@ -308,7 +309,7 @@ public class MapperTests
         return priceHistory;
     }
 
-    private static ICollection<DailyPrice> GetSimplePriceHistoryTestData_DbEntity(PubliclyTradedSecurityBase dbEntity)
+    private static DailyPrice[] GetSimplePriceHistoryTestData_DbEntity(PubliclyTradedSecurityBase dbEntity)
     {
         DailyPrice[] priceHistory = [
             new() { Id = 100, Date = new(2024, 12, 1), Average = 630, Close = 635, Open = 625, High = 627, Low = 624, Security = dbEntity, SecurityId = dbEntity.Id },
@@ -328,9 +329,9 @@ public class MapperTests
         return payouts;
     }
 
-    private static ICollection<Infrastructure.DB.Entities.MarketData.DividendPayout> GetSimpleDividendPayoutsTestData_DbEntity(PubliclyTradedSecurityBase dbEntity)
+    private static DividendPayout[] GetSimpleDividendPayoutsTestData_DbEntity(PubliclyTradedSecurityBase dbEntity)
     {
-        ICollection<Infrastructure.DB.Entities.MarketData.DividendPayout> payouts = [
+        DividendPayout[] payouts = [
             new() { Id = 1, PayoutDate = new(2024,06, 24), PayoutAmount = 6, Security = dbEntity, SecurityId = dbEntity.Id },
             new() { Id = 2, PayoutDate = new(2024,09, 27), PayoutAmount = 6.2, Security = dbEntity, SecurityId = dbEntity.Id },
             new() { Id = 3, PayoutDate = new(2024,12, 30), PayoutAmount = 6.5, Security = dbEntity, SecurityId = dbEntity.Id },
