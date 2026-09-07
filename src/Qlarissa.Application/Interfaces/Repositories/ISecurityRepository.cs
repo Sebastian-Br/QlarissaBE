@@ -14,6 +14,14 @@ public interface ISecurityRepository
     Task<PubliclyTradedSecurityBase?> GetSecurityAsync(int id, CancellationToken cancellationToken);
 
     /// <summary>
+    /// Gets a security by its ID, but does not load navigation properties. 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Returns null if the security does not exist.</returns>
+    Task<PubliclyTradedSecurityBase?> GetSecurityBasicAsync(int id, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Adds a security to the database. The currency of that security must already exist.
     /// </summary>
     /// <param name="security"></param>
@@ -29,4 +37,13 @@ public interface ISecurityRepository
     /// <param name="cancellationToken"></param>
     /// <returns>SearchResults, containing e.g. { Name = "Microsoft Corporation", ... }</returns>
     Task<IEnumerable<SearchResult>> SearchSecuritiesAsync(string userQuery, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Updates the properties of a security. If processSplitEvent is true, the method will update its entire price history.
+    /// </summary>
+    /// <param name="security"></param>
+    /// <param name="processSplitEvent"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<FluentResults.Result> UpdateSecurityAsync(PubliclyTradedSecurityBase security, bool processSplitEvent, CancellationToken cancellationToken);
 }

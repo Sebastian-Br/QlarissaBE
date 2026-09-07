@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Qlarissa.Infrastructure.DB;
 
@@ -11,9 +12,11 @@ using Qlarissa.Infrastructure.DB;
 namespace Qlarissa.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260906201252_schema_update")]
+    partial class schema_update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -521,16 +524,6 @@ namespace Qlarissa.Infrastructure.Migrations
                         .HasFilter("[Symbol] IS NOT NULL");
 
                     b.HasDiscriminator().HasValue("PubliclyTradedSecurityBase");
-                });
-
-            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.CryptoCurrency", b =>
-                {
-                    b.HasBaseType("Qlarissa.Infrastructure.DB.Entities.Base.PubliclyTradedSecurityBase");
-
-                    b.Property<double>("MarketCapitalization")
-                        .HasColumnType("float");
-
-                    b.HasDiscriminator().HasValue("CryptoCurrency");
                 });
 
             modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.ETF", b =>

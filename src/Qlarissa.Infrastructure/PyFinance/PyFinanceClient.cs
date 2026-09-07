@@ -22,11 +22,16 @@ public class PyFinanceClient(IHttpClientFactory httpClientFactory, IOptions<PyFi
         return resultDtos?.Select(dto => dto.ToDomainEntity()) ?? [];
     }
 
-    public async Task<PubliclyTradedSecurityBase> GetSecurityAsync(string tickerSymbol, CancellationToken cancellationToken)
+    public async Task<PubliclyTradedSecurityBase> GetSecurityWithHistoryAsync(string tickerSymbol, CancellationToken cancellationToken)
     {
         var response = await _marketDataClient.GetAsync($"security?symbol={Uri.EscapeDataString(tickerSymbol)}&startdate={_options.MarketDataAPI.StartDate:yyyy-MM-dd}", cancellationToken);
         response.EnsureSuccessStatusCode();
         var resultDto = await response.Content.ReadFromJsonAsync<PyFinance.Security>(cancellationToken);
+        if (resultDto.History[^1].Close == 0)
+        {
+            resultDto.History.RemoveAt(resultDto.History.Count - 1);
+        }
+
         return resultDto?.ToDomainEntity();
     }
 }

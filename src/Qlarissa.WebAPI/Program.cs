@@ -14,6 +14,7 @@ using Qlarissa.Infrastructure.DB;
 using Qlarissa.Infrastructure.DB.Repositories;
 using Qlarissa.Infrastructure.PyFinance;
 using Qlarissa.Infrastructure.PyFinance.Options;
+using Qlarissa.WebAPI.LivePrices;
 using System.Text;
 
 namespace Qlarissa.WebAPI;
@@ -34,6 +35,16 @@ public class Program
         .AddSignInManager()
         .AddUserManager<UserManager<QlarissaUser>>()
         .AddDefaultTokenProviders();
+
+        builder.Services.AddSignalR();
+        builder.Services.Configure<LivePriceOptions>(builder.Configuration.GetSection("LivePrices"));
+        builder.Services.AddSingleton<YahooLivePriceService>();
+        builder.Services.AddSingleton<ILivePriceService>(s => s.GetRequiredService<YahooLivePriceService>());
+        builder.Services.AddHostedService(s => s.GetRequiredService<YahooLivePriceService>());
+        builder.Services.AddSingleton<LivePriceBroadcaster>();
+
+        builder.Services.AddHostedService(
+            sp => sp.GetRequiredService<LivePriceBroadcaster>());
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IQlarissaUserManager, QlarissaUserManager>();
@@ -92,7 +103,8 @@ public class Program
                 {
                     policy.WithOrigins("http://localhost:5173")
                           .AllowAnyHeader()
-                          .AllowAnyMethod();
+                          .AllowAnyMethod()
+                          .AllowCredentials();
                 });
         });
 
@@ -106,6 +118,7 @@ public class Program
             app.UseSwaggerUI(); // https://localhost:7145/swagger
         }
 
+        app.MapHub<LivePriceHub>("/hubs/live-prices");
         app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseHttpsRedirection();
         app.UseCors("AllowFrontend");

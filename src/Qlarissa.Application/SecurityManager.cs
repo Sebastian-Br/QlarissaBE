@@ -24,7 +24,7 @@ public sealed class SecurityManager(ISecurityRepository securityRepository, ICur
             return FluentResults.Result.Fail($"Security with ticker symbol '{securityTickerSymbol}' already exists.");
         }
 
-        var domainEntity = await _marketDataClient.GetSecurityAsync(securityTickerSymbol, cancellationToken);
+        var domainEntity = await _marketDataClient.GetSecurityWithHistoryAsync(securityTickerSymbol, cancellationToken);
         var currency = await _currencyRepository.GetCurrencyAsync(domainEntity.Currency.Symbol);
 
         if (currency == null)

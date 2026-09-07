@@ -49,5 +49,7 @@ public class DividendPayoutConfiguration : IEntityTypeConfiguration<DividendPayo
             .WithMany(s => s.DividendPayouts)
             .HasForeignKey(dp => dp.SecurityId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasIndex(dp => dp.SecurityId);
     }
 }

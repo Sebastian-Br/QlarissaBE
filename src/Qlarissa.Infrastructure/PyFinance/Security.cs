@@ -8,7 +8,7 @@ public class Security
 {
     public SecurityInformation Info { get; set; }
 
-    public IEnumerable<DailyPrice> History { get; set; }
+    public List<DailyPrice> History { get; set; }
 
     /// <summary>
     /// Set for some ETFs/Stocks, usually US ones. Not set for Cryptocurrencies or CurrencyPairs.

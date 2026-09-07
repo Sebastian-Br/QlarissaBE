@@ -53,5 +53,7 @@ public class SplitConfiguration : IEntityTypeConfiguration<Split>
             .WithMany(security => security.Splits)
             .HasForeignKey(dp => dp.SecurityId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasIndex(s => s.SecurityId);
     }
 }

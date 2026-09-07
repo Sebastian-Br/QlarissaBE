@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 using Qlarissa.Application.Interfaces.Repositories;
+using FluentResults;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
@@ -26,6 +27,22 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
             .Include(s => s.PriceHistory)
             .Include(s => s.DividendPayouts)
             .Include(s => s.Splits)
+            .Include(s => s.Currency)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+
+        if (result == null)
+        {
+            return null;
+        }
+
+        return result.ToDomainEntity();
+    }
+
+    public async Task<Domain.Entities.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityBasicAsync(int id, CancellationToken cancellationToken)
+    {
+        var result = await _context.Set<PubliclyTradedSecurityBase>()
+            .AsNoTracking()
             .Include(s => s.Currency)
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
 
@@ -59,4 +76,10 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
 
     public async Task<bool> SecurityExistsAsync(string tickerSymbol)
         => await _context.Set<PubliclyTradedSecurityBase>().AnyAsync(s => s.Symbol == tickerSymbol);
+
+    public Task<FluentResults.Result> UpdateSecurityAsync(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security, bool processSplitEvent, CancellationToken cancellationToken)
+    {
+        PubliclyTradedSecurityBase incomingDbEntity = PubliclyTradedSecurityBase.FromDomainEntity(security);
+        throw new NotImplementedException();
+    }
 }

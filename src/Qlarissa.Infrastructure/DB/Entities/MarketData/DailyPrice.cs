@@ -53,6 +53,9 @@ public class DailyPriceConfiguration : IEntityTypeConfiguration<DailyPrice>
             .HasForeignKey(dp => dp.SecurityId)
             .OnDelete(DeleteBehavior.ClientCascade);
 
+        builder.HasIndex(dp => new { dp.SecurityId, dp.Date })
+            .IsUnique();
+
         builder.Property(dp => dp.Date)
             .HasConversion(
                 d => d.ToDateTime(TimeOnly.MinValue),
