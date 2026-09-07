@@ -77,9 +77,18 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
     public async Task<bool> SecurityExistsAsync(string tickerSymbol)
         => await _context.Set<PubliclyTradedSecurityBase>().AnyAsync(s => s.Symbol == tickerSymbol);
 
-    public Task<FluentResults.Result> UpdateSecurityAsync(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security, bool processSplitEvent, CancellationToken cancellationToken)
+    public async Task<FluentResults.Result> UpdateSecurityAsync(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security, bool processSplitEvent, CancellationToken cancellationToken)
     {
-        PubliclyTradedSecurityBase incomingDbEntity = PubliclyTradedSecurityBase.FromDomainEntity(security);
+        PubliclyTradedSecurityBase incomingEntity = PubliclyTradedSecurityBase.FromDomainEntity(security);
+        var dbEntity = await _context.Set<PubliclyTradedSecurityBase>()
+            .Include(s => s.PriceHistory)
+            .Include(s => s.DividendPayouts)
+            .Include(s => s.Splits)
+            // The Currency will likely never be updated - no need to include it.
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(s => s.Id == incomingEntity.Id, cancellationToken);
+
+
         throw new NotImplementedException();
     }
 }

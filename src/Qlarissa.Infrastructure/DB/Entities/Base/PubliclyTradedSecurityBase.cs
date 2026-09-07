@@ -16,7 +16,11 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
 
     public DateTime PriceLastUpdatedTime { get; set; }
 
-    public DateTime LastCompleteUpdateTime { get; set; }
+    /// <summary>
+    /// The date of the last price data point in the PriceHistory collection. This is used to determine if the price history is up to date.
+    /// It is different from PriceLastUpdatedTime, which may be updated more frequently.
+    /// </summary>
+    public DateOnly PriceHistoryLastDataPointDate { get; set; }
 
     public ICollection<DailyPrice> PriceHistory { get; set; } = [];
 
@@ -41,7 +45,7 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
         dbEntity.Symbol = domainEntity.Symbol;
         dbEntity.Price = domainEntity.Price;
         dbEntity.PriceLastUpdatedTime = domainEntity.PriceLastUpdatedTime;
-        dbEntity.LastCompleteUpdateTime = domainEntity.LastCompleteUpdateTime;
+        dbEntity.PriceHistoryLastDataPointDate = domainEntity.PriceHistoryLastDataPointDate;
         dbEntity.PriceHistory = domainEntity.PriceHistory.Select(x => DailyPrice.FromDomainEntity(x, domainEntity)).ToList();
     }
 
@@ -68,7 +72,7 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
         domainEntity.Symbol = dbEntity.Symbol;
         domainEntity.Price = dbEntity.Price;
         domainEntity.PriceLastUpdatedTime = dbEntity.PriceLastUpdatedTime;
-        domainEntity.LastCompleteUpdateTime = dbEntity.LastCompleteUpdateTime;
+        domainEntity.PriceHistoryLastDataPointDate = dbEntity.PriceHistoryLastDataPointDate;
         domainEntity.PriceHistory = dbEntity.PriceHistory.Select(DailyPrice.ToDomainEntity).ToList();
     }
 
@@ -82,6 +86,18 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
             CurrencyPair currencyPair => currencyPair.ToDomainEntity(),
             _ => throw new NotImplementedException($"Unsupported security type '{this.GetType().Name}'.")
         };
+    }
+
+    public void UpdateFromDomainEntity(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase domainEntity)
+    {
+        var incomingDbEntity = FromDomainEntity(domainEntity);
+        Name = incomingDbEntity.Name;
+        ExchangeName = incomingDbEntity.ExchangeName;
+        ExchangeShortName = incomingDbEntity.ExchangeShortName;
+        Symbol = incomingDbEntity.Symbol;
+        Price = incomingDbEntity.Price;
+        PriceLastUpdatedTime = DateTime.UtcNow;
+        PriceHistoryLastDataPointDate = incomingDbEntity.PriceHistory.Last().Date;
     }
 }
 

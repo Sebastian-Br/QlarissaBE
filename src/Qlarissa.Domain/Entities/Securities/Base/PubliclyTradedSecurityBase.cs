@@ -26,7 +26,7 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
     public DateTime PriceLastUpdatedTime {  get; set; }
 
     /// <summary>
-    /// The UTC time at which all properties have last been updated.
+    /// The Date of the last DailyPrice data point in the PriceHistory collection. This is used to determine if the price history is up to date.
     /// </summary>
-    public DateTime LastCompleteUpdateTime {  get; set; }
+    public DateOnly PriceHistoryLastDataPointDate {  get; set; }
 }

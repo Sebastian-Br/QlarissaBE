@@ -34,7 +34,7 @@ public class MapperTests
         
         Domain.Entities.Securities.ETF domainEntity = new() { Id = 9, Name = "iShares S&P500", 
             Currency = new() { Id = 1, Name = "United States Dollar", Symbol = "USD" }, 
-            Symbol="ETFSymbol", Price = 666.6, PriceLastUpdatedTime = new(2025,1,1), LastCompleteUpdateTime = new(2024, 12,30),
+            Symbol="ETFSymbol", Price = 666.6, PriceLastUpdatedTime = new(2025,1,1), PriceHistoryLastDataPointDate = new(2024, 12,30),
             PriceHistory = GetSimplePriceHistoryTestData_DomainEntity(),
         };
 
@@ -45,7 +45,7 @@ public class MapperTests
         Assert.Equal(domainEntity.Symbol, dbEntity.Symbol);
         Assert.Equal(domainEntity.Price, dbEntity.Price);
         Assert.Equal(domainEntity.PriceLastUpdatedTime, dbEntity.PriceLastUpdatedTime);
-        Assert.Equal(domainEntity.LastCompleteUpdateTime, dbEntity.LastCompleteUpdateTime);
+        Assert.Equal(domainEntity.PriceHistoryLastDataPointDate, dbEntity.PriceHistoryLastDataPointDate);
 
         for(int i = 0; i < domainEntity.PriceHistory.Count; i++)
         {
@@ -65,7 +65,7 @@ public class MapperTests
     {
         Infrastructure.DB.Entities.Stock dbEntity = new() { Id = 7, Name = "Microsoft",
             CurrencyId = 10, Currency = new() { Id = 10, Symbol = "USD", Name = "US Dollar" },
-            Symbol = "MSFT", Price = 500, PriceLastUpdatedTime = new(2025, 1, 15), LastCompleteUpdateTime = new(2025, 1, 1),
+            Symbol = "MSFT", Price = 500, PriceLastUpdatedTime = new(2025, 1, 15), PriceHistoryLastDataPointDate = new(2025, 1, 1),
         };
 
         dbEntity.PriceHistory = GetSimplePriceHistoryTestData_DbEntity(dbEntity);
@@ -80,7 +80,7 @@ public class MapperTests
         Assert.Equal(dbEntity.Symbol, domainEntity.Symbol);
         Assert.Equal(dbEntity.Price, domainEntity.Price);
         Assert.Equal(dbEntity.PriceLastUpdatedTime, domainEntity.PriceLastUpdatedTime);
-        Assert.Equal(dbEntity.LastCompleteUpdateTime, domainEntity.LastCompleteUpdateTime);
+        Assert.Equal(dbEntity.PriceHistoryLastDataPointDate, domainEntity.PriceHistoryLastDataPointDate);
 
         for (int i = 0; i < dbEntity.PriceHistory.Count; i++)
         {
@@ -107,7 +107,7 @@ public class MapperTests
             Symbol = "ETFSymbol",
             Price = 666.6,
             PriceLastUpdatedTime = new(2025, 1, 1),
-            LastCompleteUpdateTime = new(2024, 12, 30),
+            PriceHistoryLastDataPointDate = new(2024, 12, 30),
             PriceHistory = GetSimplePriceHistoryTestData_DomainEntity(),
             DistributionEvents = GetSimpleDividendPayoutsTestData_DomainEntity()
         };
@@ -120,7 +120,7 @@ public class MapperTests
         Assert.Equal(domainEntity.Symbol, dbEntity.Symbol);
         Assert.Equal(domainEntity.Price, dbEntity.Price);
         Assert.Equal(domainEntity.PriceLastUpdatedTime, dbEntity.PriceLastUpdatedTime);
-        Assert.Equal(domainEntity.LastCompleteUpdateTime, dbEntity.LastCompleteUpdateTime);
+        Assert.Equal(domainEntity.PriceHistoryLastDataPointDate, dbEntity.PriceHistoryLastDataPointDate);
 
         for (int i = 0; i < domainEntity.PriceHistory.Count; i++)
         {
@@ -155,7 +155,7 @@ public class MapperTests
             Symbol = "ETFSymbol",
             Price = 666.6,
             PriceLastUpdatedTime = new(2025, 1, 15),
-            LastCompleteUpdateTime = new(2025, 1, 1),
+            PriceHistoryLastDataPointDate = new(2025, 1, 1),
         };
 
         dbEntity.PriceHistory = GetSimplePriceHistoryTestData_DbEntity(dbEntity);
@@ -171,7 +171,7 @@ public class MapperTests
         Assert.Equal(dbEntity.Symbol, domainEntity.Symbol);
         Assert.Equal(dbEntity.Price, domainEntity.Price);
         Assert.Equal(dbEntity.PriceLastUpdatedTime, domainEntity.PriceLastUpdatedTime);
-        Assert.Equal(dbEntity.LastCompleteUpdateTime, domainEntity.LastCompleteUpdateTime);
+        Assert.Equal(dbEntity.PriceHistoryLastDataPointDate, domainEntity.PriceHistoryLastDataPointDate);
 
         for (int i = 0; i < dbEntity.PriceHistory.Count; i++)
         {
@@ -206,7 +206,7 @@ public class MapperTests
             Symbol = "MSFT",
             Price = 555.5,
             PriceLastUpdatedTime = new(2025, 1, 1),
-            LastCompleteUpdateTime = new(2024, 12, 30),
+            PriceHistoryLastDataPointDate = new(2024, 12, 30),
             PriceHistory = GetSimplePriceHistoryTestData_DomainEntity(),
             DividendPayouts = GetSimpleDividendPayoutsTestData_DomainEntity(),
             InvestorRelationsURL = "https://www.microsoft.com/en-us/investor/default"
@@ -221,7 +221,7 @@ public class MapperTests
         Assert.Equal(domainEntity.Symbol, dbEntity.Symbol);
         Assert.Equal(domainEntity.Price, dbEntity.Price);
         Assert.Equal(domainEntity.PriceLastUpdatedTime, dbEntity.PriceLastUpdatedTime);
-        Assert.Equal(domainEntity.LastCompleteUpdateTime, dbEntity.LastCompleteUpdateTime);
+        Assert.Equal(domainEntity.PriceHistoryLastDataPointDate, dbEntity.PriceHistoryLastDataPointDate);
         Assert.Equal(domainEntity.InvestorRelationsURL, dbEntity.InvestorRelationsURL);
 
         for (int i = 0; i < domainEntity.PriceHistory.Count; i++)
@@ -257,7 +257,7 @@ public class MapperTests
             Symbol = "MSFT",
             Price = 555.5,
             PriceLastUpdatedTime = new(2025, 1, 15),
-            LastCompleteUpdateTime = new(2025, 1, 1),
+            PriceHistoryLastDataPointDate = new(2025, 1, 1),
             InvestorRelationsURL = "https://www.microsoft.com/en-us/investor/default"
         };
 
@@ -275,7 +275,7 @@ public class MapperTests
         Assert.Equal(dbEntity.Symbol, domainEntity.Symbol);
         Assert.Equal(dbEntity.Price, domainEntity.Price);
         Assert.Equal(dbEntity.PriceLastUpdatedTime, domainEntity.PriceLastUpdatedTime);
-        Assert.Equal(dbEntity.LastCompleteUpdateTime, domainEntity.LastCompleteUpdateTime);
+        Assert.Equal(dbEntity.PriceHistoryLastDataPointDate, domainEntity.PriceHistoryLastDataPointDate);
         Assert.Equal(dbEntity.InvestorRelationsURL, domainEntity.InvestorRelationsURL);
 
         for (int i = 0; i < dbEntity.PriceHistory.Count; i++)
