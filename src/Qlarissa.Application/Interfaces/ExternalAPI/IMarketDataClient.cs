@@ -20,5 +20,7 @@ public interface IMarketDataClient
     /// <param name="tickerSymbol"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task<Domain.Entities.Securities.Base.PubliclyTradedSecurityBase> GetSecurityWithHistoryAsync(string tickerSymbol, CancellationToken cancellationToken);
+    public Task<Domain.Entities.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityWithHistoryAsync(string tickerSymbol, CancellationToken cancellationToken);
+
+    public Task<Domain.Entities.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityWithHistoryFromDateAsync(string tickerSymbol, DateOnly date, CancellationToken cancellationToken);
 }

@@ -1,4 +1,5 @@
-﻿using Qlarissa.Application.Interfaces;
+﻿using FluentResults;
+using Qlarissa.Application.Interfaces;
 using Qlarissa.Application.Interfaces.ExternalAPI;
 using Qlarissa.Application.Interfaces.Repositories;
 using Qlarissa.Domain.Entities.Securities;
@@ -25,6 +26,11 @@ public sealed class SecurityManager(ISecurityRepository securityRepository, ICur
         }
 
         var domainEntity = await _marketDataClient.GetSecurityWithHistoryAsync(securityTickerSymbol, cancellationToken);
+        if (domainEntity == null)
+        {
+            return FluentResults.Result.Fail($"Security with ticker symbol '{securityTickerSymbol}' could not be found.");
+        }
+
         var currency = await _currencyRepository.GetCurrencyAsync(domainEntity.Currency.Symbol);
 
         if (currency == null)
@@ -46,4 +52,23 @@ public sealed class SecurityManager(ISecurityRepository securityRepository, ICur
 
     public Task<IEnumerable<SearchResult>> SearchSecuritiesInternallyAsync(string userQuery, CancellationToken cancellationToken)
         => _securityRepository.SearchSecuritiesAsync(userQuery, cancellationToken);
+
+    public async Task<FluentResults.Result> UpdateSecurityAsync(int id, CancellationToken cancellationToken)
+    {
+        var symbolWithLastDataPointDate = await _securityRepository.GetSecuritySymbolAndPriceHistoryLastDataPointDateAsync(id);
+        if (symbolWithLastDataPointDate == null)
+        {
+            return FluentResults.Result.Fail($"Most recent price history entry for Security with ID '{id}' could not be found.");
+        }
+
+        var domainEntity = await _marketDataClient.GetSecurityWithHistoryFromDateAsync(symbolWithLastDataPointDate.Symbol, symbolWithLastDataPointDate.PriceHistoryLastDataPointDate.AddDays(1), cancellationToken);
+        if (domainEntity == null)
+        {
+            return FluentResults.Result.Fail($"Security with ticker symbol '{symbolWithLastDataPointDate.Symbol}' could not be fetched from the external API.");
+        }
+
+        return await _securityRepository.UpdateSecurityAsync(domainEntity, cancellationToken);
+    }
+
+    public record SecuritySymbolAndLastDataPointDate(string Symbol, DateOnly PriceHistoryLastDataPointDate);
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Google.Protobuf.WellKnownTypes;
+using Microsoft.Extensions.Options;
 using Qlarissa.Application.Interfaces.ExternalAPI;
 using Qlarissa.Domain.Entities.Securities.Base;
 using Qlarissa.Infrastructure.PyFinance.Options;
@@ -22,16 +23,25 @@ public class PyFinanceClient(IHttpClientFactory httpClientFactory, IOptions<PyFi
         return resultDtos?.Select(dto => dto.ToDomainEntity()) ?? [];
     }
 
-    public async Task<PubliclyTradedSecurityBase> GetSecurityWithHistoryAsync(string tickerSymbol, CancellationToken cancellationToken)
+    public Task<PubliclyTradedSecurityBase?> GetSecurityWithHistoryAsync(string tickerSymbol, CancellationToken cancellationToken)
+        => GetSecurityWithHistoryFromDateAsync(tickerSymbol, _options.MarketDataAPI.StartDate, cancellationToken);
+
+    public async Task<PubliclyTradedSecurityBase?> GetSecurityWithHistoryFromDateAsync(string tickerSymbol, DateOnly date, CancellationToken cancellationToken)
     {
-        var response = await _marketDataClient.GetAsync($"security?symbol={Uri.EscapeDataString(tickerSymbol)}&startdate={_options.MarketDataAPI.StartDate:yyyy-MM-dd}", cancellationToken);
+        var response = await _marketDataClient.GetAsync($"security?symbol={Uri.EscapeDataString(tickerSymbol)}&startdate={date:yyyy-MM-dd}", cancellationToken);
         response.EnsureSuccessStatusCode();
         var resultDto = await response.Content.ReadFromJsonAsync<PyFinance.Security>(cancellationToken);
-        if (resultDto.History[^1].Close == 0)
+
+        if (resultDto == null)
+        {
+            return null;
+        }
+
+        if (resultDto.History[^1].Close == 0) // if the last entry is not final, do not add it to the history.
         {
             resultDto.History.RemoveAt(resultDto.History.Count - 1);
         }
 
-        return resultDto?.ToDomainEntity();
+        return resultDto.ToDomainEntity();
     }
 }

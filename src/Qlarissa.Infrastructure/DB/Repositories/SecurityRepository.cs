@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentResults;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Qlarissa.Application.Interfaces.Repositories;
 using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Infrastructure.DB.Entities.Base;
-using Qlarissa.Application.Interfaces.Repositories;
-using FluentResults;
+using static Qlarissa.Application.SecurityManager;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
@@ -54,11 +55,11 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         return result.ToDomainEntity();
     }
 
-    public async Task<DateOnly?> GetSecurityPriceHistoryLastDataPointDateAsync(int id)
+    public async Task<SecuritySymbolAndLastDataPointDate?> GetSecuritySymbolAndPriceHistoryLastDataPointDateAsync(int id)
     {
         var result = await _context.Set<PubliclyTradedSecurityBase>()
             .Where(s => s.Id == id)
-            .Select(s => s.PriceHistoryLastDataPointDate)
+            .Select(s => new SecuritySymbolAndLastDataPointDate(s.Symbol, s.PriceHistoryLastDataPointDate))
             .FirstOrDefaultAsync();
         return result;
     }

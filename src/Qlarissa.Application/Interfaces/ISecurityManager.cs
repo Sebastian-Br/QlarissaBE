@@ -15,6 +15,14 @@ public interface ISecurityManager
     /// <returns>Returns an Ok() result on success where the content is the added ticker symbol.</returns>
     public Task<FluentResults.Result<string>> AddSecurityAsync(string securityTickerSymbol, CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Attempts to update the security from the external API.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Result.Ok if the security was updated successfully.</returns>
+    public Task<FluentResults.Result> UpdateSecurityAsync(int id, CancellationToken cancellationToken);
+
     public Task<bool> SecurityExistsAsync(string securityTickerSymbol);
     public Task<IEnumerable<SearchResult>> SearchSecuritiesInternallyAsync(string userQuery, CancellationToken cancellationToken);
     public Task<IEnumerable<SearchResult>> SearchSecuritiesExternallyAsync(string userQuery, CancellationToken cancellationToken);

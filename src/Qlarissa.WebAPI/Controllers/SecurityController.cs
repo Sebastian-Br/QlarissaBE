@@ -39,4 +39,14 @@ public class SecurityController(ISecurityManager securityManager) : ControllerBa
         var webApiModel = Models.Security.Base.PubliclyTradedSecurityBase.FromDomainEntity(security);
         return Ok(webApiModel);
     }
+
+    public async Task<ActionResult<FluentResults.Result>> Update([FromQuery] int id, CancellationToken cancellationToken)
+    {
+        var result = await _securityManager.UpdateSecurityAsync(id, cancellationToken);
+        if (result.IsFailed)
+        {
+            return BadRequest(string.Join(". ", result.Errors.Select(e => e.Message)));
+        }
+        return Ok();
+    }
 }

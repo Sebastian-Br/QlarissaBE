@@ -1,5 +1,6 @@
 ﻿using Qlarissa.Domain.Entities.Securities;
 using Qlarissa.Domain.Entities.Securities.Base;
+using static Qlarissa.Application.SecurityManager;
 
 namespace Qlarissa.Application.Interfaces.Repositories;
 
@@ -26,7 +27,7 @@ public interface ISecurityRepository
     /// </summary>
     /// <param name="id"></param>
     /// <returns>Returns null if the security does not exist.</returns>
-    Task<DateOnly?> GetSecurityPriceHistoryLastDataPointDateAsync(int id);
+    Task<SecuritySymbolAndLastDataPointDate?> GetSecuritySymbolAndPriceHistoryLastDataPointDateAsync(int id);
 
     /// <summary>
     /// Adds a security to the database. The currency of that security must already exist.
