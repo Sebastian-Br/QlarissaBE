@@ -40,6 +40,8 @@ public class SecurityController(ISecurityManager securityManager) : ControllerBa
         return Ok(webApiModel);
     }
 
+    [HttpPost]
+    [Authorize]
     public async Task<ActionResult<FluentResults.Result>> Update([FromQuery] int id, CancellationToken cancellationToken)
     {
         var result = await _securityManager.UpdateSecurityAsync(id, cancellationToken);
