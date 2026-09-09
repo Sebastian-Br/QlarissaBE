@@ -54,6 +54,15 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         return result.ToDomainEntity();
     }
 
+    public async Task<DateOnly?> GetSecurityPriceHistoryLastDataPointDateAsync(int id)
+    {
+        var result = await _context.Set<PubliclyTradedSecurityBase>()
+            .Where(s => s.Id == id)
+            .Select(s => s.PriceHistoryLastDataPointDate)
+            .FirstOrDefaultAsync();
+        return result;
+    }
+
     public async Task<IEnumerable<Domain.Entities.Securities.SearchResult>> SearchSecuritiesAsync(string userQuery, CancellationToken cancellationToken)
     {
         var pattern = $"%{userQuery}%";
@@ -77,18 +86,32 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
     public async Task<bool> SecurityExistsAsync(string tickerSymbol)
         => await _context.Set<PubliclyTradedSecurityBase>().AnyAsync(s => s.Symbol == tickerSymbol);
 
-    public async Task<FluentResults.Result> UpdateSecurityAsync(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security, bool processSplitEvent, CancellationToken cancellationToken)
+    public async Task<FluentResults.Result> UpdateSecurityAsync(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security, CancellationToken cancellationToken)
     {
-        PubliclyTradedSecurityBase incomingEntity = PubliclyTradedSecurityBase.FromDomainEntity(security);
         var dbEntity = await _context.Set<PubliclyTradedSecurityBase>()
             .Include(s => s.PriceHistory)
             .Include(s => s.DividendPayouts)
             .Include(s => s.Splits)
-            // The Currency will likely never be updated - no need to include it.
+            // The Currency will always remain the same - no need to include it.
             .AsSplitQuery()
-            .FirstOrDefaultAsync(s => s.Id == incomingEntity.Id, cancellationToken);
+            .FirstOrDefaultAsync(s => s.Id == security.Id, cancellationToken);
 
+        if (dbEntity == null)
+        {
+            return FluentResults.Result.Fail($"Security with ID {security.Id} not found.");
+        }
 
-        throw new NotImplementedException();
+        try
+        {
+            dbEntity.UpdateFromDomainEntity(security);
+            await _context.SaveChangesAsync(cancellationToken);
+            return FluentResults.Result.Ok();
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating security with ID {SecurityId}", security.Id);
+            return FluentResults.Result.Fail($"Error updating security with ID {security.Id}: {ex.Message}");
+        }
     }
 }

@@ -34,4 +34,65 @@ public sealed class ETF : PubliclyTradedSecurityBase
         domainEntity.Splits = Splits.Select(Split.ToDomainEntity).ToList();
         return domainEntity;
     }
+
+    internal void UpdateFromDbEntity(ETF incomingDbEntity)
+    {
+        ISIN = incomingDbEntity.ISIN;
+        NetExpenseRatio = incomingDbEntity.NetExpenseRatio;
+        DividendYield = incomingDbEntity.DividendYield;
+
+        if (incomingDbEntity.Splits.Any(split => split.Date > PriceHistoryLastDataPointDate))
+        {
+            // Update existing price history.
+            var existingPriceHistory = PriceHistory.ToDictionary(dailyPrice => dailyPrice.Date);
+            foreach (var incomingPrice in incomingDbEntity.PriceHistory)
+            {
+                if (existingPriceHistory.TryGetValue(incomingPrice.Date, out var existingPrice))
+                {
+                    existingPrice.UpdateFromDbEntity(incomingPrice);
+                }
+                else
+                {
+                    PriceHistory.Add(incomingPrice);
+                }
+            }
+
+            var newDividendPayouts = incomingDbEntity.DividendPayouts.Where(dividend => dividend.PayoutDate > DividendPayouts.Last().PayoutDate);
+            foreach (var newPayout in newDividendPayouts)
+            {
+                DividendPayouts.Add(newPayout);
+            }
+
+            var newSplits = incomingDbEntity.Splits.Where(split => split.Date > Splits.Last().Date);
+            foreach (var newSplit in newSplits)
+            {
+                Splits.Add(newSplit);
+            }
+        }
+        else // No new splits - just add new data instead of updating existing history.
+        {
+            if (incomingDbEntity.PriceHistory.First().Date <= PriceHistoryLastDataPointDate
+                || incomingDbEntity.DividendPayouts.First().PayoutDate <= DividendPayouts.Last().PayoutDate
+                || incomingDbEntity.Splits.First().Date <= Splits.Last().Date)
+            {
+                // We expect only new data to be present in the incoming entity.
+                throw new InvalidOperationException("Incoming history is attempting to update existing entries, but no new splits have occurred.");
+            }
+
+            foreach (var price in incomingDbEntity.PriceHistory)
+            {
+                PriceHistory.Add(price); // We can trust the incoming price history to be in chronological order. It is ordered by the IMarketDataClient.
+            }
+
+            foreach (var dividend in incomingDbEntity.DividendPayouts)
+            {
+                DividendPayouts.Add(dividend);
+            }
+
+            foreach (var split in incomingDbEntity.Splits)
+            {
+                Splits.Add(split);
+            }
+        }
+    }
 }

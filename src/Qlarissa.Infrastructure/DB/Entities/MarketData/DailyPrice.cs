@@ -40,6 +40,16 @@ public sealed class DailyPrice
             Average = dbEntity.Average,
             Date = dbEntity.Date
         };
+
+    public void UpdateFromDbEntity(DailyPrice dbEntity)
+    {
+        Open = dbEntity.Open;
+        Close = dbEntity.Close;
+        High = dbEntity.High;
+        Low = dbEntity.Low;
+        Average = dbEntity.Average;
+        // date should always remain the same
+    }
 }
 
 public class DailyPriceConfiguration : IEntityTypeConfiguration<DailyPrice>

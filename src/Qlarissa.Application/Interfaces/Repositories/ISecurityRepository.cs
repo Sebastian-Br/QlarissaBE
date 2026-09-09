@@ -14,12 +14,19 @@ public interface ISecurityRepository
     Task<PubliclyTradedSecurityBase?> GetSecurityAsync(int id, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Gets a security by its ID, but does not load navigation properties. 
+    /// Gets a security with its currency by ID, but does not load navigation collections. 
     /// </summary>
     /// <param name="id"></param>
     /// <param name="cancellationToken"></param>
     /// <returns>Returns null if the security does not exist.</returns>
     Task<PubliclyTradedSecurityBase?> GetSecurityBasicAsync(int id, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Gets the date of the last data point in the price history for a security.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Returns null if the security does not exist.</returns>
+    Task<DateOnly?> GetSecurityPriceHistoryLastDataPointDateAsync(int id);
 
     /// <summary>
     /// Adds a security to the database. The currency of that security must already exist.
@@ -39,11 +46,11 @@ public interface ISecurityRepository
     Task<IEnumerable<SearchResult>> SearchSecuritiesAsync(string userQuery, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Updates the properties of a security. If processSplitEvent is true, the method will update its entire price history.
+    /// Updates the properties of a security.
+    /// Must automatically detect split events and update existing price history accordingly.
     /// </summary>
     /// <param name="security"></param>
-    /// <param name="processSplitEvent"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<FluentResults.Result> UpdateSecurityAsync(PubliclyTradedSecurityBase security, bool processSplitEvent, CancellationToken cancellationToken);
+    Task<FluentResults.Result> UpdateSecurityAsync(PubliclyTradedSecurityBase security, CancellationToken cancellationToken);
 }

@@ -88,7 +88,7 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
         };
     }
 
-    public void UpdateFromDomainEntity(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase domainEntity)
+    internal void UpdateFromDomainEntity(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase domainEntity)
     {
         var incomingDbEntity = FromDomainEntity(domainEntity);
         Name = incomingDbEntity.Name;
@@ -98,6 +98,22 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
         Price = incomingDbEntity.Price;
         PriceLastUpdatedTime = DateTime.UtcNow;
         PriceHistoryLastDataPointDate = incomingDbEntity.PriceHistory.Last().Date;
+
+        switch (this)
+        {
+            case Stock stock:
+                stock.UpdateFromDbEntity((Stock)incomingDbEntity);
+                break;
+            case ETF etf:
+                etf.UpdateFromDbEntity((ETF)incomingDbEntity);
+                break;
+            case CryptoCurrency cryptoCurrency:
+                cryptoCurrency.UpdateFromDbEntity((CryptoCurrency)incomingDbEntity);
+                break;
+            case CurrencyPair currencyPair:
+                currencyPair.UpdateFromDbEntity((CurrencyPair)incomingDbEntity);
+                break;
+        }
     }
 }
 
