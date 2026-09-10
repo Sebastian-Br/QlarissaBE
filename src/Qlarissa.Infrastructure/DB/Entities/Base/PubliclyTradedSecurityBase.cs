@@ -95,9 +95,6 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
         ExchangeName = incomingDbEntity.ExchangeName;
         ExchangeShortName = incomingDbEntity.ExchangeShortName;
         Symbol = incomingDbEntity.Symbol;
-        Price = incomingDbEntity.Price;
-        PriceLastUpdatedTime = DateTime.UtcNow;
-        PriceHistoryLastDataPointDate = incomingDbEntity.PriceHistory.Last().Date;
 
         switch (this)
         {
@@ -113,6 +110,13 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
             case CurrencyPair currencyPair:
                 currencyPair.UpdateFromDbEntity((CurrencyPair)incomingDbEntity);
                 break;
+        }
+
+        Price = incomingDbEntity.Price;
+        PriceLastUpdatedTime = DateTime.UtcNow;
+        if (incomingDbEntity.PriceHistory.Any())
+        {
+            PriceHistoryLastDataPointDate = incomingDbEntity.PriceHistory.Last().Date;
         }
     }
 }

@@ -95,7 +95,6 @@ public class Security
         domainEntity.PriceHistory = History.Select(h => h.ToDomainEntity()).ToList();
         domainEntity.Price = Info.FullDayPrice;
         domainEntity.PriceLastUpdatedTime = DateTime.UtcNow;
-        domainEntity.PriceHistoryLastDataPointDate = domainEntity.PriceHistory.Last().Date;
 
         return domainEntity;
     }

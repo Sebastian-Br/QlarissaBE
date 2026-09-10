@@ -50,7 +50,7 @@ while (true)
 
         try
         {
-            string url = $"http://127.0.0.1:7001/security?symbol={Uri.EscapeDataString(symbol)}&startdate=2026-01-01";
+            string url = $"http://127.0.0.1:7001/security?symbol={Uri.EscapeDataString(symbol)}&startdate=2026-09-08";
 
             HttpResponseMessage response = await httpClient.GetAsync(url);
             string json = await response.Content.ReadAsStringAsync();

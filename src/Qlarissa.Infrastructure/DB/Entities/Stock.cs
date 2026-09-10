@@ -90,9 +90,9 @@ public sealed class Stock : PubliclyTradedSecurityBase
         }
         else // No new splits - just add new data instead of updating existing history.
         {
-            if (incomingDbEntity.PriceHistory.First().Date <= PriceHistoryLastDataPointDate
-                || incomingDbEntity.DividendPayouts.First().PayoutDate <= DividendPayouts.Last().PayoutDate
-                || incomingDbEntity.Splits.First().Date <= Splits.Last().Date)
+            if (incomingDbEntity.PriceHistory.FirstOrDefault()?.Date <= PriceHistoryLastDataPointDate
+                || incomingDbEntity.DividendPayouts.FirstOrDefault()?.PayoutDate <= DividendPayouts.LastOrDefault()?.PayoutDate
+                || incomingDbEntity.Splits.FirstOrDefault()?.Date <= Splits.LastOrDefault()?.Date)
             {
                 // We expect only new data to be present in the incoming entity.
                 throw new InvalidOperationException("Incoming history is attempting to update existing entries, but no new splits have occurred.");

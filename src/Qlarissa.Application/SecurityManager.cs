@@ -67,6 +67,7 @@ public sealed class SecurityManager(ISecurityRepository securityRepository, ICur
             return FluentResults.Result.Fail($"Security with ticker symbol '{symbolWithLastDataPointDate.Symbol}' could not be fetched from the external API.");
         }
 
+        domainEntity.Id = id;
         return await _securityRepository.UpdateSecurityAsync(domainEntity, cancellationToken);
     }
 

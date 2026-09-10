@@ -48,6 +48,15 @@ public class SecurityInformation
     public string FullExchangeName { get; init; } = string.Empty;
 
     /// <summary>
+    /// Filled for all quote types.
+    /// REGULAR = Market is open. Daily Prices are still changing and must not be persisted.
+    /// PREPRE or PRE = Market is not open yet. Last history entry can be persisted.
+    /// POST = Market is closed. Last history entry can be persisted.
+    /// i.e. anything except REGULAR means the last history entry can be persisted.
+    /// </summary>
+    public string MarketState { get; init; } = string.Empty;
+
+    /// <summary>
     /// Filled for Stocks and Cryptocurrencies.
     /// </summary>
     public long MarketCap { get; init; }

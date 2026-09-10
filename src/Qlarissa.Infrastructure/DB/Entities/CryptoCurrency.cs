@@ -26,7 +26,7 @@ public sealed class CryptoCurrency : PubliclyTradedSecurityBase
     {
         MarketCapitalization = incomingDbEntity.MarketCapitalization;
 
-        if (incomingDbEntity.PriceHistory.First().Date <= PriceHistoryLastDataPointDate)
+        if (incomingDbEntity.PriceHistory.FirstOrDefault()?.Date <= PriceHistoryLastDataPointDate)
         {
             // We expect only new data to be present in the incoming entity.
             throw new InvalidOperationException("Incoming history is attempting to update existing entries, but no new splits have occurred.");

@@ -37,7 +37,7 @@ public class PyFinanceClient(IHttpClientFactory httpClientFactory, IOptions<PyFi
             return null;
         }
 
-        if (resultDto.History[^1].Close == 0) // if the last entry is not final, do not add it to the history.
+        if (resultDto.Info.MarketState == "REGULAR") // The market is still open and the last entry not final. Do not add it to the history.
         {
             resultDto.History.RemoveAt(resultDto.History.Count - 1);
         }
