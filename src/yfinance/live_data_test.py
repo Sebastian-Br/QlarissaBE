@@ -4,7 +4,7 @@ import yfinance as yf
 
 async def main():
     async with yf.AsyncWebSocket() as ws:
-        await ws.subscribe("005930.KS")
+        await ws.subscribe("TSLA")
 
         print("Subscribed to 005930.KS. Waiting for data...")
 
