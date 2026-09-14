@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Qlarissa.Application.Interfaces;
-using Qlarissa.Domain.Entities.Securities.Base;
-using Qlarissa.WebAPI.Models;
 
 namespace Qlarissa.WebAPI.Controllers;
 

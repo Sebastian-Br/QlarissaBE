@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Qlarissa.Domain.Securities.Base;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 
 namespace Qlarissa.Infrastructure.DB.Entities.MarketData;
@@ -30,7 +29,7 @@ public sealed class Split
 
     public static Domain.Securities.MarketData.Split ToDomainEntity(Split split)
     {
-        return new Domain.Entities.Securities.MarketData.Split
+        return new Domain.Securities.MarketData.Split
         {
             Id = split.Id,
             Date = split.Date,

@@ -2,11 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Qlarissa.Application.Interfaces.Repositories;
-using Qlarissa.Domain.Securities;
-using Qlarissa.Domain.Securities.Base;
-using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Infrastructure.DB.Entities.Base;
-using static Qlarissa.Application.SecurityManager;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
@@ -57,22 +53,22 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         return result.ToDomainEntity();
     }
 
-    public async Task<SecuritySymbolAndLastDataPointDate?> GetSecuritySymbolAndPriceHistoryLastDataPointDateAsync(int id)
+    public async Task<Application.SecurityManager.SecuritySymbolAndLastDataPointDate?> GetSecuritySymbolAndPriceHistoryLastDataPointDateAsync(int id)
     {
         var result = await _context.Set<PubliclyTradedSecurityBase>()
             .Where(s => s.Id == id)
-            .Select(s => new SecuritySymbolAndLastDataPointDate(s.Symbol, s.PriceHistoryLastDataPointDate))
+            .Select(s => new Application.SecurityManager.SecuritySymbolAndLastDataPointDate(s.Symbol, s.PriceHistoryLastDataPointDate))
             .FirstOrDefaultAsync();
         return result;
     }
 
-    public async Task<IEnumerable<SearchResult>> SearchSecuritiesAsync(string userQuery, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Domain.Securities.SearchResult>> SearchSecuritiesAsync(string userQuery, CancellationToken cancellationToken)
     {
         var pattern = $"%{userQuery}%";
 
         var result = await _context.Set<PubliclyTradedSecurityBase>()
             .Where(s => EF.Functions.Like(s.Name, pattern) || EF.Functions.Like(s.Symbol, pattern))
-            .Select(s => new Domain.Entities.Securities.SearchResult
+            .Select(s => new Domain.Securities.SearchResult
             {
                 Id = s.Id,
                 Name = s.Name,
@@ -89,7 +85,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
     public async Task<bool> SecurityExistsAsync(string tickerSymbol)
         => await _context.Set<PubliclyTradedSecurityBase>().AnyAsync(s => s.Symbol == tickerSymbol);
 
-    public async Task<FluentResults.Result> UpdateSecurityAsync(Domain.Securities.Base.PubliclyTradedSecurityBase security, CancellationToken cancellationToken)
+    public async Task<Result> UpdateSecurityAsync(Domain.Securities.Base.PubliclyTradedSecurityBase security, CancellationToken cancellationToken)
     {
         var dbEntity = await _context.Set<PubliclyTradedSecurityBase>()
             .Include(s => s.PriceHistory)

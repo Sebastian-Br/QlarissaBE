@@ -1,8 +1,4 @@
-﻿using Qlarissa.Domain.Entities.Securities;
-using Qlarissa.Domain.Entities.Securities.MarketData;
-using Qlarissa.Domain.Securities.Base;
-
-namespace Qlarissa.Infrastructure.PyFinance;
+﻿namespace Qlarissa.Infrastructure.PyFinance;
 
 public class Security
 {
@@ -16,15 +12,15 @@ public class Security
     /// </summary>
     public string ISIN {  get; set; } = "-";
 
-    public PubliclyTradedSecurityBase ToDomainEntity()
+    public Domain.Securities.Base.PubliclyTradedSecurityBase ToDomainEntity()
     {
-        PubliclyTradedSecurityBase domainEntity;
+        Domain.Securities.Base.PubliclyTradedSecurityBase domainEntity;
 
         if (Info.QuoteType == QuoteType.Stock)
         {
-            var stock = new Stock
+            var stock = new Domain.Securities.Stock
             {
-                SecurityType = SecurityType.Stock,
+                SecurityType = Domain.Securities.Base.SecurityType.Stock,
                 ISIN = ISIN,
                 InvestorRelationsURL = Info.IrWebsite,
                 BusinessSummary = Info.LongBusinessSummary,
@@ -32,52 +28,61 @@ public class Security
                 DividendRate = Info.DividendRate,
                 TargetMeanPrice = Info.TargetMeanPrice,
                 RecommendationMean = Info.RecommendationMean,
-                DividendPayouts = History.Where(h => h.Dividends > 0).Select(x => new DividendPayout
+                DividendPayouts = History.Where(h => h.Dividends > 0)
+                .Select(x => new Domain.Securities.MarketData.DividendPayout
                 {
                     PayoutDate = x.Date,
                     PayoutAmount = x.Dividends
-                }).OrderBy(x => x.PayoutDate).ToList(),
-                Splits = History.Where(h => h.StockSplits > 0).Select(x => new Split
+                })
+                .OrderBy(x => x.PayoutDate).ToList(),
+                Splits = History.Where(h => h.StockSplits > 0)
+                .Select(x => new Domain.Securities.MarketData.Split
                 {
                     Date = x.Date,
                     SplitRatio = x.StockSplits
-                }).OrderBy(x => x.Date).ToList()
+                })
+                .OrderBy(x => x.Date).ToList()
             };
             domainEntity = stock;
         } else if (Info.QuoteType == QuoteType.ETF)
         {
-            var etf = new ETF
+            var etf = new Domain.Securities.ETF
             {
-                SecurityType = SecurityType.ETF,
+                SecurityType = Domain.Securities.Base.SecurityType.ETF,
                 ISIN = ISIN,
                 NetExpenseRatio = Info.NetExpenseRatio,
                 DividendYield = Info.DividendYield,
-                DistributionEvents = History.Where(h => h.Dividends > 0).Select(x => new DividendPayout
+                DistributionEvents = History
+                .Where(h => h.Dividends > 0)
+                .Select(x => new Domain.Securities.MarketData.DividendPayout
                 {
                     PayoutDate = x.Date,
                     PayoutAmount = x.Dividends
-                }).OrderBy(x => x.PayoutDate).ToList(),
-                Splits = History.Where(h => h.StockSplits > 0).Select(x => new Split
+                })
+                .OrderBy(x => x.PayoutDate).ToList(),
+                Splits = History.Where(h => h.StockSplits > 0)
+                .Select(x => new Domain.Securities.MarketData.Split
                 {
                     Date = x.Date,
                     SplitRatio = x.StockSplits
-                }).OrderBy(x => x.Date).ToList()
+                })
+                .OrderBy(x => x.Date).ToList()
             };
             domainEntity = etf;
         } else if (Info.QuoteType == QuoteType.Cryptocurrency)
         {
-            var cryptoCurrency = new CryptoCurrency
+            var cryptoCurrency = new Domain.Securities.CryptoCurrency
             {
-                SecurityType = SecurityType.Cryptocurrency,
+                SecurityType = Domain.Securities.Base.SecurityType.Cryptocurrency,
                 MarketCapitalization = Info.MarketCap
             };
             domainEntity = cryptoCurrency;
         }
         else if (Info.QuoteType == QuoteType.CurrencyPair)
         {
-            var currencyPair = new CurrencyPair
+            var currencyPair = new Domain.Securities.CurrencyPair
             {
-                SecurityType = SecurityType.CurrencyPair
+                SecurityType = Domain.Securities.Base.SecurityType.CurrencyPair
             };
             domainEntity = currencyPair;
         }
@@ -88,7 +93,7 @@ public class Security
 
         domainEntity.Name = Info.LongName;
         domainEntity.ShortName = Info.ShortName;
-        domainEntity.Currency = new Domain.Entities.Currency { Symbol = Info.Currency }; // fully loaded later on in the application layer
+        domainEntity.Currency = new Domain.Currency { Symbol = Info.Currency }; // fully loaded later on in the application layer
         domainEntity.ExchangeName = Info.FullExchangeName;
         domainEntity.ExchangeShortName = Info.Exchange;
         domainEntity.Symbol = Info.Symbol;

@@ -4,19 +4,19 @@ namespace Qlarissa.Infrastructure.PyFinance;
 
 public class SearchResult
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    public string Symbol { get; set; }
+    public string Symbol { get; set; } = string.Empty;
 
-    public string typeDisp { get; set; }
+    public string typeDisp { get; set; } = string.Empty;
 
-    public string exchange { get; set; }
+    public string exchange { get; set; } = string.Empty;
 
-    public string exchDisp { get; set; }
+    public string exchDisp { get; set; } = string.Empty;
 
     public Domain.Securities.SearchResult ToDomainEntity()
     {
-        var domainEntity = new Domain.Entities.Securities.SearchResult
+        var domainEntity = new Domain.Securities.SearchResult
         {
             Name = Name,
             Symbol = Symbol,

@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Application.Interfaces.Repositories;
-using Qlarissa.Domain;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 

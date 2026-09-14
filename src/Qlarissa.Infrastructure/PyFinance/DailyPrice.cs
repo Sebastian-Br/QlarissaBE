@@ -16,7 +16,7 @@ public class DailyPrice
 
     public Domain.Securities.MarketData.DailyPrice ToDomainEntity()
     {
-        return new Qlarissa.Domain.Entities.Securities.MarketData.DailyPrice
+        return new Domain.Securities.MarketData.DailyPrice
         {
             Date = Date,
             High = High,

@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Qlarissa.Domain;
 using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Infrastructure.DB.Entities.MarketData;
 
 namespace Qlarissa.Infrastructure.DB;
 
-public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<QlarissaUser>(options)
+public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<Domain.QlarissaUser>(options)
 {
     public DbSet<Portfolio> Portfolios { get; set; }
     public DbSet<Currency> Currencies { get; set; }

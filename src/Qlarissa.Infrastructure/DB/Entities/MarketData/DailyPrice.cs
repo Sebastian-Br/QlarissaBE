@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Qlarissa.Domain.Securities.Base;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 
 namespace Qlarissa.Infrastructure.DB.Entities.MarketData;
