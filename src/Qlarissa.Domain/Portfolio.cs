@@ -1,6 +1,6 @@
 ﻿using Qlarissa.Domain.Entities.Securities.Holdings;
 
-namespace Qlarissa.Domain.Entities;
+namespace Qlarissa.Domain;
 
 public class Portfolio
 {

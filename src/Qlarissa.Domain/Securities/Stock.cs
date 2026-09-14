@@ -1,7 +1,7 @@
-﻿using Qlarissa.Domain.Entities.Securities.Base;
-using Qlarissa.Domain.Entities.Securities.MarketData;
+﻿using Qlarissa.Domain.Securities.Base;
+using Qlarissa.Domain.Securities.MarketData;
 
-namespace Qlarissa.Domain.Entities.Securities;
+namespace Qlarissa.Domain.Securities;
 
 public sealed class Stock : PubliclyTradedSecurityBase
 {

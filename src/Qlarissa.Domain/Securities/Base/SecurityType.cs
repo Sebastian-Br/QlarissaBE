@@ -1,4 +1,4 @@
-﻿namespace Qlarissa.Domain.Entities.Securities.Base;
+﻿namespace Qlarissa.Domain.Securities.Base;
 
 public enum SecurityType
 {

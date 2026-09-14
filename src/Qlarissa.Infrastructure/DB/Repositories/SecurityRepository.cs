@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Qlarissa.Application.Interfaces.Repositories;
+using Qlarissa.Domain.Securities;
+using Qlarissa.Domain.Securities.Base;
 using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 using static Qlarissa.Application.SecurityManager;
@@ -14,14 +16,14 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
 
     private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
-    public async Task AddSecurityAsync(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security, CancellationToken cancellationToken)
+    public async Task AddSecurityAsync(Domain.Securities.Base.PubliclyTradedSecurityBase security, CancellationToken cancellationToken)
     {
         PubliclyTradedSecurityBase dbEntity = PubliclyTradedSecurityBase.FromDomainEntity(security);
         _context.Set<PubliclyTradedSecurityBase>().Add(dbEntity);
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<Domain.Entities.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityAsync(int id, CancellationToken cancellationToken)
+    public async Task<Domain.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityAsync(int id, CancellationToken cancellationToken)
     {
         var result = await _context.Set<PubliclyTradedSecurityBase>()
             .AsNoTracking()
@@ -40,7 +42,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         return result.ToDomainEntity();
     }
 
-    public async Task<Domain.Entities.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityBasicAsync(int id, CancellationToken cancellationToken)
+    public async Task<Domain.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityBasicAsync(int id, CancellationToken cancellationToken)
     {
         var result = await _context.Set<PubliclyTradedSecurityBase>()
             .AsNoTracking()
@@ -64,7 +66,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         return result;
     }
 
-    public async Task<IEnumerable<Domain.Entities.Securities.SearchResult>> SearchSecuritiesAsync(string userQuery, CancellationToken cancellationToken)
+    public async Task<IEnumerable<SearchResult>> SearchSecuritiesAsync(string userQuery, CancellationToken cancellationToken)
     {
         var pattern = $"%{userQuery}%";
 
@@ -75,7 +77,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
                 Id = s.Id,
                 Name = s.Name,
                 Symbol = s.Symbol,
-                SecurityType = (Domain.Entities.Securities.Base.SecurityType)s.SecurityType,
+                SecurityType = (Domain.Securities.Base.SecurityType)s.SecurityType,
                 Exchange = s.ExchangeName,
                 ExchangeShortName = s.ExchangeShortName
             })
@@ -87,7 +89,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
     public async Task<bool> SecurityExistsAsync(string tickerSymbol)
         => await _context.Set<PubliclyTradedSecurityBase>().AnyAsync(s => s.Symbol == tickerSymbol);
 
-    public async Task<FluentResults.Result> UpdateSecurityAsync(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security, CancellationToken cancellationToken)
+    public async Task<FluentResults.Result> UpdateSecurityAsync(Domain.Securities.Base.PubliclyTradedSecurityBase security, CancellationToken cancellationToken)
     {
         var dbEntity = await _context.Set<PubliclyTradedSecurityBase>()
             .Include(s => s.PriceHistory)

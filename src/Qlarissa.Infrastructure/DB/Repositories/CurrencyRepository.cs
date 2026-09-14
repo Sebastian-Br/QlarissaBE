@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Application.Interfaces.Repositories;
+using Qlarissa.Domain;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
@@ -11,17 +12,17 @@ public sealed class CurrencyRepository(ILogger<CurrencyRepository> logger, Appli
 
     private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
-    public async Task<Domain.Entities.Currency?> GetCurrencyAsync(string symbol)
+    public async Task<Domain.Currency?> GetCurrencyAsync(string symbol)
     {
         return (await _context.Currencies.AsNoTracking().FirstOrDefaultAsync(c => c.Symbol == symbol))?.ToDomainEntity();
     }
 
-    public async Task<IEnumerable<Domain.Entities.Currency>> GetCurrenciesAsync()
+    public async Task<IEnumerable<Domain.Currency>> GetCurrenciesAsync()
     {
         return await _context.Currencies.AsNoTracking().Select(c => c.ToDomainEntity()).ToListAsync();
     }
 
-    public async Task AddCurrencyAsync(Domain.Entities.Currency security)
+    public async Task AddCurrencyAsync(Domain.Currency security)
     {
         try
         {

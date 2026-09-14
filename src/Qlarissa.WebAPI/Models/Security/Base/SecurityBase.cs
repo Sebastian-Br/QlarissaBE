@@ -12,7 +12,7 @@ public abstract class SecurityBase
 
     public SecurityType SecurityType { get; set; }
 
-    public static void FromDomainEntity(Domain.Entities.Securities.Base.SecurityBase domainEntity, SecurityBase webApiModel)
+    public static void FromDomainEntity(Domain.Securities.Base.SecurityBase domainEntity, SecurityBase webApiModel)
     {
         webApiModel.Id = domainEntity.Id;
         webApiModel.Name = domainEntity.Name;

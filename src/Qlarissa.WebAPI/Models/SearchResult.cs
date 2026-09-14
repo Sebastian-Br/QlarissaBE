@@ -16,7 +16,7 @@ public class SearchResult
 
     public string ExchangeShortName { get; set; } = string.Empty;
 
-    public static SearchResult FromDomainEntity(Domain.Entities.Securities.SearchResult domainSearchResult)
+    public static SearchResult FromDomainEntity(Domain.Securities.SearchResult domainSearchResult)
     {
         return new SearchResult
         {

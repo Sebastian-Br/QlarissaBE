@@ -23,7 +23,7 @@ public sealed class Stock : PubliclyTradedSecurityBase
 
     public IEnumerable<Split> Splits { get; set; } = [];
 
-    public static Stock FromDomainEntity(Domain.Entities.Securities.Stock domainEntity)
+    public static Stock FromDomainEntity(Domain.Securities.Stock domainEntity)
     {
         Stock stock = new();
         PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, stock);

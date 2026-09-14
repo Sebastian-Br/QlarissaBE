@@ -10,7 +10,7 @@ public sealed class DailyPrice
     public double Average { get; set; }
     public DateOnly Date { get; set; }
 
-    public static DailyPrice FromDomainEntity(Domain.Entities.Securities.MarketData.DailyPrice domainEntity)
+    public static DailyPrice FromDomainEntity(Domain.Securities.MarketData.DailyPrice domainEntity)
     {
         return new DailyPrice
         {

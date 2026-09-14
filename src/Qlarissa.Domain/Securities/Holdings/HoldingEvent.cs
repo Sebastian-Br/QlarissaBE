@@ -1,4 +1,4 @@
-﻿namespace Qlarissa.Domain.Entities.Securities.Holdings;
+﻿namespace Qlarissa.Domain.Securities.Holdings;
 
 public class HoldingEvent
 {

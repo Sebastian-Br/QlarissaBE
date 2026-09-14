@@ -34,7 +34,7 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
     /// </summary>
     public ICollection<Split> Splits { get; set; } = [];
 
-    protected static void FromDomainEntity(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase domainEntity, PubliclyTradedSecurityBase dbEntity)
+    protected static void FromDomainEntity(Domain.Securities.Base.PubliclyTradedSecurityBase domainEntity, PubliclyTradedSecurityBase dbEntity)
     {
         dbEntity.Id = domainEntity.Id;
         dbEntity.Name = domainEntity.Name;
@@ -49,24 +49,24 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
         dbEntity.PriceHistory = domainEntity.PriceHistory.Select(x => DailyPrice.FromDomainEntity(x, domainEntity)).ToList();
     }
 
-    public static PubliclyTradedSecurityBase FromDomainEntity(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase domainEntity)
+    public static PubliclyTradedSecurityBase FromDomainEntity(Domain.Securities.Base.PubliclyTradedSecurityBase domainEntity)
     {
         return domainEntity switch
         {
-            Domain.Entities.Securities.Stock stock => Stock.FromDomainEntity(stock),
-            Domain.Entities.Securities.ETF etf => ETF.FromDomainEntity(etf),
-            Domain.Entities.Securities.CryptoCurrency cryptoCurrency => CryptoCurrency.FromDomainEntity(cryptoCurrency),
-            Domain.Entities.Securities.CurrencyPair currencyPair => CurrencyPair.FromDomainEntity(currencyPair),
+            Domain.Securities.Stock stock => Stock.FromDomainEntity(stock),
+            Domain.Securities.ETF etf => ETF.FromDomainEntity(etf),
+            Domain.Securities.CryptoCurrency cryptoCurrency => CryptoCurrency.FromDomainEntity(cryptoCurrency),
+            Domain.Securities.CurrencyPair currencyPair => CurrencyPair.FromDomainEntity(currencyPair),
             _ => throw new NotImplementedException($"Unsupported security type '{domainEntity.GetType().Name}'.")
         };
     }
 
-    protected static void ToDomainEntity(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase domainEntity, PubliclyTradedSecurityBase dbEntity)
+    protected static void ToDomainEntity(Domain.Securities.Base.PubliclyTradedSecurityBase domainEntity, PubliclyTradedSecurityBase dbEntity)
     {
         domainEntity.Id = dbEntity.Id;
         domainEntity.Name = dbEntity.Name;
         domainEntity.Currency = dbEntity.Currency.ToDomainEntity();
-        domainEntity.SecurityType = (Domain.Entities.Securities.Base.SecurityType)dbEntity.SecurityType;
+        domainEntity.SecurityType = (Domain.Securities.Base.SecurityType)dbEntity.SecurityType;
         domainEntity.ExchangeName = dbEntity.ExchangeName;
         domainEntity.ExchangeShortName= dbEntity.ExchangeShortName;
         domainEntity.Symbol = dbEntity.Symbol;
@@ -76,7 +76,7 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
         domainEntity.PriceHistory = dbEntity.PriceHistory.Select(DailyPrice.ToDomainEntity).ToList();
     }
 
-    public Domain.Entities.Securities.Base.PubliclyTradedSecurityBase ToDomainEntity()
+    public Domain.Securities.Base.PubliclyTradedSecurityBase ToDomainEntity()
     {
         return this switch
         {
@@ -88,7 +88,7 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
         };
     }
 
-    internal void UpdateFromDomainEntity(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase domainEntity)
+    internal void UpdateFromDomainEntity(Domain.Securities.Base.PubliclyTradedSecurityBase domainEntity)
     {
         var incomingDbEntity = FromDomainEntity(domainEntity);
         Name = incomingDbEntity.Name;

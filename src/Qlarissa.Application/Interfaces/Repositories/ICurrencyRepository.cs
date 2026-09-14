@@ -1,4 +1,4 @@
-﻿using Qlarissa.Domain.Entities;
+﻿using Qlarissa.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -8,7 +8,7 @@ public sealed class Split
 
     public double SplitRatio { get; set; }
 
-    public static Split FromDomainEntity(Domain.Entities.Securities.MarketData.Split domainEntity)
+    public static Split FromDomainEntity(Domain.Securities.MarketData.Split domainEntity)
     {
         return new Split
         {

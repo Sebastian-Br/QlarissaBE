@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Qlarissa.Domain.Securities.Base;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 
 namespace Qlarissa.Infrastructure.DB.Entities.MarketData;
@@ -16,7 +17,7 @@ public sealed class DividendPayout
 
     public PubliclyTradedSecurityBase Security { get; set; }
 
-    public static DividendPayout FromDomainEntity(Domain.Entities.Securities.MarketData.DividendPayout payout, Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security)
+    public static DividendPayout FromDomainEntity(Domain.Securities.MarketData.DividendPayout payout, Domain.Securities.Base.PubliclyTradedSecurityBase security)
         => new()
         {
             Id = payout.Id,
@@ -25,7 +26,7 @@ public sealed class DividendPayout
             SecurityId = security.Id
         };
 
-    public static Domain.Entities.Securities.MarketData.DividendPayout ToDomainEntity(DividendPayout dbEntity)
+    public static Domain.Securities.MarketData.DividendPayout ToDomainEntity(DividendPayout dbEntity)
         => new()
         {
             Id = dbEntity.Id,

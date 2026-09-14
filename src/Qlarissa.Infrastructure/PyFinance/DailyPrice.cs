@@ -1,5 +1,4 @@
-﻿using Qlarissa.Domain.Entities.Securities.MarketData;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Qlarissa.Infrastructure.PyFinance;
 
@@ -15,7 +14,7 @@ public class DailyPrice
     [JsonPropertyName("Stock Splits")]
     public double StockSplits { get; set; }
 
-    public Qlarissa.Domain.Entities.Securities.MarketData.DailyPrice ToDomainEntity()
+    public Domain.Securities.MarketData.DailyPrice ToDomainEntity()
     {
         return new Qlarissa.Domain.Entities.Securities.MarketData.DailyPrice
         {

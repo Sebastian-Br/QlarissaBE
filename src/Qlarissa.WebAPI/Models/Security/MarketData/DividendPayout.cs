@@ -8,7 +8,7 @@ public sealed class DividendPayout
 
     public double PayoutAmount { get; set; }
 
-    public static DividendPayout FromDomainEntity(Domain.Entities.Securities.MarketData.DividendPayout domainEntity)
+    public static DividendPayout FromDomainEntity(Domain.Securities.MarketData.DividendPayout domainEntity)
     {
         return new DividendPayout
         {

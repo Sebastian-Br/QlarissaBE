@@ -1,6 +1,6 @@
-﻿using Qlarissa.Domain.Entities.Securities.Base;
+﻿using Qlarissa.Domain.Securities.Base;
 
-namespace Qlarissa.Domain.Entities.Securities.Holdings;
+namespace Qlarissa.Domain.Securities.Holdings;
 
 public class Holding
 {

@@ -1,7 +1,7 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Options;
 using Qlarissa.Application.Interfaces.ExternalAPI;
-using Qlarissa.Domain.Entities.Securities.Base;
+using Qlarissa.Domain.Securities.Base;
 using Qlarissa.Infrastructure.PyFinance.Options;
 using System.Net.Http.Json;
 
@@ -15,7 +15,7 @@ public class PyFinanceClient(IHttpClientFactory httpClientFactory, IOptions<PyFi
 
     private readonly PyFinanceOptions _options = options.Value;
 
-    public async Task<IEnumerable<Domain.Entities.Securities.SearchResult>> SearchSecuritiesAsync(string userQuery, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Domain.Securities.SearchResult>> SearchSecuritiesAsync(string userQuery, CancellationToken cancellationToken)
     {
         var response = await _searchClient.GetAsync($"search?q={Uri.EscapeDataString(userQuery)}", cancellationToken);
         response.EnsureSuccessStatusCode();

@@ -1,5 +1,5 @@
 ﻿using FluentResults;
-using Qlarissa.Domain.Entities;
+using Qlarissa.Domain;
 using System.Security.Claims;
 
 namespace Qlarissa.Application.Interfaces;

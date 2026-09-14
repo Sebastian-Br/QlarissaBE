@@ -1,4 +1,6 @@
-﻿namespace Qlarissa.Infrastructure.PyFinance;
+﻿using Qlarissa.Domain.Securities.Base;
+
+namespace Qlarissa.Infrastructure.PyFinance;
 
 public class SearchResult
 {
@@ -12,7 +14,7 @@ public class SearchResult
 
     public string exchDisp { get; set; }
 
-    public Domain.Entities.Securities.SearchResult ToDomainEntity()
+    public Domain.Securities.SearchResult ToDomainEntity()
     {
         var domainEntity = new Domain.Entities.Securities.SearchResult
         {
@@ -24,19 +26,19 @@ public class SearchResult
 
         if (typeDisp == "Equity")
         {
-            domainEntity.SecurityType = Domain.Entities.Securities.Base.SecurityType.Stock;
+            domainEntity.SecurityType = SecurityType.Stock;
         }
         else if (typeDisp == "ETF")
         {
-            domainEntity.SecurityType = Domain.Entities.Securities.Base.SecurityType.ETF;
+            domainEntity.SecurityType = SecurityType.ETF;
         }
         else if (typeDisp == "Cryptocurrency")
         {
-            domainEntity.SecurityType = Domain.Entities.Securities.Base.SecurityType.Cryptocurrency;
+            domainEntity.SecurityType = SecurityType.Cryptocurrency;
         }
         else if (typeDisp == "Currency")
         {
-            domainEntity.SecurityType = Domain.Entities.Securities.Base.SecurityType.CurrencyPair;
+            domainEntity.SecurityType = SecurityType.CurrencyPair;
         }
         else
         {

@@ -1,4 +1,5 @@
-﻿using Qlarissa.Domain.Entities.Securities;
+﻿using Qlarissa.Domain.Securities;
+using Qlarissa.Domain.Securities.Base;
 
 namespace Qlarissa.Application.Interfaces.ExternalAPI;
 
@@ -20,7 +21,7 @@ public interface IMarketDataClient
     /// <param name="tickerSymbol"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task<Domain.Entities.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityWithHistoryAsync(string tickerSymbol, CancellationToken cancellationToken);
+    public Task<PubliclyTradedSecurityBase?> GetSecurityWithHistoryAsync(string tickerSymbol, CancellationToken cancellationToken);
 
-    public Task<Domain.Entities.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityWithHistoryFromDateAsync(string tickerSymbol, DateOnly date, CancellationToken cancellationToken);
+    public Task<PubliclyTradedSecurityBase?> GetSecurityWithHistoryFromDateAsync(string tickerSymbol, DateOnly date, CancellationToken cancellationToken);
 }

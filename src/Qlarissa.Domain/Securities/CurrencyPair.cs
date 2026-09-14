@@ -1,6 +1,6 @@
-﻿using Qlarissa.Domain.Entities.Securities.Base;
+﻿using Qlarissa.Domain.Securities.Base;
 
-namespace Qlarissa.Domain.Entities.Securities;
+namespace Qlarissa.Domain.Securities;
 
 /// <summary>
 /// In a CurrencyPair, e.g. USD-EUR, USD would be the primary currency.

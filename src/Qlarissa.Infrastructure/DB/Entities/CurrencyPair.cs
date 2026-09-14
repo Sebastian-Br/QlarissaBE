@@ -1,20 +1,19 @@
-﻿
-using Qlarissa.Infrastructure.DB.Entities.Base;
+﻿using Qlarissa.Infrastructure.DB.Entities.Base;
 
 namespace Qlarissa.Infrastructure.DB.Entities;
 
 public class CurrencyPair : PubliclyTradedSecurityBase
 {
-    internal static CurrencyPair FromDomainEntity(Domain.Entities.Securities.CurrencyPair domainEntity)
+    internal static CurrencyPair FromDomainEntity(Domain.Securities.CurrencyPair domainEntity)
     {
         CurrencyPair dbEntity = new();
         PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, dbEntity);
         return dbEntity;
     }
 
-    internal new Domain.Entities.Securities.CurrencyPair ToDomainEntity()
+    internal new Domain.Securities.CurrencyPair ToDomainEntity()
     {
-        Domain.Entities.Securities.CurrencyPair domainEntity = new();
+        Domain.Securities.CurrencyPair domainEntity = new();
         PubliclyTradedSecurityBase.ToDomainEntity(domainEntity, this);
         return domainEntity;
     }

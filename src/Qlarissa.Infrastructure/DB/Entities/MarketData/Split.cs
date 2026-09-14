@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Qlarissa.Domain.Securities.Base;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 
 namespace Qlarissa.Infrastructure.DB.Entities.MarketData;
@@ -16,7 +17,7 @@ public sealed class Split
 
     public PubliclyTradedSecurityBase Security { get; set; }
 
-    public static Split FromDomainEntity(Domain.Entities.Securities.MarketData.Split domainEntity, Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security)
+    public static Split FromDomainEntity(Domain.Securities.MarketData.Split domainEntity, Domain.Securities.Base.PubliclyTradedSecurityBase security)
     {
         return new Split
         {
@@ -27,7 +28,7 @@ public sealed class Split
         };
     }
 
-    public static Domain.Entities.Securities.MarketData.Split ToDomainEntity(Split split)
+    public static Domain.Securities.MarketData.Split ToDomainEntity(Split split)
     {
         return new Domain.Entities.Securities.MarketData.Split
         {

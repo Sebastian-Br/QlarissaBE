@@ -1,5 +1,5 @@
-﻿using Qlarissa.Domain.Entities.Securities;
-using Qlarissa.Domain.Entities.Securities.Base;
+﻿using Qlarissa.Domain.Securities;
+using Qlarissa.Domain.Securities.Base;
 
 namespace Qlarissa.Application.Interfaces;
 

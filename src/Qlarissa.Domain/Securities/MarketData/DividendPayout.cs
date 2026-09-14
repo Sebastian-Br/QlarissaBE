@@ -1,4 +1,4 @@
-﻿namespace Qlarissa.Domain.Entities.Securities.MarketData;
+﻿namespace Qlarissa.Domain.Securities.MarketData;
 
 public sealed class DividendPayout
 {

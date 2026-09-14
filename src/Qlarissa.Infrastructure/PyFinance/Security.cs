@@ -1,6 +1,6 @@
 ﻿using Qlarissa.Domain.Entities.Securities;
-using Qlarissa.Domain.Entities.Securities.Base;
 using Qlarissa.Domain.Entities.Securities.MarketData;
+using Qlarissa.Domain.Securities.Base;
 
 namespace Qlarissa.Infrastructure.PyFinance;
 

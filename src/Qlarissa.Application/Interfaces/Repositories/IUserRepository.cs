@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Qlarissa.Domain.Entities;
+using Qlarissa.Domain;
 
 namespace Qlarissa.Application.Interfaces.Repositories;
 

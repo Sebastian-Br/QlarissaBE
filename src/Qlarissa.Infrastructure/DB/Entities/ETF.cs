@@ -11,7 +11,7 @@ public sealed class ETF : PubliclyTradedSecurityBase
 
     public double DividendYield { get; set; }
 
-    internal static ETF FromDomainEntity(Domain.Entities.Securities.ETF domainEntity)
+    internal static ETF FromDomainEntity(Domain.Securities.ETF domainEntity)
     {
         ETF dbEntity = new();
         PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, dbEntity);
@@ -23,9 +23,9 @@ public sealed class ETF : PubliclyTradedSecurityBase
         return dbEntity;
     }
 
-    internal new Domain.Entities.Securities.ETF ToDomainEntity()
+    internal new Domain.Securities.ETF ToDomainEntity()
     {
-        Domain.Entities.Securities.ETF domainEntity = new();
+        Domain.Securities.ETF domainEntity = new();
         PubliclyTradedSecurityBase.ToDomainEntity(domainEntity, this);
         domainEntity.ISIN = ISIN;
         domainEntity.NetExpenseRatio = NetExpenseRatio;

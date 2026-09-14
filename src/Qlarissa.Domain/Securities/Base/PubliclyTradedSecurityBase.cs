@@ -1,6 +1,6 @@
-﻿using Qlarissa.Domain.Entities.Securities.MarketData;
+﻿using Qlarissa.Domain.Securities.MarketData;
 
-namespace Qlarissa.Domain.Entities.Securities.Base;
+namespace Qlarissa.Domain.Securities.Base;
 
 public abstract class PubliclyTradedSecurityBase : SecurityBase
 {

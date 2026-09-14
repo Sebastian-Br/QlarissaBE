@@ -1,4 +1,4 @@
-﻿namespace Qlarissa.Domain.Entities;
+﻿namespace Qlarissa.Domain;
 
 public sealed class Currency
 {

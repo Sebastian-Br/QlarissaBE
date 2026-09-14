@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Qlarissa.Application.Interfaces.ExternalAPI;
-using Qlarissa.Domain.Entities.Securities.MarketData;
+using Qlarissa.Domain.Securities.MarketData;
 using Qlarissa.Infrastructure.PyFinance.Options;
 using System.Net.WebSockets;
 using System.Text;

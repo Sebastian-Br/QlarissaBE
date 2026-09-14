@@ -1,6 +1,8 @@
 ﻿
-using Qlarissa.Domain.Entities;
-using Qlarissa.Domain.Entities.Securities;
+using Qlarissa.Domain;
+using Qlarissa.Domain.Securities;
+using Qlarissa.Domain.Securities.Base;
+using Qlarissa.Domain.Securities.MarketData;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 using Qlarissa.Infrastructure.DB.Entities.MarketData;
 
@@ -31,8 +33,8 @@ public class MapperTests
     [Fact]
     public void MapPubliclyTradedSecurityBase_FromDomainEntity()
     {
-        
-        Domain.Entities.Securities.ETF domainEntity = new() { Id = 9, Name = "iShares S&P500", 
+
+        ETF domainEntity = new() { Id = 9, Name = "iShares S&P500", 
             Currency = new() { Id = 1, Name = "United States Dollar", Symbol = "USD" }, 
             Symbol="ETFSymbol", Price = 666.6, PriceLastUpdatedTime = new(2025,1,1), PriceHistoryLastDataPointDate = new(2024, 12,30),
             PriceHistory = GetSimplePriceHistoryTestData_DomainEntity(),
@@ -70,7 +72,7 @@ public class MapperTests
 
         dbEntity.PriceHistory = GetSimplePriceHistoryTestData_DbEntity(dbEntity);
 
-        Domain.Entities.Securities.Base.PubliclyTradedSecurityBase domainEntity = dbEntity.ToDomainEntity();
+        Domain.Securities.Base.PubliclyTradedSecurityBase domainEntity = dbEntity.ToDomainEntity();
 
         Assert.Equal(dbEntity.Id, domainEntity.Id);
         Assert.Equal(dbEntity.Name, domainEntity.Name);
@@ -99,7 +101,7 @@ public class MapperTests
     public void MapETF_FromDomainEntity()
     {
 
-        Domain.Entities.Securities.ETF domainEntity = new()
+        ETF domainEntity = new()
         {
             Id = 9,
             Name = "iShares S&P500",
@@ -161,7 +163,7 @@ public class MapperTests
         dbEntity.PriceHistory = GetSimplePriceHistoryTestData_DbEntity(dbEntity);
         dbEntity.DividendPayouts = GetSimpleDividendPayoutsTestData_DbEntity(dbEntity);
 
-        Domain.Entities.Securities.ETF? domainEntity = dbEntity.ToDomainEntity() as ETF;
+        ETF? domainEntity = dbEntity.ToDomainEntity() as ETF;
 
         Assert.Equal(dbEntity.Id, domainEntity.Id);
         Assert.Equal(dbEntity.Name, domainEntity.Name);
@@ -198,7 +200,7 @@ public class MapperTests
     public void MapStock_FromDomainEntity()
     {
 
-        Domain.Entities.Securities.Stock domainEntity = new()
+        Stock domainEntity = new()
         {
             Id = 9,
             Name = "Microsoft",
@@ -264,7 +266,7 @@ public class MapperTests
         dbEntity.PriceHistory = GetSimplePriceHistoryTestData_DbEntity(dbEntity);
         dbEntity.DividendPayouts = GetSimpleDividendPayoutsTestData_DbEntity(dbEntity);
 
-        Domain.Entities.Securities.Stock? domainEntity = dbEntity.ToDomainEntity() as Domain.Entities.Securities.Stock;
+        Stock? domainEntity = ((dbEntity.ToDomainEntity() as Stock));
 
         Assert.NotNull(domainEntity);
         Assert.Equal(dbEntity.Id, domainEntity.Id);
@@ -299,9 +301,9 @@ public class MapperTests
         }
     }
 
-    private static Domain.Entities.Securities.MarketData.DailyPrice[] GetSimplePriceHistoryTestData_DomainEntity()
+    private static Domain.Securities.MarketData.DailyPrice[] GetSimplePriceHistoryTestData_DomainEntity()
     {
-        Domain.Entities.Securities.MarketData.DailyPrice[] priceHistory = [
+        Domain.Securities.MarketData.DailyPrice[] priceHistory = [
             new() { Id = 100, Date = new(2024, 12, 1), Average = 630, Close = 635, Open = 625, High = 627, Low = 624 },
             new() { Id = 101, Date = new(2024, 12, 2), Average = 631, Close = 636, Open = 626, High = 628, Low = 625 },
             new() { Id = 102, Date = new(2024, 12, 3), Average = 632, Close = 637, Open = 627, High = 629, Low = 626 },
@@ -319,9 +321,9 @@ public class MapperTests
         return priceHistory;
     }
 
-    private static Domain.Entities.Securities.MarketData.DividendPayout[] GetSimpleDividendPayoutsTestData_DomainEntity()
+    private static Domain.Securities.MarketData.DividendPayout[] GetSimpleDividendPayoutsTestData_DomainEntity()
     {
-        Domain.Entities.Securities.MarketData.DividendPayout[] payouts = [
+        Domain.Securities.MarketData.DividendPayout[] payouts = [
             new() { Id = 1, PayoutDate = new(2024,06, 24), PayoutAmount = 6 },
             new() { Id = 2, PayoutDate = new(2024,09, 27), PayoutAmount = 6.2 },
             new() { Id = 3, PayoutDate = new(2024,12, 30), PayoutAmount = 6.5 },

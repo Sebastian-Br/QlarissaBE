@@ -1,4 +1,4 @@
-﻿using Qlarissa.Domain.Entities.Securities.MarketData;
+﻿using Qlarissa.Domain.Securities.MarketData;
 
 namespace Qlarissa.Application.Interfaces.ExternalAPI;
 

@@ -15,7 +15,7 @@ public sealed class ETF : PubliclyTradedSecurityBase
 
     public double DividendYield { get; set; }
 
-    public static ETF FromDomainEntity(Domain.Entities.Securities.ETF domainEntity)
+    public static ETF FromDomainEntity(Domain.Securities.ETF domainEntity)
     {
         ETF etf = new();
         PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, etf);

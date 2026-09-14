@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Qlarissa.Domain.Entities;
+namespace Qlarissa.Domain;
 
 public sealed class QlarissaUser : IdentityUser
 {

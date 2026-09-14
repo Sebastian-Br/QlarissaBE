@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Qlarissa.Domain.Entities;
 using Qlarissa.Application.Interfaces.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Qlarissa.Domain;
 
 namespace Qlarissa.Infrastructure.Authorization;
 

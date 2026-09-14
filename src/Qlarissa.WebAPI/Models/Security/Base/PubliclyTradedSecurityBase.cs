@@ -19,7 +19,7 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
 
     public DateTime LastCompleteUpdateTime { get; set; }
 
-    protected static void FromDomainEntity(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase domainEntity, PubliclyTradedSecurityBase webApiModel)
+    protected static void FromDomainEntity(Domain.Securities.Base.PubliclyTradedSecurityBase domainEntity, PubliclyTradedSecurityBase webApiModel)
     {
         SecurityBase.FromDomainEntity(domainEntity, webApiModel);
         webApiModel.ExchangeName = domainEntity.ExchangeName;
@@ -31,14 +31,14 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
         webApiModel.PriceHistory = domainEntity.PriceHistory.Select(DailyPrice.FromDomainEntity).ToList();
     }
 
-    public static PubliclyTradedSecurityBase FromDomainEntity(Domain.Entities.Securities.Base.PubliclyTradedSecurityBase domainEntity)
+    public static PubliclyTradedSecurityBase FromDomainEntity(Domain.Securities.Base.PubliclyTradedSecurityBase domainEntity)
     {
         return domainEntity switch
         {
-            Domain.Entities.Securities.Stock stock => Stock.FromDomainEntity(stock),
-            Domain.Entities.Securities.ETF etf => ETF.FromDomainEntity(etf),
-            Domain.Entities.Securities.CryptoCurrency cryptoCurrency => CryptoCurrency.FromDomainEntity(cryptoCurrency),
-            Domain.Entities.Securities.CurrencyPair currencyPair => CurrencyPair.FromDomainEntity(currencyPair),
+            Domain.Securities.Stock stock => Stock.FromDomainEntity(stock),
+            Domain.Securities.ETF etf => ETF.FromDomainEntity(etf),
+            Domain.Securities.CryptoCurrency cryptoCurrency => CryptoCurrency.FromDomainEntity(cryptoCurrency),
+            Domain.Securities.CurrencyPair currencyPair => CurrencyPair.FromDomainEntity(currencyPair),
             _ => throw new NotImplementedException($"Unsupported security type '{domainEntity.GetType().Name}'.")
         };
     }

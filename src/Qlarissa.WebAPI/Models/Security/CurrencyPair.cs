@@ -8,7 +8,7 @@ namespace Qlarissa.WebAPI.Models.Security;
 /// </summary>
 public sealed class CurrencyPair : PubliclyTradedSecurityBase
 {
-    public static CurrencyPair FromDomainEntity(Domain.Entities.Securities.CurrencyPair domainEntity)
+    public static CurrencyPair FromDomainEntity(Domain.Securities.CurrencyPair domainEntity)
     {
         CurrencyPair currencyPair = new();
         PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, currencyPair);

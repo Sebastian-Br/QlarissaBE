@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Qlarissa.Domain.Securities.Base;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 
 namespace Qlarissa.Infrastructure.DB.Entities.MarketData;
@@ -16,7 +17,7 @@ public sealed class DailyPrice
     public double Average { get; set; }
     public DateOnly Date { get; set; }
 
-    public static DailyPrice FromDomainEntity(Domain.Entities.Securities.MarketData.DailyPrice domainEntity, Domain.Entities.Securities.Base.PubliclyTradedSecurityBase security) =>
+    public static DailyPrice FromDomainEntity(Domain.Securities.MarketData.DailyPrice domainEntity, Domain.Securities.Base.PubliclyTradedSecurityBase security) =>
         new()
         {
             Id = domainEntity.Id,
@@ -29,7 +30,7 @@ public sealed class DailyPrice
             Date = domainEntity.Date
         };
 
-    public static Domain.Entities.Securities.MarketData.DailyPrice ToDomainEntity(DailyPrice dbEntity) =>
+    public static Domain.Securities.MarketData.DailyPrice ToDomainEntity(DailyPrice dbEntity) =>
         new()
         {
             Id = dbEntity.Id,

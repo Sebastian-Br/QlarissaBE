@@ -8,7 +8,7 @@ public sealed class Currency
 
     public required string Name { get; set; }
 
-    public static Currency FromDomainEntity(Domain.Entities.Currency currency)
+    public static Currency FromDomainEntity(Domain.Currency currency)
     {
         return new Currency
         {

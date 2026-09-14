@@ -7,7 +7,7 @@ using Qlarissa.Application.Interfaces;
 using Qlarissa.Application.Interfaces.Authorization;
 using Qlarissa.Application.Interfaces.ExternalAPI;
 using Qlarissa.Application.Interfaces.Repositories;
-using Qlarissa.Domain.Entities;
+using Qlarissa.Domain;
 using Qlarissa.Infrastructure;
 using Qlarissa.Infrastructure.Authorization;
 using Qlarissa.Infrastructure.DB;

@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Qlarissa.Application.Interfaces.ExternalAPI;
-using Qlarissa.Domain.Entities.Securities.MarketData;
+using Qlarissa.Domain.Securities.MarketData;
 using Qlarissa.Infrastructure.PyFinance.Options;
 
 namespace Qlarissa.WebAPI.LivePrices;

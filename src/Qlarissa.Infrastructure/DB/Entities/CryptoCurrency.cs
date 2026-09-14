@@ -6,7 +6,7 @@ public sealed class CryptoCurrency : PubliclyTradedSecurityBase
 {
     public double MarketCapitalization { get; set; }
 
-    internal static CryptoCurrency FromDomainEntity(Domain.Entities.Securities.CryptoCurrency domainEntity)
+    internal static CryptoCurrency FromDomainEntity(Domain.Securities.CryptoCurrency domainEntity)
     {
         CryptoCurrency dbEntity = new();
         PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, dbEntity);
@@ -14,9 +14,9 @@ public sealed class CryptoCurrency : PubliclyTradedSecurityBase
         return dbEntity;
     }
 
-    internal new Domain.Entities.Securities.CryptoCurrency ToDomainEntity()
+    internal new Domain.Securities.CryptoCurrency ToDomainEntity()
     {
-        Domain.Entities.Securities.CryptoCurrency domainEntity = new();
+        Domain.Securities.CryptoCurrency domainEntity = new();
         PubliclyTradedSecurityBase.ToDomainEntity(domainEntity, this);
         domainEntity.MarketCapitalization = MarketCapitalization;
         return domainEntity;
