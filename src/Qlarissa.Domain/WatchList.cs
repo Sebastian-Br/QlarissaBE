@@ -1,8 +1,6 @@
-﻿namespace Qlarissa.Domain.WatchList;
+﻿namespace Qlarissa.Domain;
 
 public sealed class WatchList
 {
-    public int Id { get; set; }
-
     public IEnumerable<WatchedSecurity> WatchedSecurities { get; set; } = [];
 }

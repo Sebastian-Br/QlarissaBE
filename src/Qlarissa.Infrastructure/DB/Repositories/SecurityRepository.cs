@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Qlarissa.Application.Interfaces.Repositories;
+using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
@@ -53,11 +54,11 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         return result.ToDomainEntity();
     }
 
-    public async Task<Application.SecurityManager.SecuritySymbolAndLastDataPointDate?> GetSecuritySymbolAndPriceHistoryLastDataPointDateAsync(int id)
+    public async Task<ISecurityRepository.SecuritySymbolAndLastDataPointDate?> GetSecuritySymbolAndPriceHistoryLastDataPointDateAsync(int id)
     {
         var result = await _context.Set<PubliclyTradedSecurityBase>()
             .Where(s => s.Id == id)
-            .Select(s => new Application.SecurityManager.SecuritySymbolAndLastDataPointDate(s.Symbol, s.PriceHistoryLastDataPointDate))
+            .Select(s => new ISecurityRepository.SecuritySymbolAndLastDataPointDate(s.Symbol, s.PriceHistoryLastDataPointDate))
             .FirstOrDefaultAsync();
         return result;
     }
@@ -97,20 +98,101 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
 
         if (dbEntity == null)
         {
-            return FluentResults.Result.Fail($"Security with ID {security.Id} not found.");
+            return Result.Fail($"Security with ID {security.Id} not found.");
         }
 
         try
         {
             dbEntity.UpdateFromDomainEntity(security);
             await _context.SaveChangesAsync(cancellationToken);
-            return FluentResults.Result.Ok();
-
+            return Result.Ok();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating security with ID {SecurityId}", security.Id);
-            return FluentResults.Result.Fail($"Error updating security with ID {security.Id}: {ex.Message}");
+            return Result.Fail($"Error updating security with ID {security.Id}.");
         }
+    }
+
+    public Task<bool> IsSecurityWatched(int securityId, string userId)
+        => _context.WatchedSecurities.AnyAsync(w => w.SecurityId == securityId && w.WatchedByUserId == userId);
+
+    public async Task<Result> WatchSecurity(int securityId, string userId, bool isPrimaryWatchlist)
+    {
+        try
+        {
+            await _context.WatchedSecurities.AddAsync(new WatchedSecurity
+            {
+                SecurityId = securityId,
+                WatchedByUserId = userId,
+                IsPrimaryWatchlist = isPrimaryWatchlist
+            });
+
+            await _context.SaveChangesAsync();
+            return Result.Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error watching security with ID {SecurityId} for user {UserId}", securityId, userId);
+            return Result.Fail("Error watching this security.");
+        }
+    }
+
+    public async Task<Result> UnwatchSecurity(int securityId, string userId)
+    {
+        try
+        {
+            var watchedSecurity = await _context.WatchedSecurities.FirstOrDefaultAsync(w => w.SecurityId == securityId && w.WatchedByUserId == userId);
+
+            if (watchedSecurity == null)
+            {
+                return Result.Fail($"Security with ID {securityId} is not watched by this user.");
+            }
+
+            _context.WatchedSecurities.Remove(watchedSecurity);
+            await _context.SaveChangesAsync();
+            return Result.Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error unwatching security with ID {SecurityId} for user {UserId}", securityId, userId);
+            return Result.Fail("Error unwatching this security.");
+        }
+    }
+
+    public async Task<IEnumerable<Domain.WatchList>> GetWatchlists(string userId, CancellationToken cancellationToken)
+    {
+        var watchedSecurities = await _context.WatchedSecurities
+            .Where(w => w.WatchedByUserId == userId)
+            .Select(w => new
+            {
+                w.IsPrimaryWatchlist,
+                WatchedSecurity = new Domain.WatchedSecurity()
+                {
+                    SecurityId = w.SecurityId,
+                    Name = w.Security.Name,
+                    Symbol = w.Security.Symbol,
+                    PreviousDaysClosePrice = w.Security.PriceHistory
+                        .OrderByDescending(ph => ph.Id)
+                        .Select(ph => ph.Average)
+                        .FirstOrDefault()
+                }
+            })
+            .ToListAsync(cancellationToken);
+
+        return [
+            new Domain.WatchList
+            {
+                WatchedSecurities = watchedSecurities
+                    .Where(w => w.IsPrimaryWatchlist)
+                    .Select(w => w.WatchedSecurity)
+            },
+            new Domain.WatchList
+            {
+                WatchedSecurities = watchedSecurities
+                    .Where(w => !w.IsPrimaryWatchlist)
+                    .Select(w => w.WatchedSecurity)
+            }
+            ];
     }
 }

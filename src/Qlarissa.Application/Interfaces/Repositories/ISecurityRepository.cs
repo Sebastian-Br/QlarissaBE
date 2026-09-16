@@ -1,6 +1,6 @@
-﻿using Qlarissa.Domain.Securities;
+﻿using Qlarissa.Domain;
+using Qlarissa.Domain.Securities;
 using Qlarissa.Domain.Securities.Base;
-using static Qlarissa.Application.SecurityManager;
 
 namespace Qlarissa.Application.Interfaces.Repositories;
 
@@ -54,4 +54,14 @@ public interface ISecurityRepository
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<FluentResults.Result> UpdateSecurityAsync(PubliclyTradedSecurityBase security, CancellationToken cancellationToken);
+
+    Task<FluentResults.Result> WatchSecurity(int securityId, string userId, bool isPrimaryWatchlist);
+
+    Task<FluentResults.Result> UnwatchSecurity(int securityId, string userId);
+
+    Task<bool> IsSecurityWatched(int securityId, string userId);
+
+    Task<IEnumerable<WatchList>> GetWatchlists(string userId, CancellationToken cancellationToken);
+
+    public record SecuritySymbolAndLastDataPointDate(string Symbol, DateOnly PriceHistoryLastDataPointDate);
 }

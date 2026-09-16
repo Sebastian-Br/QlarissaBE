@@ -71,5 +71,4 @@ public sealed class SecurityManager(ISecurityRepository securityRepository, ICur
         return await _securityRepository.UpdateSecurityAsync(domainEntity, cancellationToken);
     }
 
-    public record SecuritySymbolAndLastDataPointDate(string Symbol, DateOnly PriceHistoryLastDataPointDate);
 }

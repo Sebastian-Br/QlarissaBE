@@ -1,4 +1,4 @@
-﻿namespace Qlarissa.Domain.WatchList;
+﻿namespace Qlarissa.Domain;
 
 public sealed class WatchedSecurity
 {
