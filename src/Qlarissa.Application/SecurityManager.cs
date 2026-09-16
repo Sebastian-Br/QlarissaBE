@@ -2,6 +2,7 @@
 using Qlarissa.Application.Interfaces;
 using Qlarissa.Application.Interfaces.ExternalAPI;
 using Qlarissa.Application.Interfaces.Repositories;
+using Qlarissa.Domain;
 using Qlarissa.Domain.Securities;
 using Qlarissa.Domain.Securities.Base;
 
@@ -53,22 +54,33 @@ public sealed class SecurityManager(ISecurityRepository securityRepository, ICur
     public Task<IEnumerable<SearchResult>> SearchSecuritiesInternallyAsync(string userQuery, CancellationToken cancellationToken)
         => _securityRepository.SearchSecuritiesAsync(userQuery, cancellationToken);
 
-    public async Task<FluentResults.Result> UpdateSecurityAsync(int id, CancellationToken cancellationToken)
+    public async Task<Result> UpdateSecurityAsync(int id, CancellationToken cancellationToken)
     {
         var symbolWithLastDataPointDate = await _securityRepository.GetSecuritySymbolAndPriceHistoryLastDataPointDateAsync(id);
         if (symbolWithLastDataPointDate == null)
         {
-            return FluentResults.Result.Fail($"Most recent price history entry for Security with ID '{id}' could not be found.");
+            return Result.Fail($"Most recent price history entry for Security with ID '{id}' could not be found.");
         }
 
         var domainEntity = await _marketDataClient.GetSecurityWithHistoryFromDateAsync(symbolWithLastDataPointDate.Symbol, symbolWithLastDataPointDate.PriceHistoryLastDataPointDate.AddDays(1), cancellationToken);
         if (domainEntity == null)
         {
-            return FluentResults.Result.Fail($"Security with ticker symbol '{symbolWithLastDataPointDate.Symbol}' could not be fetched from the external API.");
+            return Result.Fail($"Security with ticker symbol '{symbolWithLastDataPointDate.Symbol}' could not be fetched from the external API.");
         }
 
         domainEntity.Id = id;
         return await _securityRepository.UpdateSecurityAsync(domainEntity, cancellationToken);
     }
 
+    public Task<WatchedSecurityMinimal> IsSecurityWatchedAsync(int securityId, string userId)
+        => _securityRepository.IsSecurityWatchedAsync(securityId, userId);
+
+    public Task<Result> WatchSecurityAsync(int securityId, string userId, bool isPrimaryWatchlist)
+        => _securityRepository.WatchSecurityAsync(securityId, userId, isPrimaryWatchlist);
+
+    public Task<Result> UnwatchSecurityAsync(int securityId, string userId)
+        => _securityRepository.UnwatchSecurityAsync(securityId, userId);
+
+    public Task<IEnumerable<WatchList>> GetWatchlistsAsync(string userId, CancellationToken cancellationToken)
+        => _securityRepository.GetWatchlistsAsync(userId, cancellationToken);
 }

@@ -55,13 +55,19 @@ public interface ISecurityRepository
     /// <returns></returns>
     Task<FluentResults.Result> UpdateSecurityAsync(PubliclyTradedSecurityBase security, CancellationToken cancellationToken);
 
-    Task<FluentResults.Result> WatchSecurity(int securityId, string userId, bool isPrimaryWatchlist);
+    Task<FluentResults.Result> WatchSecurityAsync(int securityId, string userId, bool isPrimaryWatchlist);
 
-    Task<FluentResults.Result> UnwatchSecurity(int securityId, string userId);
+    Task<FluentResults.Result> UnwatchSecurityAsync(int securityId, string userId);
 
-    Task<bool> IsSecurityWatched(int securityId, string userId);
+    /// <summary>
+    /// Checks if a security is watched by a user and if it is on the user's primary watchlist.
+    /// </summary>
+    /// <param name="securityId"></param>
+    /// <param name="userId"></param>
+    /// <returns>Never returns null. If the security does not exist, it will return IsWatched = false.</returns>
+    Task<WatchedSecurityMinimal> IsSecurityWatchedAsync(int securityId, string userId);
 
-    Task<IEnumerable<WatchList>> GetWatchlists(string userId, CancellationToken cancellationToken);
+    Task<IEnumerable<WatchList>> GetWatchlistsAsync(string userId, CancellationToken cancellationToken);
 
     public record SecuritySymbolAndLastDataPointDate(string Symbol, DateOnly PriceHistoryLastDataPointDate);
 }

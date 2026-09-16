@@ -83,8 +83,8 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         return result;
     }
 
-    public async Task<bool> SecurityExistsAsync(string tickerSymbol)
-        => await _context.Set<PubliclyTradedSecurityBase>().AnyAsync(s => s.Symbol == tickerSymbol);
+    public Task<bool> SecurityExistsAsync(string tickerSymbol)
+        => _context.Set<PubliclyTradedSecurityBase>().AnyAsync(s => s.Symbol == tickerSymbol);
 
     public async Task<Result> UpdateSecurityAsync(Domain.Securities.Base.PubliclyTradedSecurityBase security, CancellationToken cancellationToken)
     {
@@ -114,10 +114,30 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         }
     }
 
-    public Task<bool> IsSecurityWatched(int securityId, string userId)
-        => _context.WatchedSecurities.AnyAsync(w => w.SecurityId == securityId && w.WatchedByUserId == userId);
+    public async Task<Domain.WatchedSecurityMinimal> IsSecurityWatchedAsync(int securityId, string userId)
+    {
+        var result = await _context.WatchedSecurities
+                .Where(w => w.SecurityId == securityId && w.WatchedByUserId == userId)
+                .Select(w => new Domain.WatchedSecurityMinimal
+                {
+                    IsWatched = true,
+                    IsOnPrimaryWatchlist = w.IsPrimaryWatchlist
+                })
+                .FirstOrDefaultAsync();
 
-    public async Task<Result> WatchSecurity(int securityId, string userId, bool isPrimaryWatchlist)
+        if (result == null)
+        {
+            return new Domain.WatchedSecurityMinimal
+            {
+                IsWatched = false,
+                IsOnPrimaryWatchlist = false
+            };
+        }
+
+        return result;
+    }
+
+    public async Task<Result> WatchSecurityAsync(int securityId, string userId, bool isPrimaryWatchlist)
     {
         try
         {
@@ -131,36 +151,39 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
             await _context.SaveChangesAsync();
             return Result.Ok();
         }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Error watching security with ID {SecurityId} for user {UserId}", securityId, userId);
+            return Result.Fail("This security is already watched.");
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error watching security with ID {SecurityId} for user {UserId}", securityId, userId);
-            return Result.Fail("Error watching this security.");
+            return Result.Fail("Unknown error watching this security.");
         }
     }
 
-    public async Task<Result> UnwatchSecurity(int securityId, string userId)
+    public async Task<Result> UnwatchSecurityAsync(int securityId, string userId)
     {
         try
         {
-            var watchedSecurity = await _context.WatchedSecurities.FirstOrDefaultAsync(w => w.SecurityId == securityId && w.WatchedByUserId == userId);
+            var deleted = await _context.WatchedSecurities.Where(w => w.SecurityId == securityId && w.WatchedByUserId == userId).ExecuteDeleteAsync();
 
-            if (watchedSecurity == null)
+            if (deleted == 0)
             {
                 return Result.Fail($"Security with ID {securityId} is not watched by this user.");
             }
 
-            _context.WatchedSecurities.Remove(watchedSecurity);
-            await _context.SaveChangesAsync();
             return Result.Ok();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error unwatching security with ID {SecurityId} for user {UserId}", securityId, userId);
-            return Result.Fail("Error unwatching this security.");
+            return Result.Fail("Unknown error unwatching this security.");
         }
     }
 
-    public async Task<IEnumerable<Domain.WatchList>> GetWatchlists(string userId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Domain.WatchList>> GetWatchlistsAsync(string userId, CancellationToken cancellationToken)
     {
         var watchedSecurities = await _context.WatchedSecurities
             .Where(w => w.WatchedByUserId == userId)
