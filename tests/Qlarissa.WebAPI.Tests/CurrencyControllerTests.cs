@@ -21,8 +21,8 @@ public class CurrencyControllerTests
         var currencyManagerMock = new Mock<ICurrencyManager>();
         currencyManagerMock.Setup(mgr => mgr.GetCurrenciesAsync()).ReturnsAsync(
         [
-            new Domain.Entities.Currency { Id = 1, Symbol = "USD", Name = "US Dollar" },
-            new Domain.Entities.Currency { Id = 2, Symbol = "EUR", Name = "Euro" }
+            new Domain.Currency { Id = 1, Symbol = "USD", Name = "US Dollar" },
+            new Domain.Currency { Id = 2, Symbol = "EUR", Name = "Euro" }
         ]);
         var controller = new CurrencyController(currencyManagerMock.Object);
 

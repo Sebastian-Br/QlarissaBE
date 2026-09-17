@@ -1,9 +1,4 @@
-﻿
-using Qlarissa.Domain;
-using Qlarissa.Domain.Securities;
-using Qlarissa.Domain.Securities.Base;
-using Qlarissa.Domain.Securities.MarketData;
-using Qlarissa.Infrastructure.DB.Entities.Base;
+﻿using Qlarissa.Infrastructure.DB.Entities.Base;
 using Qlarissa.Infrastructure.DB.Entities.MarketData;
 
 namespace Qlarissa.Infrastructure.Tests.DB;
@@ -13,7 +8,7 @@ public class MapperTests
     [Fact]
     public void MapCurrency_FromDomainEntity()
     {
-        Currency domainEntity = new() { Id = 1, Symbol = "USD", Name = "US Dollar" };
+        Domain.Currency domainEntity = new() { Id = 1, Symbol = "USD", Name = "US Dollar" };
         var dbEntity = Infrastructure.DB.Entities.Currency.FromDomainEntity(domainEntity);
         Assert.Equal(domainEntity.Id, dbEntity.Id);
         Assert.Equal(domainEntity.Symbol, dbEntity.Symbol);
@@ -34,7 +29,7 @@ public class MapperTests
     public void MapPubliclyTradedSecurityBase_FromDomainEntity()
     {
 
-        ETF domainEntity = new() { Id = 9, Name = "iShares S&P500", 
+        Domain.Securities.ETF domainEntity = new() { Id = 9, Name = "iShares S&P500", 
             Currency = new() { Id = 1, Name = "United States Dollar", Symbol = "USD" }, 
             Symbol="ETFSymbol", Price = 666.6, PriceLastUpdatedTime = new(2025,1,1), PriceHistoryLastDataPointDate = new(2024, 12,30),
             PriceHistory = GetSimplePriceHistoryTestData_DomainEntity(),
@@ -101,7 +96,7 @@ public class MapperTests
     public void MapETF_FromDomainEntity()
     {
 
-        ETF domainEntity = new()
+        Domain.Securities.ETF domainEntity = new()
         {
             Id = 9,
             Name = "iShares S&P500",
@@ -163,8 +158,9 @@ public class MapperTests
         dbEntity.PriceHistory = GetSimplePriceHistoryTestData_DbEntity(dbEntity);
         dbEntity.DividendPayouts = GetSimpleDividendPayoutsTestData_DbEntity(dbEntity);
 
-        ETF? domainEntity = dbEntity.ToDomainEntity() as ETF;
+        Domain.Securities.ETF? domainEntity = dbEntity.ToDomainEntity() as Domain.Securities.ETF;
 
+        Assert.NotNull(domainEntity);
         Assert.Equal(dbEntity.Id, domainEntity.Id);
         Assert.Equal(dbEntity.Name, domainEntity.Name);
         Assert.Equal(dbEntity.Currency.Id, domainEntity.Currency.Id);
@@ -200,7 +196,7 @@ public class MapperTests
     public void MapStock_FromDomainEntity()
     {
 
-        Stock domainEntity = new()
+        Domain.Securities.Stock domainEntity = new()
         {
             Id = 9,
             Name = "Microsoft",
@@ -266,7 +262,7 @@ public class MapperTests
         dbEntity.PriceHistory = GetSimplePriceHistoryTestData_DbEntity(dbEntity);
         dbEntity.DividendPayouts = GetSimpleDividendPayoutsTestData_DbEntity(dbEntity);
 
-        Stock? domainEntity = ((dbEntity.ToDomainEntity() as Stock));
+        Domain.Securities.Stock? domainEntity = dbEntity.ToDomainEntity() as Domain.Securities.Stock;
 
         Assert.NotNull(domainEntity);
         Assert.Equal(dbEntity.Id, domainEntity.Id);
