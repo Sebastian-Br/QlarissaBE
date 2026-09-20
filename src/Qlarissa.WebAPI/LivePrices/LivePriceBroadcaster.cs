@@ -15,10 +15,10 @@ public sealed class LivePriceBroadcaster(
     ILogger<LivePriceBroadcaster> logger)
     : BackgroundService
 {
-    private readonly ILivePriceService _livePriceService = livePriceService;
-    private readonly IHubContext<LivePriceHub> _hubContext = hubContext;
-    private readonly LivePriceOptions _options = options.Value;
-    private readonly ILogger<LivePriceBroadcaster> _logger = logger;
+    private readonly ILivePriceService _livePriceService = livePriceService ?? throw new ArgumentNullException(nameof(livePriceService));
+    private readonly IHubContext<LivePriceHub> _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
+    private readonly LivePriceOptions _options = options.Value ?? throw new ArgumentNullException(nameof(options));
+    private readonly ILogger<LivePriceBroadcaster> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

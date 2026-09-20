@@ -29,4 +29,9 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
     /// The Date of the last DailyPrice data point in the PriceHistory collection. This is used to determine if the price history is up to date.
     /// </summary>
     public DateOnly PriceHistoryLastDataPointDate {  get; set; }
+
+    /// <summary>
+    /// DateTime at which information (like the BusinessSummary, NetExpense ratio, etc.) were last updated, excluding the Price and price/split/dividend histories.
+    /// </summary>
+    public DateTime InformationLastUpdatedTime { get; set; }
 }

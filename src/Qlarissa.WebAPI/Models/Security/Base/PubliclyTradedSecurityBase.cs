@@ -1,5 +1,4 @@
-﻿using FluentResults;
-using Qlarissa.WebAPI.Models.Security.MarketData;
+﻿using Qlarissa.WebAPI.Models.Security.MarketData;
 
 namespace Qlarissa.WebAPI.Models.Security.Base;
 
@@ -27,7 +26,7 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
         webApiModel.Symbol = domainEntity.Symbol;
         webApiModel.Price = domainEntity.Price;
         webApiModel.PriceLastUpdatedTime = domainEntity.PriceLastUpdatedTime;
-        //webApiModel.LastCompleteUpdateTime = domainEntity.PriceHistoryLastDataPointDate; TODO: Add different property to represent a 'LastCompleteUpdateTime'.
+        webApiModel.LastCompleteUpdateTime = domainEntity.InformationLastUpdatedTime;
         webApiModel.PriceHistory = domainEntity.PriceHistory.Select(DailyPrice.FromDomainEntity).ToList();
     }
 

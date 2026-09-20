@@ -206,12 +206,14 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         return [
             new Domain.WatchList
             {
+                IsPrimary = true,
                 WatchedSecurities = watchedSecurities
                     .Where(w => w.IsPrimaryWatchlist)
                     .Select(w => w.WatchedSecurity)
             },
             new Domain.WatchList
             {
+                IsPrimary = false,
                 WatchedSecurities = watchedSecurities
                     .Where(w => !w.IsPrimaryWatchlist)
                     .Select(w => w.WatchedSecurity)

@@ -6,7 +6,44 @@ namespace Qlarissa.Infrastructure.Tests.DB;
 public class MapperTests
 {
     [Fact]
-    public void MapCurrency_FromDomainEntity()
+    public void DailyPrice_UpdateFromDbEntity_DoesNotUpdateDateOrSecurityId()
+    {
+        DailyPrice p = new()
+        {
+            Open = 10.0,
+            Close = 10.2,
+            High = 10.3,
+            Low = 10.0,
+            Average = 10.1,
+            Date = new DateOnly(2022, 8, 23),
+            SecurityId = 2
+        };
+
+        DailyPrice incomingDbEntity = new()
+        {
+            Open = 5.0,
+            Close = 5.1,
+            High = 5.15,
+            Low = 5.0,
+            Average = 5.05,
+            // Date and SecurityId are checked before, thus they will be the same. This is just to guarantee that the implementation does not attempt to update them.
+            Date = new DateOnly(9999, 9, 20),
+            SecurityId = 4
+        };
+
+        p.UpdateFromDbEntity(incomingDbEntity);
+
+        Assert.Equal(p.Open, incomingDbEntity.Open);
+        Assert.Equal(p.Close, incomingDbEntity.Close);
+        Assert.Equal(p.High, incomingDbEntity.High);
+        Assert.Equal(p.Low, incomingDbEntity.Low);
+        Assert.Equal(p.Average, incomingDbEntity.Average);
+        Assert.NotEqual(p.Date, incomingDbEntity.Date);
+        Assert.NotEqual(p.SecurityId, incomingDbEntity.SecurityId);
+    }
+
+    [Fact]
+    public void Currency_FromDomainEntity()
     {
         Domain.Currency domainEntity = new() { Id = 1, Symbol = "USD", Name = "US Dollar" };
         var dbEntity = Infrastructure.DB.Entities.Currency.FromDomainEntity(domainEntity);
@@ -16,7 +53,7 @@ public class MapperTests
     }
 
     [Fact]
-    public void MapCurrency_ToDomainEntity()
+    public void Currency_ToDomainEntity()
     {
         Infrastructure.DB.Entities.Currency dbEntity = new() { Id = 1, Symbol = "USD", Name = "US Dollar" };
         var domainEntity = dbEntity.ToDomainEntity();
@@ -26,7 +63,7 @@ public class MapperTests
     }
 
     [Fact]
-    public void MapPubliclyTradedSecurityBase_FromDomainEntity()
+    public void PubliclyTradedSecurityBase_FromDomainEntity()
     {
 
         Domain.Securities.ETF domainEntity = new() { Id = 9, Name = "iShares S&P500", 
@@ -58,7 +95,7 @@ public class MapperTests
     }
 
     [Fact]
-    public void MapPubliclyTradedSecurityBase_ToDomainEntity()
+    public void PubliclyTradedSecurityBase_ToDomainEntity()
     {
         Infrastructure.DB.Entities.Stock dbEntity = new() { Id = 7, Name = "Microsoft",
             CurrencyId = 10, Currency = new() { Id = 10, Symbol = "USD", Name = "US Dollar" },
@@ -93,7 +130,7 @@ public class MapperTests
     }
 
     [Fact]
-    public void MapETF_FromDomainEntity()
+    public void ETF_FromDomainEntity()
     {
 
         Domain.Securities.ETF domainEntity = new()
@@ -106,7 +143,8 @@ public class MapperTests
             PriceLastUpdatedTime = new(2025, 1, 1),
             PriceHistoryLastDataPointDate = new(2024, 12, 30),
             PriceHistory = GetSimplePriceHistoryTestData_DomainEntity(),
-            DistributionEvents = GetSimpleDividendPayoutsTestData_DomainEntity()
+            DistributionEvents = GetSimpleDividendPayoutsTestData_DomainEntity(),
+            Splits = [new Domain.Securities.MarketData.Split() { Id = 9, Date = new DateOnly(2019, 1, 20), SplitRatio = 2.0 }]
         };
 
         PubliclyTradedSecurityBase dbEntity =   PubliclyTradedSecurityBase.FromDomainEntity(domainEntity);
@@ -138,10 +176,16 @@ public class MapperTests
             Assert.Equal(domainEntity.DistributionEvents[i].PayoutDate, dbEntity.DividendPayouts.ElementAt(i).PayoutDate);
             Assert.Equal(domainEntity.Id, dbEntity.DividendPayouts.ElementAt(i).SecurityId);
         }
+
+        Assert.NotEmpty(dbEntity.Splits);
+        Assert.Equal(domainEntity.Splits.First().Id, dbEntity.Splits.First().Id);
+        Assert.Equal(domainEntity.Splits.First().Date, dbEntity.Splits.First().Date);
+        Assert.Equal(domainEntity.Splits.First().SplitRatio, dbEntity.Splits.First().SplitRatio);
+        Assert.Equal(domainEntity.Id, dbEntity.Splits.First().SecurityId);
     }
 
     [Fact]
-    public void MapETF_ToDomainEntity()
+    public void ETF_ToDomainEntity()
     {
         Infrastructure.DB.Entities.ETF dbEntity = new()
         {
@@ -193,7 +237,7 @@ public class MapperTests
     }
 
     [Fact]
-    public void MapStock_FromDomainEntity()
+    public void Stock_FromDomainEntity()
     {
 
         Domain.Securities.Stock domainEntity = new()
@@ -244,7 +288,7 @@ public class MapperTests
     }
 
     [Fact]
-    public void MapStock_ToDomainEntity()
+    public void Stock_ToDomainEntity()
     {
         Infrastructure.DB.Entities.Stock dbEntity = new()
         {

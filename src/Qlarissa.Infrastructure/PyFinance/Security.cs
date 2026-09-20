@@ -97,9 +97,11 @@ public class Security
         domainEntity.ExchangeName = Info.FullExchangeName;
         domainEntity.ExchangeShortName = Info.Exchange;
         domainEntity.Symbol = Info.Symbol;
-        domainEntity.PriceHistory = History.Select(h => h.ToDomainEntity()).ToList();
+        domainEntity.PriceHistory = History.Select(h => h.ToDomainEntity()).OrderBy(h => h.Date).ToList();
         domainEntity.Price = Info.FullDayPrice;
-        domainEntity.PriceLastUpdatedTime = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
+        domainEntity.PriceLastUpdatedTime = now;
+        domainEntity.InformationLastUpdatedTime = now;
 
         return domainEntity;
     }

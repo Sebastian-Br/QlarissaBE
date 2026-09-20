@@ -8,11 +8,10 @@ public sealed class UserWatchlists
 
     public static UserWatchlists FromDomainEntity(IEnumerable<Domain.WatchList> domainWatchlists)
     {
-        var domainWatchlistsAsList = domainWatchlists.ToList();
         return new UserWatchlists
         {
-            PrimaryWatchlist = domainWatchlistsAsList[0].WatchedSecurities.Select(WatchedSecurity.FromDomainEntity).ToList(),
-            SecondaryWatchlist = domainWatchlistsAsList[1].WatchedSecurities.Select(WatchedSecurity.FromDomainEntity).ToList()
+            PrimaryWatchlist = domainWatchlists.FirstOrDefault(ws => ws.IsPrimary)?.WatchedSecurities.Select(WatchedSecurity.FromDomainEntity).ToList() ?? [],
+            SecondaryWatchlist = domainWatchlists.FirstOrDefault(ws => !ws.IsPrimary)?.WatchedSecurities.Select(WatchedSecurity.FromDomainEntity).ToList() ?? []
         };
     }
 }
