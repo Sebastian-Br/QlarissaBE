@@ -13,6 +13,6 @@ public class HoldingEvent
 
 public enum HoldingEventType
 {
-    Buy,
-    Sell,
+    Purchase,
+    Sale,
 }
