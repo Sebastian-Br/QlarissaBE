@@ -11,6 +11,4 @@ public interface ICurrencyManager
     /// </summary>
     /// <returns></returns>
     public Task<IEnumerable<Currency>> GetCurrenciesAsync();
-
-    Task AddCurrencyAsync(Currency security);
 }

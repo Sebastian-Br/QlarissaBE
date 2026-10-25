@@ -8,9 +8,6 @@ public class CurrencyManager(ICurrencyRepository currencyRepository) : ICurrency
 {
     private readonly ICurrencyRepository _currencyRepository = currencyRepository ?? throw new ArgumentNullException(nameof(currencyRepository));
 
-    public Task AddCurrencyAsync(Currency security)
-        => _currencyRepository.AddCurrencyAsync(security);
-
     public Task<IEnumerable<Currency>> GetCurrenciesAsync()
         => _currencyRepository.GetCurrenciesAsync();
 

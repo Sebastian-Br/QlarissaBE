@@ -20,18 +20,4 @@ public sealed class CurrencyRepository(ILogger<CurrencyRepository> logger, Appli
     {
         return await _context.Currencies.AsNoTracking().Select(c => c.ToDomainEntity()).ToListAsync();
     }
-
-    public async Task AddCurrencyAsync(Domain.Currency security)
-    {
-        try
-        {
-            var dbEntity = Currency.FromDomainEntity(security);
-            _context.Set<Currency>().Add(dbEntity);
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateException ex)
-        {
-            _logger.LogWarning(ex, "Failed to add currency.");
-        }
-    }
 }
