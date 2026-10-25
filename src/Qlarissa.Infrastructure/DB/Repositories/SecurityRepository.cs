@@ -1,18 +1,18 @@
 ﻿using FluentResults;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
 using Qlarissa.Application.Interfaces.Repositories;
 using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Infrastructure.DB.Entities.Base;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
-public sealed class SecurityRepository(ILogger<SecurityRepository> logger, HybridCache cache, ApplicationDbContext context) : ISecurityRepository
+public sealed class SecurityRepository(ILogger<SecurityRepository> logger, FusionCache cache, ApplicationDbContext context) : ISecurityRepository
 {
     private readonly ILogger<SecurityRepository> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    private readonly HybridCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+    private readonly FusionCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
 
     private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
@@ -44,11 +44,11 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Hybri
 
     public async Task<Domain.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityFromCacheAsync(int id, CancellationToken cancellationToken)
     {
-        return await _cache.GetOrCreateAsync(
+        return await _cache.GetOrSetAsync(
                 FullSecurityKey(id),
                 async token => await GetSecurityAsync(id, token),
                 tags: [SecurityTag(id)],
-                cancellationToken: cancellationToken
+                token: cancellationToken
             );
     }
 
@@ -137,7 +137,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Hybri
         {
             dbEntity.UpdateFromDomainEntity(security);
             await _context.SaveChangesAsync(cancellationToken);
-            await cache.RemoveByTagAsync(SecurityTag(security.Id), cancellationToken);
+            await cache.RemoveByTagAsync(SecurityTag(security.Id), token: cancellationToken);
             return Result.Ok();
         }
         catch (Exception ex)

@@ -2,6 +2,7 @@ using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Qlarissa.Application;
@@ -18,6 +19,7 @@ using Qlarissa.Infrastructure.PyFinance;
 using Qlarissa.Infrastructure.PyFinance.Options;
 using Qlarissa.WebAPI.LivePrices;
 using System.Text;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Qlarissa.WebAPI;
 
@@ -30,13 +32,22 @@ public class Program
 
         // Add services to the container.
 
-        builder.Services.AddHybridCache(options =>
-        {
-            options.DefaultEntryOptions = new HybridCacheEntryOptions
+        builder.Services.AddFusionCache()
+            .TryWithAutoSetup()
+            .WithDefaultEntryOptions(opt => opt
+                .SetMemoryCacheDuration(TimeSpan.FromMinutes(30))
+            );
+
+        builder.Services.AddFusionCache("SearchCache")
+            .WithMemoryCache(new MemoryCache(new MemoryCacheOptions
             {
-                LocalCacheExpiration = TimeSpan.FromMinutes(10)
-            };
-        });
+                // stores a maximum of 10000 search queries along with their result collections
+                SizeLimit = 10000, // for this to work, you must set the Size property when adding cache entries
+                CompactionPercentage = 0.20
+            }))
+            .WithDefaultEntryOptions(opt => opt
+                .SetMemoryCacheDuration(TimeSpan.FromMinutes(30))
+            );
 
         builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
         builder.Services.AddIdentityCore<QlarissaUser>()
