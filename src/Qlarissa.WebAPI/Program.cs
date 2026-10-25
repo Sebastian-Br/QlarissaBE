@@ -1,5 +1,7 @@
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Qlarissa.Application;
@@ -28,7 +30,14 @@ public class Program
 
         // Add services to the container.
 
-        builder.Services.AddHybridCache();
+        builder.Services.AddHybridCache(options =>
+        {
+            options.DefaultEntryOptions = new HybridCacheEntryOptions
+            {
+                LocalCacheExpiration = TimeSpan.FromMinutes(10)
+            };
+        });
+
         builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
         builder.Services.AddIdentityCore<QlarissaUser>()
         .AddRoles<IdentityRole>()

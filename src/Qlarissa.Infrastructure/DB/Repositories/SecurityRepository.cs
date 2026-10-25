@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
 using Qlarissa.Application.Interfaces.Repositories;
 using Qlarissa.Infrastructure.DB.Entities;
@@ -7,17 +8,48 @@ using Qlarissa.Infrastructure.DB.Entities.Base;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
-public sealed class SecurityRepository(ILogger<SecurityRepository> logger, ApplicationDbContext context) : ISecurityRepository
+public sealed class SecurityRepository(ILogger<SecurityRepository> logger, HybridCache cache, ApplicationDbContext context) : ISecurityRepository
 {
     private readonly ILogger<SecurityRepository> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
+    private readonly HybridCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+
     private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+
+    /// <summary>
+    /// You must invalidate this cache tag when a security is updated.
+    /// </summary>
+    /// <param name="id">The id of the security.</param>
+    /// <returns>The tag for a security.</returns>
+    private string SecurityTag(int id) => $"security:{id}";
+
+    /// <summary>
+    /// Generates a cache key for the full security entity.
+    /// </summary>
+    /// <param name="id">The id of the security.</param>
+    private string FullSecurityKey(int id) => $"security:full:{id}";
+
+    /// <summary>
+    /// Generates a cache key for the basic security entity, without loaded collections.
+    /// </summary>
+    /// <param name="id">The id of the security.</param>
+    private string BasicSecurityKey(int id) => $"security:basic:{id}";
 
     public async Task AddSecurityAsync(Domain.Securities.Base.PubliclyTradedSecurityBase security, CancellationToken cancellationToken)
     {
         PubliclyTradedSecurityBase dbEntity = PubliclyTradedSecurityBase.FromDomainEntity(security);
         _context.Set<PubliclyTradedSecurityBase>().Add(dbEntity);
         await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<Domain.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityFromCacheAsync(int id, CancellationToken cancellationToken)
+    {
+        return await _cache.GetOrCreateAsync(
+                FullSecurityKey(id),
+                async token => await GetSecurityAsync(id, token),
+                tags: [SecurityTag(id)],
+                cancellationToken: cancellationToken
+            );
     }
 
     public async Task<Domain.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityAsync(int id, CancellationToken cancellationToken)
@@ -105,6 +137,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Appli
         {
             dbEntity.UpdateFromDomainEntity(security);
             await _context.SaveChangesAsync(cancellationToken);
+            await cache.RemoveByTagAsync(SecurityTag(security.Id), cancellationToken);
             return Result.Ok();
         }
         catch (Exception ex)

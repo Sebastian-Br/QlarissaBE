@@ -12,7 +12,7 @@ public interface ISecurityRepository
     /// <param name="id"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<PubliclyTradedSecurityBase?> GetSecurityAsync(int id, CancellationToken cancellationToken);
+    Task<PubliclyTradedSecurityBase?> GetSecurityFromCacheAsync(int id, CancellationToken cancellationToken);
 
     /// <summary>
     /// Gets a security with its currency by ID, but does not load navigation collections. 
