@@ -28,6 +28,7 @@ public class Program
 
         // Add services to the container.
 
+        builder.Services.AddHybridCache();
         builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
         builder.Services.AddIdentityCore<QlarissaUser>()
         .AddRoles<IdentityRole>()
