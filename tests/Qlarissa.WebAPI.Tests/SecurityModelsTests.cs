@@ -89,7 +89,7 @@ public class SecurityModelsTests
             SecurityId = 1,
             Name = "Some Company",
             Symbol = "SOCO",
-            PreviousDaysClosePrice = 234.5
+            PreviousClosePrice = 234.5
         };
 
         var apiModel = Models.Watchlist.WatchedSecurity.FromDomainEntity(domainEntity);
@@ -98,7 +98,7 @@ public class SecurityModelsTests
         Assert.Equal(domainEntity.SecurityId, apiModel.SecurityId);
         Assert.Equal(domainEntity.Name, apiModel.Name);
         Assert.Equal(domainEntity.Symbol, apiModel.Symbol);
-        Assert.Equal(domainEntity.PreviousDaysClosePrice, apiModel.PreviousDaysClosePrice);
+        Assert.Equal(domainEntity.PreviousClosePrice, apiModel.PreviousClosePrice);
     }
 
     [Fact]
@@ -125,14 +125,14 @@ public class SecurityModelsTests
                                Name = "Company 1 Inc.",
                                Symbol = "CO1",
                                SecurityId = 4,
-                               PreviousDaysClosePrice = 109.5
+                               PreviousClosePrice = 109.5
                            },
                            new()
                            {
                                Name = "ETF 1",
                                Symbol = "ETF1",
                                SecurityId = 5,
-                               PreviousDaysClosePrice = 55.8
+                               PreviousClosePrice = 55.8
                            }
                         ]
                 },
@@ -145,14 +145,14 @@ public class SecurityModelsTests
                                Name = "Currency 1",
                                Symbol = "C1",
                                SecurityId = 7,
-                               PreviousDaysClosePrice = 1.4
+                               PreviousClosePrice = 1.4
                            },
                            new()
                            {
                                Name = "Cryptocurrency 1",
                                Symbol = "CR1",
                                SecurityId = 12,
-                               PreviousDaysClosePrice = 2789
+                               PreviousClosePrice = 2789
                            }
                         ]
                 }
@@ -165,22 +165,22 @@ public class SecurityModelsTests
         Assert.Equal(apiModel.PrimaryWatchlist[0].Name, domainWatchlists[0].WatchedSecurities.ElementAt(0).Name);
         Assert.Equal(apiModel.PrimaryWatchlist[0].Symbol, domainWatchlists[0].WatchedSecurities.ElementAt(0).Symbol);
         Assert.Equal(apiModel.PrimaryWatchlist[0].SecurityId, domainWatchlists[0].WatchedSecurities.ElementAt(0).SecurityId);
-        Assert.Equal(apiModel.PrimaryWatchlist[0].PreviousDaysClosePrice, domainWatchlists[0].WatchedSecurities.ElementAt(0).PreviousDaysClosePrice);
+        Assert.Equal(apiModel.PrimaryWatchlist[0].PreviousClosePrice, domainWatchlists[0].WatchedSecurities.ElementAt(0).PreviousClosePrice);
 
         Assert.Equal(apiModel.PrimaryWatchlist[1].Name, domainWatchlists[0].WatchedSecurities.ElementAt(1).Name);
         Assert.Equal(apiModel.PrimaryWatchlist[1].Symbol, domainWatchlists[0].WatchedSecurities.ElementAt(1).Symbol);
         Assert.Equal(apiModel.PrimaryWatchlist[1].SecurityId, domainWatchlists[0].WatchedSecurities.ElementAt(1).SecurityId);
-        Assert.Equal(apiModel.PrimaryWatchlist[1].PreviousDaysClosePrice, domainWatchlists[0].WatchedSecurities.ElementAt(1).PreviousDaysClosePrice);
+        Assert.Equal(apiModel.PrimaryWatchlist[1].PreviousClosePrice, domainWatchlists[0].WatchedSecurities.ElementAt(1).PreviousClosePrice);
 
         Assert.Equal(apiModel.SecondaryWatchlist[0].Name, domainWatchlists[1].WatchedSecurities.ElementAt(0).Name);
         Assert.Equal(apiModel.SecondaryWatchlist[0].Symbol, domainWatchlists[1].WatchedSecurities.ElementAt(0).Symbol);
         Assert.Equal(apiModel.SecondaryWatchlist[0].SecurityId, domainWatchlists[1].WatchedSecurities.ElementAt(0).SecurityId);
-        Assert.Equal(apiModel.SecondaryWatchlist[0].PreviousDaysClosePrice, domainWatchlists[1].WatchedSecurities.ElementAt(0).PreviousDaysClosePrice);
+        Assert.Equal(apiModel.SecondaryWatchlist[0].PreviousClosePrice, domainWatchlists[1].WatchedSecurities.ElementAt(0).PreviousClosePrice);
 
         Assert.Equal(apiModel.SecondaryWatchlist[1].Name, domainWatchlists[1].WatchedSecurities.ElementAt(1).Name);
         Assert.Equal(apiModel.SecondaryWatchlist[1].Symbol, domainWatchlists[1].WatchedSecurities.ElementAt(1).Symbol);
         Assert.Equal(apiModel.SecondaryWatchlist[1].SecurityId, domainWatchlists[1].WatchedSecurities.ElementAt(1).SecurityId);
-        Assert.Equal(apiModel.SecondaryWatchlist[1].PreviousDaysClosePrice, domainWatchlists[1].WatchedSecurities.ElementAt(1).PreviousDaysClosePrice);
+        Assert.Equal(apiModel.SecondaryWatchlist[1].PreviousClosePrice, domainWatchlists[1].WatchedSecurities.ElementAt(1).PreviousClosePrice);
     }
 
     /// <summary>
@@ -207,7 +207,8 @@ public class SecurityModelsTests
             PriceHistory = GeneratePriceHistoryDomainEntity(),
             Price = 102.7,
             PriceLastUpdatedTime = DateTime.UtcNow,
-            PriceHistoryLastDataPointDate = new DateOnly(2022, 8, 30)
+            // PriceHistoryLastDataPointDate = new DateOnly(2022, 8, 30), -- duplicated not required for presentation layer
+            InformationLastUpdatedTime = new DateTime(2022, 8, 30, 12, 0, 0, DateTimeKind.Utc)
         };
 
         var apiModel = Models.Security.Base.PubliclyTradedSecurityBase.FromDomainEntity(domainEntity);
@@ -240,6 +241,95 @@ public class SecurityModelsTests
 
         Assert.Equal(domainEntity.Price, apiModel.Price);
         Assert.Equal(domainEntity.PriceLastUpdatedTime, apiModel.PriceLastUpdatedTime);
+        Assert.Equal(domainEntity.InformationLastUpdatedTime, apiModel.LastCompleteUpdateTime);
+    }
+
+    [Fact]
+    public void Stock_FromDomainEntity()
+    {
+        Domain.Securities.Stock domainEntity = new()
+        {
+            Id = 1,
+            Name = "Some Company Inc.",
+            ShortName = "Some Company",
+            Currency = new Domain.Currency()
+            {
+                Id = 2,
+                Symbol = "USD",
+                Name = "United States Dollar"
+            },
+            SecurityType = Domain.Securities.Base.SecurityType.Stock,
+            ExchangeName = "Exchange",
+            ExchangeShortName = "EXCHG",
+            Symbol = "SOCO",
+            PriceHistory = GeneratePriceHistoryDomainEntity(),
+            Price = 102.7,
+            PriceLastUpdatedTime = DateTime.UtcNow,
+            // PriceHistoryLastDataPointDate = new DateOnly(2022, 8, 30), -- duplicated not required for presentation layer
+            InformationLastUpdatedTime = new DateTime(2022, 8, 30, 12, 0, 0, DateTimeKind.Utc),
+            ISIN = "US1234567890",
+            InvestorRelationsURL = "https://www.somecompany.com/investors",
+            BusinessSummary = "Some Company is a leading acceptor of your cash.",
+            SharesOutstanding = 1000000,
+            DividendRate = 1.5,
+            TargetMeanPrice = 120.0,
+            RecommendationMean = 2.0,
+            DividendPayouts = GenerateDividendHistory(),
+            Splits = GenerateSplitHistory()
+        };
+
+        var apiModel = Models.Security.Base.PubliclyTradedSecurityBase.FromDomainEntity(domainEntity) as Models.Security.Stock;
+
+        Assert.NotNull(apiModel);
+        Assert.Equal(domainEntity.Id, apiModel.Id);
+        Assert.Equal(domainEntity.Name, apiModel.Name);
+        Assert.Equal(domainEntity.ShortName, apiModel.ShortName);
+        Assert.Equal(domainEntity.Currency.Id, apiModel.Currency.Id);
+        Assert.Equal(domainEntity.Currency.Symbol, apiModel.Currency.Symbol);
+        Assert.Equal(domainEntity.Currency.Name, apiModel.Currency.Name);
+        Assert.Equal((int)domainEntity.SecurityType, (int)apiModel.SecurityType);
+        Assert.Equal(domainEntity.ExchangeName, apiModel.ExchangeName);
+        Assert.Equal(domainEntity.ExchangeShortName, apiModel.ExchangeShortName);
+        Assert.Equal(domainEntity.Symbol, apiModel.Symbol);
+
+        var apiModelPriceHistoryArray = apiModel.PriceHistory.ToArray();
+        var domainEntityPriceHistoryArray = domainEntity.PriceHistory.ToArray();
+
+        for (int i = 0; i < domainEntity.PriceHistory.Count; i++)
+        {
+            Assert.Equal(domainEntityPriceHistoryArray[i].Id, apiModelPriceHistoryArray[i].Id);
+            Assert.Equal(domainEntityPriceHistoryArray[i].Open, apiModelPriceHistoryArray[i].Open);
+            Assert.Equal(domainEntityPriceHistoryArray[i].Close, apiModelPriceHistoryArray[i].Close);
+            Assert.Equal(domainEntityPriceHistoryArray[i].High, apiModelPriceHistoryArray[i].High);
+            Assert.Equal(domainEntityPriceHistoryArray[i].Low, apiModelPriceHistoryArray[i].Low);
+            Assert.Equal(domainEntityPriceHistoryArray[i].Average, apiModelPriceHistoryArray[i].Average);
+            Assert.Equal(domainEntityPriceHistoryArray[i].Date, apiModelPriceHistoryArray[i].Date);
+        }
+
+        Assert.Equal(domainEntity.Price, apiModel.Price);
+        Assert.Equal(domainEntity.PriceLastUpdatedTime, apiModel.PriceLastUpdatedTime);
+        Assert.Equal(domainEntity.InformationLastUpdatedTime, apiModel.LastCompleteUpdateTime);
+        Assert.Equal(domainEntity.ISIN, apiModel.ISIN);
+        Assert.Equal(domainEntity.InvestorRelationsURL, apiModel.InvestorRelationsURL);
+        Assert.Equal(domainEntity.BusinessSummary, apiModel.BusinessSummary);
+        Assert.Equal(domainEntity.SharesOutstanding, apiModel.SharesOutstanding);
+        Assert.Equal(domainEntity.DividendRate, apiModel.DividendRate);
+        Assert.Equal(domainEntity.TargetMeanPrice, apiModel.TargetMeanPrice);
+        Assert.Equal(domainEntity.RecommendationMean, apiModel.RecommendationMean);
+
+        for (int i = 0; i < domainEntity.DividendPayouts.Count; i++)
+        {
+            Assert.Equal(domainEntity.DividendPayouts.ElementAt(i).Id, apiModel.DividendPayouts.ElementAt(i).Id);
+            Assert.Equal(domainEntity.DividendPayouts.ElementAt(i).PayoutDate, apiModel.DividendPayouts.ElementAt(i).PayoutDate);
+            Assert.Equal(domainEntity.DividendPayouts.ElementAt(i).PayoutAmount, apiModel.DividendPayouts.ElementAt(i).PayoutAmount);
+        }
+
+        for (int i = 0; i < domainEntity.Splits.Count(); i++)
+        {
+            Assert.Equal(domainEntity.Splits.ElementAt(i).Id, apiModel.Splits.ElementAt(i).Id);
+            Assert.Equal(domainEntity.Splits.ElementAt(i).Date, apiModel.Splits.ElementAt(i).Date);
+            Assert.Equal(domainEntity.Splits.ElementAt(i).SplitRatio, apiModel.Splits.ElementAt(i).SplitRatio);
+        }
     }
 
     private Domain.Securities.MarketData.DailyPrice[] GeneratePriceHistoryDomainEntity()

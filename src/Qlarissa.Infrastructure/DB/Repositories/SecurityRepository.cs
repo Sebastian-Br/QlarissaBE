@@ -228,9 +228,9 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Fusio
                     SecurityId = w.SecurityId,
                     Name = w.Security.Name,
                     Symbol = w.Security.Symbol,
-                    PreviousDaysClosePrice = w.Security.PriceHistory
+                    PreviousClosePrice = w.Security.PriceHistory
                         .OrderByDescending(ph => ph.Id)
-                        .Select(ph => ph.Average)
+                        .Select(ph => ph.Close)
                         .FirstOrDefault()
                 }
             })

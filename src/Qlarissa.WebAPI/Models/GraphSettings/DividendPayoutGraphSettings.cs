@@ -13,4 +13,11 @@ public class DividendPayoutGraphSettings : GraphSettingsBase<Domain.GraphSetting
         domainEntity.IsSynchronizedWithSecurityGraph = IsSynchronizedWithSecurityGraph;
         return domainEntity;
     }
+
+    public override void FromDomainEntity(Domain.GraphSettings.DividendPayoutGraphSettings domainEntity)
+    {
+        base.FromDomainEntity(domainEntity);
+        ShowDividendYield = domainEntity.ShowDividendYield;
+        IsSynchronizedWithSecurityGraph = domainEntity.IsSynchronizedWithSecurityGraph;
+    }
 }

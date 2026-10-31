@@ -20,4 +20,12 @@ public abstract class GraphSettingsBase<TGraphSettings> where TGraphSettings : D
             PriceCardHoverDistance = PriceCardHoverDistance
         };
     }
+
+    public virtual void FromDomainEntity(TGraphSettings domainEntity)
+    {
+        StartDate = domainEntity.StartDate;
+        EndDate = domainEntity.EndDate;
+        LogarithmicScale = domainEntity.LogarithmicScale;
+        PriceCardHoverDistance = domainEntity.PriceCardHoverDistance;
+    }
 }
