@@ -1,6 +1,4 @@
-﻿using Qlarissa.Domain.Watchlists;
-using Qlarissa.WebAPI.Models.Watchlist;
-
+﻿
 namespace Qlarissa.WebAPI.Tests;
 
 public class SecurityModelsTests
@@ -8,7 +6,7 @@ public class SecurityModelsTests
     [Fact]
     public void DailyPrices_FromDomainEntity()
     {
-        Domain.Securities.MarketData.DailyPrice domainEntity = new Domain.Securities.MarketData.DailyPrice()
+        Domain.Securities.MarketData.DailyPrice domainEntity = new()
         {
             Id = 1,
             Open = 10.0,
@@ -65,123 +63,6 @@ public class SecurityModelsTests
         Assert.Equal(domainEntity.Id, apiModel.Id);
         Assert.Equal(domainEntity.Date, apiModel.Date);
         Assert.Equal(domainEntity.SplitRatio, apiModel.SplitRatio);
-    }
-
-    [Fact]
-    public void WatchedSecurityMinimal_FromDomainEntity()
-    {
-        Domain.Watchlists.WatchedSecurityMinimal domainEntity = new()
-        {
-            IsWatched = true,
-            IsOnPrimaryWatchlist = false
-        };
-
-        var apiModel = WatchedSecurityMinimal.FromDomainEntity(domainEntity);
-
-        Assert.Equal(domainEntity.IsWatched, apiModel.IsWatched);
-        Assert.Equal(domainEntity.IsOnPrimaryWatchlist, apiModel.IsOnPrimaryWatchlist);
-    }
-
-    [Fact]
-    public void WatchedSecurity_FromDomainEntity()
-    {
-        Domain.Watchlists.WatchedSecurity domainEntity = new()
-        {
-            SecurityId = 1,
-            Name = "Some Company",
-            Symbol = "SOCO",
-            PreviousClosePrice = 234.5
-        };
-
-        var apiModel = Models.Watchlist.WatchedSecurity.FromDomainEntity(domainEntity);
-
-        Assert.NotNull(apiModel);
-        Assert.Equal(domainEntity.SecurityId, apiModel.SecurityId);
-        Assert.Equal(domainEntity.Name, apiModel.Name);
-        Assert.Equal(domainEntity.Symbol, apiModel.Symbol);
-        Assert.Equal(domainEntity.PreviousClosePrice, apiModel.PreviousClosePrice);
-    }
-
-    [Fact]
-    public void UserWatchlists_FromDomainEntity_ShouldContainEmptyLists()
-    {
-        Domain.Watchlists.Watchlist[] domainWatchlists = [];
-
-        var apiModel = UserWatchlists.FromDomainEntity(domainWatchlists);
-
-        Assert.Empty(apiModel.PrimaryWatchlist);
-        Assert.Empty(apiModel.SecondaryWatchlist);
-    }
-
-    [Fact]
-    public void UserWatchlists_FromDomainEntity()
-    {
-        Domain.Watchlists.Watchlist[] domainWatchlists = [
-                new()
-                {
-                    IsPrimary = true,
-                    WatchedSecurities = [
-                           new()
-                           {
-                               Name = "Company 1 Inc.",
-                               Symbol = "CO1",
-                               SecurityId = 4,
-                               PreviousClosePrice = 109.5
-                           },
-                           new()
-                           {
-                               Name = "ETF 1",
-                               Symbol = "ETF1",
-                               SecurityId = 5,
-                               PreviousClosePrice = 55.8
-                           }
-                        ]
-                },
-                new()
-                {
-                    IsPrimary = false,
-                    WatchedSecurities = [
-                           new()
-                           {
-                               Name = "Currency 1",
-                               Symbol = "C1",
-                               SecurityId = 7,
-                               PreviousClosePrice = 1.4
-                           },
-                           new()
-                           {
-                               Name = "Cryptocurrency 1",
-                               Symbol = "CR1",
-                               SecurityId = 12,
-                               PreviousClosePrice = 2789
-                           }
-                        ]
-                }
-            ];
-
-        var apiModel = UserWatchlists.FromDomainEntity(domainWatchlists);
-
-        Assert.NotEmpty(apiModel.PrimaryWatchlist);
-        Assert.NotEmpty(apiModel.SecondaryWatchlist);
-        Assert.Equal(apiModel.PrimaryWatchlist[0].Name, domainWatchlists[0].WatchedSecurities.ElementAt(0).Name);
-        Assert.Equal(apiModel.PrimaryWatchlist[0].Symbol, domainWatchlists[0].WatchedSecurities.ElementAt(0).Symbol);
-        Assert.Equal(apiModel.PrimaryWatchlist[0].SecurityId, domainWatchlists[0].WatchedSecurities.ElementAt(0).SecurityId);
-        Assert.Equal(apiModel.PrimaryWatchlist[0].PreviousClosePrice, domainWatchlists[0].WatchedSecurities.ElementAt(0).PreviousClosePrice);
-
-        Assert.Equal(apiModel.PrimaryWatchlist[1].Name, domainWatchlists[0].WatchedSecurities.ElementAt(1).Name);
-        Assert.Equal(apiModel.PrimaryWatchlist[1].Symbol, domainWatchlists[0].WatchedSecurities.ElementAt(1).Symbol);
-        Assert.Equal(apiModel.PrimaryWatchlist[1].SecurityId, domainWatchlists[0].WatchedSecurities.ElementAt(1).SecurityId);
-        Assert.Equal(apiModel.PrimaryWatchlist[1].PreviousClosePrice, domainWatchlists[0].WatchedSecurities.ElementAt(1).PreviousClosePrice);
-
-        Assert.Equal(apiModel.SecondaryWatchlist[0].Name, domainWatchlists[1].WatchedSecurities.ElementAt(0).Name);
-        Assert.Equal(apiModel.SecondaryWatchlist[0].Symbol, domainWatchlists[1].WatchedSecurities.ElementAt(0).Symbol);
-        Assert.Equal(apiModel.SecondaryWatchlist[0].SecurityId, domainWatchlists[1].WatchedSecurities.ElementAt(0).SecurityId);
-        Assert.Equal(apiModel.SecondaryWatchlist[0].PreviousClosePrice, domainWatchlists[1].WatchedSecurities.ElementAt(0).PreviousClosePrice);
-
-        Assert.Equal(apiModel.SecondaryWatchlist[1].Name, domainWatchlists[1].WatchedSecurities.ElementAt(1).Name);
-        Assert.Equal(apiModel.SecondaryWatchlist[1].Symbol, domainWatchlists[1].WatchedSecurities.ElementAt(1).Symbol);
-        Assert.Equal(apiModel.SecondaryWatchlist[1].SecurityId, domainWatchlists[1].WatchedSecurities.ElementAt(1).SecurityId);
-        Assert.Equal(apiModel.SecondaryWatchlist[1].PreviousClosePrice, domainWatchlists[1].WatchedSecurities.ElementAt(1).PreviousClosePrice);
     }
 
     /// <summary>

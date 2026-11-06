@@ -1,9 +1,9 @@
 ﻿using Qlarissa.Infrastructure.DB.Entities.Base;
 using Qlarissa.Infrastructure.DB.Entities.MarketData;
 
-namespace Qlarissa.Infrastructure.Tests.DB;
+namespace Qlarissa.Infrastructure.Tests.DB.Mappers;
 
-public class MapperTests
+public class SecurityMappersTests
 {
     [Fact]
     public void DailyPrice_UpdateFromDbEntity_DoesNotUpdateDateOrSecurityId()

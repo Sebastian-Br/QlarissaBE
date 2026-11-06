@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Qlarissa.Application.Interfaces.Repositories;
-using Qlarissa.Domain.Watchlists;
 using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 using ZiggyCreatures.Caching.Fusion;
