@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Qlarissa.Application.Interfaces.Repositories;
+using Qlarissa.Domain.Watchlists;
 using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 using ZiggyCreatures.Caching.Fusion;
@@ -16,25 +17,6 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Fusio
 
     private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
-    /// <summary>
-    /// You must invalidate this cache tag when a security is updated.
-    /// </summary>
-    /// <param name="id">The id of the security.</param>
-    /// <returns>The tag for a security.</returns>
-    private string SecurityTag(int id) => $"security:{id}";
-
-    /// <summary>
-    /// Generates a cache key for the full security entity.
-    /// </summary>
-    /// <param name="id">The id of the security.</param>
-    private string FullSecurityKey(int id) => $"security:full:{id}";
-
-    /// <summary>
-    /// Generates a cache key for the basic security entity, without loaded collections.
-    /// </summary>
-    /// <param name="id">The id of the security.</param>
-    private string BasicSecurityKey(int id) => $"security:basic:{id}";
-
     public async Task AddSecurityAsync(Domain.Securities.Base.PubliclyTradedSecurityBase security, CancellationToken cancellationToken)
     {
         PubliclyTradedSecurityBase dbEntity = PubliclyTradedSecurityBase.FromDomainEntity(security);
@@ -45,9 +27,9 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Fusio
     public async Task<Domain.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityFromCacheAsync(int id, CancellationToken cancellationToken)
     {
         return await _cache.GetOrSetAsync(
-                FullSecurityKey(id),
+                Key.FullSecurityKey(id),
                 async token => await GetSecurityAsync(id, token),
-                tags: [SecurityTag(id)],
+                tags: [Tag.Security(id)],
                 token: cancellationToken
             );
     }
@@ -137,7 +119,8 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Fusio
         {
             dbEntity.UpdateFromDomainEntity(security);
             await _context.SaveChangesAsync(cancellationToken);
-            await cache.RemoveByTagAsync(SecurityTag(security.Id), token: cancellationToken);
+            // Removes all security cache entries (full, basic), as well as cached watchedlists that watch this security.
+            await cache.RemoveByTagAsync(Tag.Security(security.Id), token: cancellationToken);
             return Result.Ok();
         }
         catch (Exception ex)
@@ -145,112 +128,5 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, Fusio
             _logger.LogError(ex, "Error updating security with ID {SecurityId}", security.Id);
             return Result.Fail($"Error updating security with ID {security.Id}.");
         }
-    }
-
-    public async Task<Domain.WatchedSecurityMinimal> IsSecurityWatchedAsync(int securityId, string userId)
-    {
-        var result = await _context.WatchedSecurities
-                .Where(w => w.SecurityId == securityId && w.WatchedByUserId == userId)
-                .Select(w => new Domain.WatchedSecurityMinimal
-                {
-                    IsWatched = true,
-                    IsOnPrimaryWatchlist = w.IsPrimaryWatchlist
-                })
-                .FirstOrDefaultAsync();
-
-        if (result == null)
-        {
-            return new Domain.WatchedSecurityMinimal
-            {
-                IsWatched = false,
-                IsOnPrimaryWatchlist = false
-            };
-        }
-
-        return result;
-    }
-
-    public async Task<Result> WatchSecurityAsync(int securityId, string userId, bool isPrimaryWatchlist)
-    {
-        try
-        {
-            await _context.WatchedSecurities.AddAsync(new WatchedSecurity
-            {
-                SecurityId = securityId,
-                WatchedByUserId = userId,
-                IsPrimaryWatchlist = isPrimaryWatchlist
-            });
-
-            await _context.SaveChangesAsync();
-            return Result.Ok();
-        }
-        catch (DbUpdateException ex)
-        {
-            _logger.LogError(ex, "Error watching security with ID {SecurityId} for user {UserId}", securityId, userId);
-            return Result.Fail("This security is already watched.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error watching security with ID {SecurityId} for user {UserId}", securityId, userId);
-            return Result.Fail("Unknown error watching this security.");
-        }
-    }
-
-    public async Task<Result> UnwatchSecurityAsync(int securityId, string userId)
-    {
-        try
-        {
-            var deleted = await _context.WatchedSecurities.Where(w => w.SecurityId == securityId && w.WatchedByUserId == userId).ExecuteDeleteAsync();
-
-            if (deleted == 0)
-            {
-                return Result.Fail($"Security with ID {securityId} is not watched by this user.");
-            }
-
-            return Result.Ok();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error unwatching security with ID {SecurityId} for user {UserId}", securityId, userId);
-            return Result.Fail("Unknown error unwatching this security.");
-        }
-    }
-
-    public async Task<IEnumerable<Domain.WatchList>> GetWatchlistsAsync(string userId, CancellationToken cancellationToken)
-    {
-        var watchedSecurities = await _context.WatchedSecurities
-            .Where(w => w.WatchedByUserId == userId)
-            .Select(w => new
-            {
-                w.IsPrimaryWatchlist,
-                WatchedSecurity = new Domain.WatchedSecurity()
-                {
-                    SecurityId = w.SecurityId,
-                    Name = w.Security.Name,
-                    Symbol = w.Security.Symbol,
-                    PreviousClosePrice = w.Security.PriceHistory
-                        .OrderByDescending(ph => ph.Id)
-                        .Select(ph => ph.Close)
-                        .FirstOrDefault()
-                }
-            })
-            .ToListAsync(cancellationToken);
-
-        return [
-            new Domain.WatchList
-            {
-                IsPrimary = true,
-                WatchedSecurities = watchedSecurities
-                    .Where(w => w.IsPrimaryWatchlist)
-                    .Select(w => w.WatchedSecurity)
-            },
-            new Domain.WatchList
-            {
-                IsPrimary = false,
-                WatchedSecurities = watchedSecurities
-                    .Where(w => !w.IsPrimaryWatchlist)
-                    .Select(w => w.WatchedSecurity)
-            }
-            ];
     }
 }

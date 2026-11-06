@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Infrastructure.DB.Entities.MarketData;
+using Qlarissa.Infrastructure.DB.Entities.Watchlists;
 
 namespace Qlarissa.Infrastructure.DB;
 
@@ -15,6 +16,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<ETF> ETFs { get; set; }
     public DbSet<CryptoCurrency> CryptoCurrencies { get; set; }
     public DbSet<WatchedSecurity> WatchedSecurities { get; set; }
+    public DbSet<Watchlist> Watchlists { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

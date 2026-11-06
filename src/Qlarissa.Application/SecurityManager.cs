@@ -2,9 +2,9 @@
 using Qlarissa.Application.Interfaces;
 using Qlarissa.Application.Interfaces.ExternalAPI;
 using Qlarissa.Application.Interfaces.Repositories;
-using Qlarissa.Domain;
 using Qlarissa.Domain.Securities;
 using Qlarissa.Domain.Securities.Base;
+using Qlarissa.Domain.Watchlists;
 
 namespace Qlarissa.Application;
 
@@ -71,16 +71,4 @@ public sealed class SecurityManager(ISecurityRepository securityRepository, ICur
         domainEntity.Id = id;
         return await _securityRepository.UpdateSecurityAsync(domainEntity, cancellationToken);
     }
-
-    public Task<WatchedSecurityMinimal> IsSecurityWatchedAsync(int securityId, string userId)
-        => _securityRepository.IsSecurityWatchedAsync(securityId, userId);
-
-    public Task<Result> WatchSecurityAsync(int securityId, string userId, bool isPrimaryWatchlist)
-        => _securityRepository.WatchSecurityAsync(securityId, userId, isPrimaryWatchlist);
-
-    public Task<Result> UnwatchSecurityAsync(int securityId, string userId)
-        => _securityRepository.UnwatchSecurityAsync(securityId, userId);
-
-    public Task<IEnumerable<WatchList>> GetWatchlistsAsync(string userId, CancellationToken cancellationToken)
-        => _securityRepository.GetWatchlistsAsync(userId, cancellationToken);
 }

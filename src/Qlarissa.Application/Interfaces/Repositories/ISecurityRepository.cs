@@ -1,6 +1,6 @@
-﻿using Qlarissa.Domain;
-using Qlarissa.Domain.Securities;
+﻿using Qlarissa.Domain.Securities;
 using Qlarissa.Domain.Securities.Base;
+using Qlarissa.Domain.Watchlists;
 
 namespace Qlarissa.Application.Interfaces.Repositories;
 
@@ -54,20 +54,6 @@ public interface ISecurityRepository
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<FluentResults.Result> UpdateSecurityAsync(PubliclyTradedSecurityBase security, CancellationToken cancellationToken);
-
-    Task<FluentResults.Result> WatchSecurityAsync(int securityId, string userId, bool isPrimaryWatchlist);
-
-    Task<FluentResults.Result> UnwatchSecurityAsync(int securityId, string userId);
-
-    /// <summary>
-    /// Checks if a security is watched by a user and if it is on the user's primary watchlist.
-    /// </summary>
-    /// <param name="securityId"></param>
-    /// <param name="userId"></param>
-    /// <returns>Never returns null. If the security does not exist, it will return IsWatched = false.</returns>
-    Task<WatchedSecurityMinimal> IsSecurityWatchedAsync(int securityId, string userId);
-
-    Task<IEnumerable<WatchList>> GetWatchlistsAsync(string userId, CancellationToken cancellationToken);
 
     public record SecuritySymbolAndLastDataPointDate(string Symbol, DateOnly PriceHistoryLastDataPointDate);
 }

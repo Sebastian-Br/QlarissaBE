@@ -7,7 +7,7 @@ public sealed class WatchedSecurity
     public string Symbol { get; set; } = string.Empty;
     public double PreviousClosePrice { get; set; }
 
-    public static WatchedSecurity FromDomainEntity(Domain.WatchedSecurity domainEntity) => new()
+    public static WatchedSecurity FromDomainEntity(Domain.Watchlists.WatchedSecurity domainEntity) => new()
     {
         SecurityId = domainEntity.SecurityId,
         Name = domainEntity.Name,

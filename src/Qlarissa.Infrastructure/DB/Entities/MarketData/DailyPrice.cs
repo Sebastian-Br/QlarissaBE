@@ -58,11 +58,7 @@ public class DailyPriceConfiguration : IEntityTypeConfiguration<DailyPrice>
     {
         builder.Property(s => s.Id).ValueGeneratedOnAdd();
 
-        builder.HasOne(dp => dp.Security)
-            .WithMany(s => s.PriceHistory)
-            .HasForeignKey(dp => dp.SecurityId)
-            .OnDelete(DeleteBehavior.ClientCascade);
-
+        // prevent duplicate entries for the same day and security
         builder.HasIndex(dp => new { dp.SecurityId, dp.Date })
             .IsUnique();
 
@@ -70,5 +66,11 @@ public class DailyPriceConfiguration : IEntityTypeConfiguration<DailyPrice>
             .HasConversion(
                 d => d.ToDateTime(TimeOnly.MinValue),
                 d => DateOnly.FromDateTime(d));
+
+        // deleting a security should cascade to its price history
+        builder.HasOne(dp => dp.Security)
+            .WithMany(s => s.PriceHistory)
+            .HasForeignKey(dp => dp.SecurityId)
+            .OnDelete(DeleteBehavior.ClientCascade);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Qlarissa.WebAPI.Models.Watchlist;
+﻿using Qlarissa.Domain.Watchlists;
+using Qlarissa.WebAPI.Models.Watchlist;
 
 namespace Qlarissa.WebAPI.Tests;
 
@@ -69,7 +70,7 @@ public class SecurityModelsTests
     [Fact]
     public void WatchedSecurityMinimal_FromDomainEntity()
     {
-        Domain.WatchedSecurityMinimal domainEntity = new()
+        Domain.Watchlists.WatchedSecurityMinimal domainEntity = new()
         {
             IsWatched = true,
             IsOnPrimaryWatchlist = false
@@ -84,7 +85,7 @@ public class SecurityModelsTests
     [Fact]
     public void WatchedSecurity_FromDomainEntity()
     {
-        Domain.WatchedSecurity domainEntity = new()
+        Domain.Watchlists.WatchedSecurity domainEntity = new()
         {
             SecurityId = 1,
             Name = "Some Company",
@@ -104,7 +105,7 @@ public class SecurityModelsTests
     [Fact]
     public void UserWatchlists_FromDomainEntity_ShouldContainEmptyLists()
     {
-        Domain.WatchList[] domainWatchlists = [];
+        Domain.Watchlists.Watchlist[] domainWatchlists = [];
 
         var apiModel = UserWatchlists.FromDomainEntity(domainWatchlists);
 
@@ -115,7 +116,7 @@ public class SecurityModelsTests
     [Fact]
     public void UserWatchlists_FromDomainEntity()
     {
-        Domain.WatchList[] domainWatchlists = [
+        Domain.Watchlists.Watchlist[] domainWatchlists = [
                 new()
                 {
                     IsPrimary = true,
