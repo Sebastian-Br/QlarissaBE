@@ -13,6 +13,8 @@ public sealed class Watchlist
 
     public bool IsPinned { get; set; }
 
+    public int PinPosition { get; set; }
+
     public int TrackedChangeDurationTradingDays { get; set; } = 1;
 
     public ICollection<WatchedSecurity> WatchedSecurities { get; set; } = [];
@@ -26,6 +28,7 @@ public sealed class Watchlist
             UserId = userId,
             Name = domainWatchlist.Name,
             IsPinned = domainWatchlist.IsPinned,
+            PinPosition = domainWatchlist.PinPosition,
             TrackedChangeDurationTradingDays = domainWatchlist.TrackedChangeDurationTradingDays
         };
     }
@@ -35,10 +38,11 @@ public sealed class Watchlist
     {
         return new Domain.Watchlists.Watchlist
         {
-            Id = this.Id,
-            Name = this.Name,
-            IsPinned = this.IsPinned,
-            TrackedChangeDurationTradingDays = this.TrackedChangeDurationTradingDays,
+            Id = Id,
+            Name = Name,
+            IsPinned = IsPinned,
+            PinPosition = PinPosition,
+            TrackedChangeDurationTradingDays = TrackedChangeDurationTradingDays,
         };
     }
 }

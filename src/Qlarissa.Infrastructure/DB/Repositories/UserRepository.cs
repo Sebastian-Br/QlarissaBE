@@ -5,13 +5,50 @@ using Qlarissa.Domain;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
-public sealed class UserRepository(UserManager<QlarissaUser> userManager) : IUserRepository
+public sealed class UserRepository(UserManager<QlarissaUser> userManager, ApplicationDbContext context, WatchlistRepository watchlistRepository) : IUserRepository
 {
     readonly UserManager<QlarissaUser> _identityUserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+    readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+    readonly WatchlistRepository _watchlistRepository = watchlistRepository ?? throw new ArgumentNullException(nameof(watchlistRepository));
 
     public async Task<IdentityResult> CreateAsync(QlarissaUser user, string password)
     {
-        return await _identityUserManager.CreateAsync(user, password);
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
+            var result = await _identityUserManager.CreateAsync(user, password);
+
+            if (!result.Succeeded)
+            {
+                await transaction.RollbackAsync();
+                return result;
+            }
+
+            await _watchlistRepository.AddWatchlistAsync(new Domain.Watchlists.Watchlist()
+            {
+                Name = "Primary",
+                IsPinned = true,
+                PinPosition = 1,
+                TrackedChangeDurationTradingDays = 1
+            }, user.Id);
+
+            await _watchlistRepository.AddWatchlistAsync(new Domain.Watchlists.Watchlist()
+            {
+                Name = "Secondary",
+                IsPinned = true,
+                PinPosition = 2,
+                TrackedChangeDurationTradingDays = 5
+            }, user.Id);
+
+            await transaction.CommitAsync();
+            return result;
+
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<QlarissaUser?> GetAsync(string username)
