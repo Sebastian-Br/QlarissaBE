@@ -15,11 +15,29 @@ public class WatchlistController(IQlarissaUserManager userManager, IWatchlistMan
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> AddWatchlistAsync(Watchlist watchlist)
+    public async Task<ActionResult<Watchlist>> AddWatchlistAsync(Watchlist watchlist)
     {
         var user = await _userManager.GetAsync(User);
-        await _watchlistManager.AddWatchlistAsync(watchlist.ToDomainEntity(), user.Value.Id);
+        var addedWatchlist = await _watchlistManager.AddWatchlistAsync(watchlist.ToDomainEntity(), user.Value.Id);
+        return Ok(Watchlist.FromDomainEntity(addedWatchlist));
+    }
+
+    [HttpDelete]
+    [Authorize]
+    public async Task<IActionResult> RemoveWatchlistAsync([FromQuery] int watchlistId)
+    {
+        var user = await _userManager.GetAsync(User);
+        await _watchlistManager.RemoveWatchlistAsync(watchlistId, user.Value.Id);
         return Ok();
+    }
+
+    [HttpPut]
+    [Authorize]
+    public async Task<IActionResult> UpdateWatchlistAsync(Watchlist watchlist)
+    {
+        var user = await _userManager.GetAsync(User);
+        var updatedWatchlist = await _watchlistManager.UpdateWatchlistAsync(watchlist.ToDomainEntity(), user.Value.Id);
+        return Ok(Watchlist.FromDomainEntity(updatedWatchlist));
     }
 
     [HttpPost]

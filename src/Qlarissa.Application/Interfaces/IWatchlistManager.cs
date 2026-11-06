@@ -15,7 +15,7 @@ public interface IWatchlistManager
     Task RemoveWatchlistAsync(int watchlistId, string userId);
 
     // Only updates the Name, Pinned status, and TrackedChangeDurationTradingDays, NOT the WatchedSecurities.
-    Task UpdateWatchlistAsync(Watchlist watchlist, string userId);
+    Task<Watchlist> UpdateWatchlistAsync(Watchlist watchlist, string userId);
 
     Task WatchSecurityAsync(int watchlistId, int securityId, string userId);
 

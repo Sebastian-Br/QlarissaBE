@@ -19,7 +19,7 @@ public sealed class WatchlistsTests
         };
 
         string userId = "user123";
-        var entityWatchlist = Infrastructure.DB.Entities.Watchlists.Watchlist.FromDomainEntity(domainWatchlist, userId);
+        var entityWatchlist = Infrastructure.DB.Entities.Watchlists.Watchlist.FromDomainEntityWithoutCollections(domainWatchlist, userId);
         
         Assert.Equal(domainWatchlist.Id, entityWatchlist.Id);
         Assert.Equal(userId, entityWatchlist.UserId);

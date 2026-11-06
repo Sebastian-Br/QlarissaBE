@@ -8,7 +8,7 @@ public interface IWatchlistRepository
 
     Task RemoveWatchlistAsync(int watchlistId, string userId);
 
-    Task UpdateWatchlistAsync(Watchlist watchlist, string userId);
+    Task<Watchlist> UpdateWatchlistAsync(Watchlist watchlist, string userId);
 
     Task WatchSecurityAsync(int watchlistId,int securityId, string userId);
 

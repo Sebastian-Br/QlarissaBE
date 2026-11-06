@@ -17,18 +17,38 @@ public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, Fusi
 
     public async Task<Domain.Watchlists.Watchlist> AddWatchlistAsync(Domain.Watchlists.Watchlist watchlist, string userId)
     {
-        var dbEntity = Watchlist.FromDomainEntity(watchlist, userId);
+        var dbEntity = Watchlist.FromDomainEntityWithoutCollections(watchlist, userId);
         await _context.Watchlists.AddAsync(dbEntity);
         await _context.SaveChangesAsync();
 
-        return new Domain.Watchlists.Watchlist()
+        return dbEntity.ToDomainEntityWithoutCollections();
+    }
+
+    public async Task RemoveWatchlistAsync(int watchlistId, string userId)
+    {
+        var affectedRows = await _context.Watchlists
+            .Where(w => w.Id == watchlistId && w.UserId == userId)
+            .ExecuteDeleteAsync();
+
+        if (affectedRows == 0)
         {
-            // return domain entity with generated Id. If other properties are modified in any way, this will return the updated version.
-            Id = dbEntity.Id,
-            Name = dbEntity.Name,
-            IsPinned = dbEntity.IsPinned,
-            TrackedChangeDurationTradingDays = dbEntity.TrackedChangeDurationTradingDays,
-        };
+            _logger.LogWarning("No watchlist found with id {WatchlistId} for user {UserId}", watchlistId, userId);
+            throw new InvalidOperationException($"No watchlist found with id {watchlistId} for user {userId}");
+        }
+    }
+
+    public async Task<Domain.Watchlists.Watchlist> UpdateWatchlistAsync(Domain.Watchlists.Watchlist watchlist, string userId)
+    {
+        var dbEntity = await _context.Watchlists
+            .Where(w => w.Id == watchlist.Id && w.UserId == userId)
+            .FirstAsync();
+
+        dbEntity.Name = watchlist.Name;
+        dbEntity.IsPinned = watchlist.IsPinned;
+        dbEntity.TrackedChangeDurationTradingDays = watchlist.TrackedChangeDurationTradingDays;
+
+        await _context.SaveChangesAsync();
+        return dbEntity.ToDomainEntityWithoutCollections();
     }
 
     public async Task<IEnumerable<Domain.Watchlists.Watchlist>> GetWatchlistsAsync(string userId, CancellationToken cancellationToken)
@@ -98,45 +118,6 @@ public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, Fusi
         return watchlistIds;
     }
 
-    public async Task RemoveWatchlistAsync(int watchlistId, string userId)
-    {
-        var affectedRows = await _context.Watchlists
-            .Where(w => w.Id == watchlistId && w.UserId == userId)
-            .ExecuteDeleteAsync();
-
-        if (affectedRows == 0)
-        {
-            _logger.LogWarning("No watchlist found with id {WatchlistId} for user {UserId}", watchlistId, userId);
-            throw new InvalidOperationException($"No watchlist found with id {watchlistId} for user {userId}");
-        }
-    }
-
-    public async Task UnwatchSecurityAsync(int watchlistId, int securityId, string userId)
-    {
-        var watchlist = await _context.Watchlists
-            .Where(w => w.Id == watchlistId && w.UserId == userId)
-            .Include(w => w.WatchedSecurities)
-            .FirstAsync();
-
-        var watchedSecurity = watchlist.WatchedSecurities.First(ws => ws.SecurityId == securityId);
-
-        _context.WatchedSecurities.Remove(watchedSecurity);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task UpdateWatchlistAsync(Domain.Watchlists.Watchlist watchlist, string userId)
-    {
-        var dbEntity = await _context.Watchlists
-            .Where(w => w.Id == watchlist.Id && w.UserId == userId)
-            .FirstAsync();
-
-        dbEntity.Name = watchlist.Name;
-        dbEntity.IsPinned = watchlist.IsPinned;
-        dbEntity.TrackedChangeDurationTradingDays = watchlist.TrackedChangeDurationTradingDays;
-
-        await _context.SaveChangesAsync();
-    }
-
     public async Task WatchSecurityAsync(int watchlistId, int securityId, string userId)
     {
         var watchlist = await _context.Watchlists
@@ -150,6 +131,19 @@ public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, Fusi
             SecurityId = securityId
         });
 
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task UnwatchSecurityAsync(int watchlistId, int securityId, string userId)
+    {
+        var watchlist = await _context.Watchlists
+            .Where(w => w.Id == watchlistId && w.UserId == userId)
+            .Include(w => w.WatchedSecurities)
+            .FirstAsync();
+
+        var watchedSecurity = watchlist.WatchedSecurities.First(ws => ws.SecurityId == securityId);
+
+        _context.WatchedSecurities.Remove(watchedSecurity);
         await _context.SaveChangesAsync();
     }
 }

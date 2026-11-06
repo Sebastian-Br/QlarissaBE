@@ -17,7 +17,8 @@ public sealed class Watchlist
 
     public ICollection<WatchedSecurity> WatchedSecurities { get; set; } = [];
 
-    public static Watchlist FromDomainEntity(Domain.Watchlists.Watchlist domainWatchlist, string userId)
+    // only used to create the Watchlist in the DB. WatchedSecurities are added later on.
+    public static Watchlist FromDomainEntityWithoutCollections(Domain.Watchlists.Watchlist domainWatchlist, string userId)
     {
         return new Watchlist
         {
@@ -26,7 +27,18 @@ public sealed class Watchlist
             Name = domainWatchlist.Name,
             IsPinned = domainWatchlist.IsPinned,
             TrackedChangeDurationTradingDays = domainWatchlist.TrackedChangeDurationTradingDays
-            // only used to create the Watchlist in the DB. WatchedSecurities are added later on.
+        };
+    }
+
+    // does not map WatchedSecurities.
+    public Domain.Watchlists.Watchlist ToDomainEntityWithoutCollections()
+    {
+        return new Domain.Watchlists.Watchlist
+        {
+            Id = this.Id,
+            Name = this.Name,
+            IsPinned = this.IsPinned,
+            TrackedChangeDurationTradingDays = this.TrackedChangeDurationTradingDays,
         };
     }
 }

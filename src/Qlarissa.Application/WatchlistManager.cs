@@ -36,7 +36,7 @@ public sealed class WatchlistManager(IWatchlistRepository watchlistRepository) :
         return _watchlistRepository.UnwatchSecurityAsync(watchlistId, securityId, userId);
     }
 
-    public Task UpdateWatchlistAsync(Watchlist watchlist, string userId)
+    public Task<Watchlist> UpdateWatchlistAsync(Watchlist watchlist, string userId)
     {
         return _watchlistRepository.UpdateWatchlistAsync(watchlist, userId);
     }
