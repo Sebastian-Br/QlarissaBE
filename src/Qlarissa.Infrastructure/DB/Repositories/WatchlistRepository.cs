@@ -7,11 +7,11 @@ using Qlarissa.Infrastructure.DB.Entities.Watchlists;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
-public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, FusionCache cache, ApplicationDbContext context) : IWatchlistRepository
+public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, IFusionCache cache, ApplicationDbContext context) : IWatchlistRepository
 {
     private readonly ILogger<SecurityRepository> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    private readonly FusionCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+    private readonly IFusionCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
 
     private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 

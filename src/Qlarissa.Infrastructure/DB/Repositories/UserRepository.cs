@@ -5,11 +5,11 @@ using Qlarissa.Domain;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
-public sealed class UserRepository(UserManager<QlarissaUser> userManager, ApplicationDbContext context, WatchlistRepository watchlistRepository) : IUserRepository
+public sealed class UserRepository(UserManager<QlarissaUser> userManager, ApplicationDbContext context, IWatchlistRepository watchlistRepository) : IUserRepository
 {
     readonly UserManager<QlarissaUser> _identityUserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
     readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
-    readonly WatchlistRepository _watchlistRepository = watchlistRepository ?? throw new ArgumentNullException(nameof(watchlistRepository));
+    readonly IWatchlistRepository _watchlistRepository = watchlistRepository ?? throw new ArgumentNullException(nameof(watchlistRepository));
 
     public async Task<IdentityResult> CreateAsync(QlarissaUser user, string password)
     {

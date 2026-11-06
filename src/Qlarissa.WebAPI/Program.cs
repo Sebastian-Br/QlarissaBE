@@ -67,15 +67,22 @@ public class Program
         builder.Services.AddHostedService(
             sp => sp.GetRequiredService<LivePriceBroadcaster>());
 
+        builder.Services.AddScoped<IJwtService, JwtService>();
+
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IQlarissaUserManager, QlarissaUserManager>();
-        builder.Services.AddScoped<IJwtService, JwtService>();
+
         builder.Services.AddScoped<ISecurityRepository, SecurityRepository>();
         builder.Services.AddScoped<ISecurityManager, SecurityManager>();
+
         builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
         builder.Services.AddScoped<ICurrencyManager, CurrencyManager>();
 
+        builder.Services.AddScoped<IWatchlistRepository, WatchlistRepository>();
+        builder.Services.AddScoped<IWatchlistManager, WatchlistManager>();
+
         builder.Services.Configure<PyFinanceOptions>(configuration.GetSection("PyFinance"));
+
         builder.Services.AddHttpClient("PyFinanceSearch", (sp, client) =>
         {
             var options = sp

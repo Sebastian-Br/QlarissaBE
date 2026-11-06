@@ -17,7 +17,7 @@ namespace Qlarissa.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.12")
+                .HasAnnotation("ProductVersion", "10.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -495,22 +495,53 @@ namespace Qlarissa.Infrastructure.Migrations
                     b.ToTable("Portfolios");
                 });
 
-            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.WatchedSecurity", b =>
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Watchlists.WatchedSecurity", b =>
                 {
-                    b.Property<string>("WatchedByUserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("WatchlistId")
+                        .HasColumnType("int");
 
                     b.Property<int>("SecurityId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsPrimaryWatchlist")
-                        .HasColumnType("bit");
-
-                    b.HasKey("WatchedByUserId", "SecurityId");
+                    b.HasKey("WatchlistId", "SecurityId");
 
                     b.HasIndex("SecurityId");
 
                     b.ToTable("WatchedSecurities");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Watchlists.Watchlist", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsPinned")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PinPosition")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TrackedChangeDurationTradingDays")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("Id", "UserId");
+
+                    b.ToTable("Watchlists");
                 });
 
             modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Base.PubliclyTradedSecurityBase", b =>
@@ -744,7 +775,7 @@ namespace Qlarissa.Infrastructure.Migrations
                     b.Navigation("AccountCurrency");
                 });
 
-            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.WatchedSecurity", b =>
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Watchlists.WatchedSecurity", b =>
                 {
                     b.HasOne("Qlarissa.Infrastructure.DB.Entities.Base.PubliclyTradedSecurityBase", "Security")
                         .WithMany()
@@ -752,13 +783,22 @@ namespace Qlarissa.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Qlarissa.Domain.QlarissaUser", null)
-                        .WithMany()
-                        .HasForeignKey("WatchedByUserId")
+                    b.HasOne("Qlarissa.Infrastructure.DB.Entities.Watchlists.Watchlist", null)
+                        .WithMany("WatchedSecurities")
+                        .HasForeignKey("WatchlistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Security");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Watchlists.Watchlist", b =>
+                {
+                    b.HasOne("Qlarissa.Domain.QlarissaUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Holdings.Holding", b =>
@@ -769,6 +809,11 @@ namespace Qlarissa.Infrastructure.Migrations
             modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Portfolio", b =>
                 {
                     b.Navigation("Holdings");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Watchlists.Watchlist", b =>
+                {
+                    b.Navigation("WatchedSecurities");
                 });
 
             modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Base.PubliclyTradedSecurityBase", b =>

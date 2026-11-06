@@ -8,11 +8,11 @@ using ZiggyCreatures.Caching.Fusion;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
-public sealed class SecurityRepository(ILogger<SecurityRepository> logger, FusionCache cache, ApplicationDbContext context) : ISecurityRepository
+public sealed class SecurityRepository(ILogger<SecurityRepository> logger, IFusionCache cache, ApplicationDbContext context) : ISecurityRepository
 {
     private readonly ILogger<SecurityRepository> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    private readonly FusionCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+    private readonly IFusionCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
 
     private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
