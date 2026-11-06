@@ -45,6 +45,7 @@ public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, IFus
 
         dbEntity.Name = watchlist.Name;
         dbEntity.IsPinned = watchlist.IsPinned;
+        dbEntity.PinPosition = watchlist.PinPosition;
         dbEntity.TrackedChangeDurationTradingDays = watchlist.TrackedChangeDurationTradingDays;
 
         await _context.SaveChangesAsync();
