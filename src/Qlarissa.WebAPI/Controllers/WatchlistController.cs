@@ -15,11 +15,11 @@ public class WatchlistController(IQlarissaUserManager userManager, IWatchlistMan
 
     [HttpPost]
     [Authorize]
-    public async Task<ActionResult<Watchlist>> AddWatchlistAsync(Watchlist watchlist)
+    public async Task<ActionResult<WatchlistMinimal>> AddWatchlistAsync(WatchlistMinimal watchlistMinimal)
     {
         var user = await _userManager.GetAsync(User);
-        var addedWatchlist = await _watchlistManager.AddWatchlistAsync(watchlist.ToDomainEntityWithoutCollections(), user.Value.Id);
-        return Ok(Watchlist.FromDomainEntityWithoutCollections(addedWatchlist));
+        var addedWatchlist = await _watchlistManager.AddWatchlistAsync(watchlistMinimal.ToDomainEntity(), user.Value.Id);
+        return Ok(WatchlistMinimal.FromDomainEntity(addedWatchlist));
     }
 
     [HttpDelete]
@@ -33,11 +33,11 @@ public class WatchlistController(IQlarissaUserManager userManager, IWatchlistMan
 
     [HttpPut]
     [Authorize]
-    public async Task<IActionResult> UpdateWatchlistAsync(Watchlist watchlist)
+    public async Task<ActionResult<WatchlistMinimal>> UpdateWatchlistAsync(WatchlistMinimal watchlist)
     {
         var user = await _userManager.GetAsync(User);
-        var updatedWatchlist = await _watchlistManager.UpdateWatchlistAsync(watchlist.ToDomainEntityWithoutCollections(), user.Value.Id);
-        return Ok(Watchlist.FromDomainEntityWithoutCollections(updatedWatchlist));
+        var updatedWatchlist = await _watchlistManager.UpdateWatchlistAsync(watchlist.ToDomainEntity(), user.Value.Id);
+        return Ok(WatchlistMinimal.FromDomainEntity(updatedWatchlist));
     }
 
     [HttpPost]
@@ -47,5 +47,41 @@ public class WatchlistController(IQlarissaUserManager userManager, IWatchlistMan
         var user = await _userManager.GetAsync(User);
         await _watchlistManager.WatchSecurityAsync(watchlistId, securityId, user.Value.Id);
         return Ok();
+    }
+
+    [HttpDelete]
+    [Authorize]
+    public async Task<IActionResult> UnwatchSecurityAsync([FromQuery] int watchlistId, [FromQuery] int securityId)
+    {
+        var user = await _userManager.GetAsync(User);
+        await _watchlistManager.UnwatchSecurityAsync(watchlistId, securityId, user.Value.Id);
+        return Ok();
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<int>> GetWatchlistIdsForSecurity([FromQuery] int securityId)
+    {
+        var user = await _userManager.GetAsync(User);
+        var watchlistIds = await _watchlistManager.GetWatchlistsForSecurityAsync(securityId, user.Value.Id);
+        return Ok(watchlistIds);
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<Watchlist>>> GetAllWatchlistsAsync(CancellationToken cancellationToken)
+    {
+        var user = await _userManager.GetAsync(User);
+        var domainWatchlists = await _watchlistManager.GetAllWatchlistsAsync(user.Value.Id, cancellationToken);
+        return Ok(domainWatchlists.Select(Watchlist.FromDomainEntity));
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<WatchlistMinimal>>> GetWatchlistsMinimalAsync()
+    {
+        var user = await _userManager.GetAsync(User);
+        var domainWatchlists = await _watchlistManager.GetWatchlistsMinimalAsync(user.Value.Id);
+        return Ok(domainWatchlists.Select(WatchlistMinimal.FromDomainEntity));
     }
 }

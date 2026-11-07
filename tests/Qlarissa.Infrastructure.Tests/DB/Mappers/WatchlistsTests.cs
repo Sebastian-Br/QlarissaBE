@@ -66,7 +66,7 @@ public sealed class WatchlistsTests
                 }
             }
         };
-        var domainWatchlist = entityWatchlist.ToDomainEntityWithoutCollections();
+        var domainWatchlist = entityWatchlist.ToDomainEntity();
         Assert.Equal(entityWatchlist.Id, domainWatchlist.Id);
         Assert.Equal(entityWatchlist.Name, domainWatchlist.Name);
         Assert.Equal(entityWatchlist.IsPinned, domainWatchlist.IsPinned);

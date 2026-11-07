@@ -15,13 +15,13 @@ public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, IFus
 
     private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
-    public async Task<Domain.Watchlists.Watchlist> AddWatchlistAsync(Domain.Watchlists.Watchlist watchlist, string userId)
+    public async Task<Domain.Watchlists.WatchlistMinimal> AddWatchlistAsync(Domain.Watchlists.WatchlistMinimal watchlist, string userId)
     {
         var dbEntity = Watchlist.FromDomainEntityWithoutCollections(watchlist, userId);
         await _context.Watchlists.AddAsync(dbEntity);
         await _context.SaveChangesAsync();
 
-        return dbEntity.ToDomainEntityWithoutCollections();
+        return dbEntity.ToDomainEntity();
     }
 
     public async Task RemoveWatchlistAsync(int watchlistId, string userId)
@@ -37,19 +37,21 @@ public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, IFus
         }
     }
 
-    public async Task<Domain.Watchlists.Watchlist> UpdateWatchlistAsync(Domain.Watchlists.Watchlist watchlist, string userId)
+    public async Task<Domain.Watchlists.WatchlistMinimal> UpdateWatchlistAsync(Domain.Watchlists.WatchlistMinimal watchlist, string userId)
     {
         var dbEntity = await _context.Watchlists
             .Where(w => w.Id == watchlist.Id && w.UserId == userId)
             .FirstAsync();
 
         dbEntity.Name = watchlist.Name;
+        dbEntity.IsPrimary = watchlist.IsPrimary;
+        dbEntity.IsSecondary = watchlist.IsSecondary;
         dbEntity.IsPinned = watchlist.IsPinned;
         dbEntity.PinPosition = watchlist.PinPosition;
         dbEntity.TrackedChangeDurationTradingDays = watchlist.TrackedChangeDurationTradingDays;
 
         await _context.SaveChangesAsync();
-        return dbEntity.ToDomainEntityWithoutCollections();
+        return dbEntity.ToDomainEntity();
     }
 
     public async Task<IEnumerable<Domain.Watchlists.Watchlist>> GetWatchlistsAsync(string userId, CancellationToken cancellationToken)
@@ -61,7 +63,10 @@ public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, IFus
             {
                 Id = w.Id,
                 Name = w.Name,
+                IsPrimary = w.IsPrimary,
+                IsSecondary = w.IsSecondary,
                 IsPinned = w.IsPinned,
+                PinPosition = w.PinPosition,
                 TrackedChangeDurationTradingDays = w.TrackedChangeDurationTradingDays,
                 WatchedSecurities = w.WatchedSecurities.Select(ws => new Domain.Watchlists.WatchedSecurity()
                 {
@@ -78,35 +83,6 @@ public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, IFus
             .ToListAsync(cancellationToken);
 
         return domainWatchlists;
-    }
-
-    // might use this later if caching is desired
-    private async Task<Domain.Watchlists.Watchlist> GetWatchlistNoPermissionCheck(int watchlistId, CancellationToken cancellationToken)
-    {
-        var domainWatchlist = await _context.Watchlists
-            .Where(w => w.Id == watchlistId)
-            .Include(w => w.WatchedSecurities)
-            .Select(w => new Domain.Watchlists.Watchlist()
-            {
-                Id = w.Id,
-                Name = w.Name,
-                IsPinned = w.IsPinned,
-                TrackedChangeDurationTradingDays = w.TrackedChangeDurationTradingDays,
-                WatchedSecurities = w.WatchedSecurities.Select(ws => new Domain.Watchlists.WatchedSecurity()
-                {
-                    SecurityId = ws.SecurityId,
-                    Name = ws.Security.Name,
-                    Symbol = ws.Security.Symbol,
-                    PreviousClosePrice = ws.Security.PriceHistory
-                                            .OrderByDescending(ph => ph.Id) // we can assume ascending order for price history ids of a security by default.
-                                            .Skip(w.TrackedChangeDurationTradingDays - 1)
-                                            .Select(ph => ph.Close)
-                                            .FirstOrDefault()
-                }).ToList()
-            })
-            .FirstAsync(cancellationToken); // not finding a previously queried id is exceptional.
-
-        return domainWatchlist;
     }
 
     public async Task<IEnumerable<int>> GetWatchlistsForSecurityAsync(int securityId, string userId)
@@ -146,5 +122,55 @@ public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, IFus
 
         _context.WatchedSecurities.Remove(watchedSecurity);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<Domain.Watchlists.WatchlistMinimal>> GetWatchlistsMinimalAsync(string userId)
+    {
+        var domainWatchlists = await _context.Watchlists
+            .Where(w => w.UserId == userId)
+            .Select(w => new Domain.Watchlists.WatchlistMinimal()
+            {
+                Id = w.Id,
+                Name = w.Name,
+                IsPrimary = w.IsPrimary,
+                IsSecondary = w.IsSecondary,
+                IsPinned = w.IsPinned,
+                PinPosition = w.PinPosition,
+                TrackedChangeDurationTradingDays = w.TrackedChangeDurationTradingDays
+            })
+            .ToListAsync();
+
+        return domainWatchlists;
+    }
+
+    public async Task<IEnumerable<Domain.Watchlists.Watchlist>> GetPinnedWatchlistsAsync(string userId, CancellationToken cancellationToken)
+    {
+        var domainWatchlists = await _context.Watchlists
+            .Where(w => w.UserId == userId && w.IsPinned)
+            .Include(w => w.WatchedSecurities)
+            .Select(w => new Domain.Watchlists.Watchlist()
+            {
+                Id = w.Id,
+                Name = w.Name,
+                IsPrimary = w.IsPrimary,
+                IsSecondary = w.IsSecondary,
+                IsPinned = w.IsPinned,
+                PinPosition = w.PinPosition,
+                TrackedChangeDurationTradingDays = w.TrackedChangeDurationTradingDays,
+                WatchedSecurities = w.WatchedSecurities.Select(ws => new Domain.Watchlists.WatchedSecurity()
+                {
+                    SecurityId = ws.SecurityId,
+                    Name = ws.Security.Name,
+                    Symbol = ws.Security.Symbol,
+                    PreviousClosePrice = ws.Security.PriceHistory
+                                            .OrderByDescending(ph => ph.Id) // we can assume ascending order for price history ids of a security by default.
+                                            .Skip(w.TrackedChangeDurationTradingDays - 1)
+                                            .Select(ph => ph.Close)
+                                            .FirstOrDefault()
+                }).ToList()
+            })
+            .ToListAsync(cancellationToken);
+
+        return domainWatchlists;
     }
 }
