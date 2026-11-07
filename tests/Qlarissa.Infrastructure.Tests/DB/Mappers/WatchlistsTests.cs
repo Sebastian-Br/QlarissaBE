@@ -7,28 +7,13 @@ public sealed class WatchlistsTests
     [Fact]
     public void Watchlist_FromDomainEntityWithoutCollections()
     {
-        var domainWatchlist = new Domain.Watchlists.Watchlist
+        var domainWatchlist = new Domain.Watchlists.WatchlistMinimal
         {
             Id = 1,
             Name = "My Watchlist",
             IsPinned = true,
             PinPosition = 1,
             TrackedChangeDurationTradingDays = 5,
-            WatchedSecurities = new List<Domain.Watchlists.WatchedSecurity>
-            {
-                new() {
-                    SecurityId = 101,
-                    Name = "Company A",
-                    Symbol = "CMPA",
-                    PreviousClosePrice = 100.5
-                },
-                new() {
-                    SecurityId = 102,
-                    Name = "Company B",
-                    Symbol = "CMPB",
-                    PreviousClosePrice = 200.75
-                }
-            }
         };
 
         string userId = "user123";
@@ -37,6 +22,8 @@ public sealed class WatchlistsTests
         Assert.Equal(domainWatchlist.Id, entityWatchlist.Id);
         Assert.Equal(userId, entityWatchlist.UserId);
         Assert.Equal(domainWatchlist.Name, entityWatchlist.Name);
+        Assert.Equal(domainWatchlist.IsPrimary, entityWatchlist.IsPrimary);
+        Assert.Equal(domainWatchlist.IsSecondary, entityWatchlist.IsSecondary);
         Assert.Equal(domainWatchlist.IsPinned, entityWatchlist.IsPinned);
         Assert.Equal(domainWatchlist.PinPosition, entityWatchlist.PinPosition);
         Assert.Equal(domainWatchlist.TrackedChangeDurationTradingDays, entityWatchlist.TrackedChangeDurationTradingDays);
@@ -44,7 +31,7 @@ public sealed class WatchlistsTests
     }
 
     [Fact]
-    public void Watchlist_ToDomainEntityWithoutCollections()
+    public void Watchlist_ToDomainEntity()
     {
         var entityWatchlist = new Infrastructure.DB.Entities.Watchlists.Watchlist
         {
@@ -66,12 +53,13 @@ public sealed class WatchlistsTests
                 }
             }
         };
-        var domainWatchlist = entityWatchlist.ToDomainEntity();
-        Assert.Equal(entityWatchlist.Id, domainWatchlist.Id);
-        Assert.Equal(entityWatchlist.Name, domainWatchlist.Name);
-        Assert.Equal(entityWatchlist.IsPinned, domainWatchlist.IsPinned);
-        Assert.Equal(entityWatchlist.PinPosition, domainWatchlist.PinPosition);
-        Assert.Equal(entityWatchlist.TrackedChangeDurationTradingDays, domainWatchlist.TrackedChangeDurationTradingDays);
-        Assert.Empty(domainWatchlist.WatchedSecurities); // WatchedSecurities should not be mapped in this method
+        var domainWatchlistMinimal = entityWatchlist.ToDomainEntity();
+        Assert.Equal(entityWatchlist.Id, domainWatchlistMinimal.Id);
+        Assert.Equal(entityWatchlist.Name, domainWatchlistMinimal.Name);
+        Assert.Equal(entityWatchlist.IsPrimary, domainWatchlistMinimal.IsPrimary);
+        Assert.Equal(entityWatchlist.IsSecondary, domainWatchlistMinimal.IsSecondary);
+        Assert.Equal(entityWatchlist.IsPinned, domainWatchlistMinimal.IsPinned);
+        Assert.Equal(entityWatchlist.PinPosition, domainWatchlistMinimal.PinPosition);
+        Assert.Equal(entityWatchlist.TrackedChangeDurationTradingDays, domainWatchlistMinimal.TrackedChangeDurationTradingDays);
     }
 }

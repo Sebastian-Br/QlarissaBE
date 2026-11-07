@@ -36,6 +36,8 @@ public class WatchlistMinimal
         {
             Id = Id,
             Name = Name,
+            IsPrimary = IsPrimary,
+            IsSecondary = IsSecondary,
             IsPinned = IsPinned,
             PinPosition = PinPosition,
             TrackedChangeDurationTradingDays = TrackedChangeDurationTradingDays

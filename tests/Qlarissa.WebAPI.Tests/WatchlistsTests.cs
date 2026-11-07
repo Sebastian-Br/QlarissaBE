@@ -6,31 +6,27 @@ public sealed class WatchlistsTests
     [Fact]
     public void Watchlist_FromDomainEntityWithoutCollections()
     {
-        Domain.Watchlists.Watchlist domainWatchlist = new()
+        Domain.Watchlists.WatchlistMinimal domainWatchlist = new()
         {
             Id = 1,
             Name = "My Watchlist",
+            IsPrimary = true,
+            IsSecondary = false,
             IsPinned = true,
             PinPosition = 2,
-            TrackedChangeDurationTradingDays = 5,
-            WatchedSecurities =
-            [
-                new() {
-                    SecurityId = 1,
-                    Name = "Some Company",
-                    Symbol = "SOCO",
-                    PreviousClosePrice = 234.5
-                }
-            ]
+            TrackedChangeDurationTradingDays = 5
         };
-        var apiModel = Models.Watchlist.Watchlist.FromDomainEntityWithoutCollections(domainWatchlist);
+
+        var apiModel = Models.Watchlist.WatchlistMinimal.FromDomainEntity(domainWatchlist);
+
         Assert.NotNull(apiModel);
         Assert.Equal(domainWatchlist.Id, apiModel.Id);
         Assert.Equal(domainWatchlist.Name, apiModel.Name);
+        Assert.Equal(domainWatchlist.IsPrimary, apiModel.IsPrimary);
+        Assert.Equal(domainWatchlist.IsSecondary, apiModel.IsSecondary);
         Assert.Equal(domainWatchlist.IsPinned, apiModel.IsPinned);
         Assert.Equal(domainWatchlist.PinPosition, apiModel.PinPosition);
         Assert.Equal(domainWatchlist.TrackedChangeDurationTradingDays, apiModel.TrackedChangeDurationTradingDays);
-        Assert.Empty(apiModel.WatchedSecurities);
     }
 
     [Fact]
@@ -72,31 +68,25 @@ public sealed class WatchlistsTests
     [Fact]
     public void Watchlist_ToDomainEntityWithoutCollections()
     {
-        Models.Watchlist.Watchlist apiModel = new()
+        Models.Watchlist.WatchlistMinimal apiModel = new()
         {
             Id = 1,
             Name = "My Watchlist",
+            IsPrimary = true,
+            IsSecondary = false,
             IsPinned = true,
             PinPosition = 2,
             TrackedChangeDurationTradingDays = 5,
-            WatchedSecurities =
-            [
-                new() {
-                    SecurityId = 1,
-                    Name = "Some Company",
-                    Symbol = "SOCO",
-                    PreviousClosePrice = 234.5
-                }
-            ]
         };
-        var domainEntity = apiModel.ToDomainEntityWithoutCollections();
+        var domainEntity = apiModel.ToDomainEntity();
         Assert.NotNull(domainEntity);
         Assert.Equal(apiModel.Id, domainEntity.Id);
         Assert.Equal(apiModel.Name, domainEntity.Name);
+        Assert.Equal(apiModel.IsPrimary, domainEntity.IsPrimary);
+        Assert.Equal(apiModel.IsSecondary, domainEntity.IsSecondary);
         Assert.Equal(apiModel.IsPinned, domainEntity.IsPinned);
         Assert.Equal(apiModel.PinPosition, domainEntity.PinPosition);
         Assert.Equal(apiModel.TrackedChangeDurationTradingDays, domainEntity.TrackedChangeDurationTradingDays);
-        Assert.Empty(domainEntity.WatchedSecurities);
     }
 
     [Fact]
