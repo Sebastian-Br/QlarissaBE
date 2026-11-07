@@ -60,7 +60,7 @@ public class WatchlistController(IQlarissaUserManager userManager, IWatchlistMan
 
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<int>> GetWatchlistIdsForSecurity([FromQuery] int securityId)
+    public async Task<ActionResult<IEnumerable<int>>> GetWatchlistIdsForSecurityAsync([FromQuery] int securityId)
     {
         var user = await _userManager.GetAsync(User);
         var watchlistIds = await _watchlistManager.GetWatchlistsForSecurityAsync(securityId, user.Value.Id);
