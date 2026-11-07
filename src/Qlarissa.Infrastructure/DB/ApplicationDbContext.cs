@@ -15,6 +15,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Stock> Stocks { get; set; }
     public DbSet<ETF> ETFs { get; set; }
     public DbSet<CryptoCurrency> CryptoCurrencies { get; set; }
+    public DbSet<CurrencyPair> CurrencyPairs { get; set; }
     public DbSet<WatchedSecurity> WatchedSecurities { get; set; }
     public DbSet<Watchlist> Watchlists { get; set; }
 

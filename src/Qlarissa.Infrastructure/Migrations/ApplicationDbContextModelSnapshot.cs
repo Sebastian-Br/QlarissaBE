@@ -604,6 +604,13 @@ namespace Qlarissa.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("CryptoCurrency");
                 });
 
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.CurrencyPair", b =>
+                {
+                    b.HasBaseType("Qlarissa.Infrastructure.DB.Entities.Base.PubliclyTradedSecurityBase");
+
+                    b.HasDiscriminator().HasValue("CurrencyPair");
+                });
+
             modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.ETF", b =>
                 {
                     b.HasBaseType("Qlarissa.Infrastructure.DB.Entities.Base.PubliclyTradedSecurityBase");
@@ -742,7 +749,7 @@ namespace Qlarissa.Infrastructure.Migrations
                     b.HasOne("Qlarissa.Infrastructure.DB.Entities.Holdings.Holding", null)
                         .WithMany("HoldingEvents")
                         .HasForeignKey("HoldingId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

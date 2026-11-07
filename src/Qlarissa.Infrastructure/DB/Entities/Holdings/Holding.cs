@@ -19,21 +19,18 @@ public class HoldingConfiguration : IEntityTypeConfiguration<Holding>
     {
         builder.Property(holding => holding.Id).ValueGeneratedOnAdd();
 
+        // When a security is deleted, holdings referencing it.
         builder.HasOne(holding => holding.Security)
             .WithMany()
             .HasForeignKey(holding => holding.SecurityId)
             .OnDelete(DeleteBehavior.ClientCascade);
 
+        // When a portfolio is deleted, delete its holdings.
         builder.HasOne<Portfolio>()
             .WithMany(portfolio => portfolio.Holdings)
             .HasForeignKey(holding => holding.PortfolioId)
             .OnDelete(DeleteBehavior.ClientCascade);
 
         builder.HasIndex(holding => holding.PortfolioId);
-
-        builder.HasMany(holding => holding.HoldingEvents)
-            .WithOne()
-            .HasForeignKey(holdingEvent => holdingEvent.HoldingId)
-            .OnDelete(DeleteBehavior.ClientCascade);
     }
 }

@@ -27,5 +27,10 @@ public class HoldingEventConfiguration : IEntityTypeConfiguration<HoldingEvent>
         builder.Property(holdingEvent => holdingEvent.Date)
                 .HasConversion(d => d.ToDateTime(TimeOnly.MinValue),
                            d => DateOnly.FromDateTime(d));
+
+        builder.HasOne<Holding>()
+            .WithMany(holding => holding.HoldingEvents)
+            .HasForeignKey(holdingEvent => holdingEvent.HoldingId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
