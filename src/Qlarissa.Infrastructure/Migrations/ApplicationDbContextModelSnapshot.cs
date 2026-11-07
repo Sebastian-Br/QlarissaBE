@@ -521,6 +521,12 @@ namespace Qlarissa.Infrastructure.Migrations
                     b.Property<bool>("IsPinned")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSecondary")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -539,7 +545,16 @@ namespace Qlarissa.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("Id", "UserId");
+                    b.HasIndex("Id", "UserId")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "UserId" }, "IX_Watchlists_UserId_Primary")
+                        .IsUnique()
+                        .HasFilter("[IsPrimary] = 1");
+
+                    b.HasIndex(new[] { "UserId" }, "IX_Watchlists_UserId_Secondary")
+                        .IsUnique()
+                        .HasFilter("[IsSecondary] = 1");
 
                     b.ToTable("Watchlists");
                 });

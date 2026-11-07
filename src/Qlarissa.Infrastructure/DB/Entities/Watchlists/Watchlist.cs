@@ -66,7 +66,7 @@ public class WatchlistConfiguration : IEntityTypeConfiguration<Watchlist>
         {
             w.Id,
             w.UserId
-        });
+        }).IsUnique();
 
         // For querying by UserId only (for GetAllWatchlistsAsync)
         builder.HasIndex(w => new
@@ -74,18 +74,17 @@ public class WatchlistConfiguration : IEntityTypeConfiguration<Watchlist>
             w.UserId
         });
 
-        // A user can only have a single primary/secondary watchlist.
-        builder.HasIndex(w => new
-        {
-            w.UserId,
-            w.IsPrimary
-        }).IsUnique();
+        builder.HasIndex(
+            w => w.UserId,
+            "IX_Watchlists_UserId_Primary")
+            .IsUnique()
+            .HasFilter("[IsPrimary] = 1");
 
-        builder.HasIndex(w => new
-        {
-            w.UserId,
-            w.IsSecondary
-        }).IsUnique();
+        builder.HasIndex(
+            w => w.UserId,
+            "IX_Watchlists_UserId_Secondary")
+            .IsUnique()
+            .HasFilter("[IsSecondary] = 1");
 
         // Deletion of a user account should cascade to their watchlists
         builder.HasOne<Domain.QlarissaUser>()
