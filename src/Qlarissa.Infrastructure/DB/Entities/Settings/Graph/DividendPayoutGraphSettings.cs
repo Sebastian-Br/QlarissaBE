@@ -1,0 +1,31 @@
+﻿namespace Qlarissa.Infrastructure.DB.Entities.Settings.Graph;
+
+public class DividendPayoutGraphSettings : GraphSettingsBase<Domain.Settings.Graph.DividendPayoutGraphSettings>
+{
+    public bool ShowDividendYield { get; set; }
+
+    public bool IsSynchronizedWithSecurityGraph { get; set; }
+
+    public DividendPayoutGraphSettings(Domain.Settings.Graph.DividendPayoutGraphSettings? domainEntity = null, string userId = "")
+    {
+        if (domainEntity == null)
+            return;
+
+        base.FromDomainEntity(domainEntity, userId);
+        ShowDividendYield = domainEntity.ShowDividendYield;
+        IsSynchronizedWithSecurityGraph = domainEntity.IsSynchronizedWithSecurityGraph;
+    }
+
+    public new Domain.Settings.Graph.DividendPayoutGraphSettings ToDomainEntity()
+    {
+        var domainEntity = base.ToDomainEntity();
+        domainEntity.ShowDividendYield = ShowDividendYield;
+        domainEntity.IsSynchronizedWithSecurityGraph = IsSynchronizedWithSecurityGraph;
+        return domainEntity;
+    }
+}
+
+
+public class DividendPayoutGraphSettingsConfiguration : GraphSettingsBaseConfiguration<DividendPayoutGraphSettings, Domain.Settings.Graph.DividendPayoutGraphSettings>
+{ // Non-generic configuration required for relationship discovery
+}

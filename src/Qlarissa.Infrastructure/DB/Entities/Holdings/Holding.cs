@@ -7,6 +7,7 @@ namespace Qlarissa.Infrastructure.DB.Entities.Holdings;
 public class Holding
 {
     public int Id { get; set; }
+    public string UserId { get; set; }
     public int PortfolioId { get; set; }
     public int SecurityId { get; set; }
     public PubliclyTradedSecurityBase Security { get; set; }
@@ -19,7 +20,11 @@ public class HoldingConfiguration : IEntityTypeConfiguration<Holding>
     {
         builder.Property(holding => holding.Id).ValueGeneratedOnAdd();
 
-        // When a security is deleted, holdings referencing it.
+        // For querying by user and portfolio.
+        builder.HasIndex(h => new { h.UserId });
+        builder.HasIndex(h => new { h.PortfolioId });
+
+        // When a security is deleted, delete holdings referencing it.
         builder.HasOne(holding => holding.Security)
             .WithMany()
             .HasForeignKey(holding => holding.SecurityId)

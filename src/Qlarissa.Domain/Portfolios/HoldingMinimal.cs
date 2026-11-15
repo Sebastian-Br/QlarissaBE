@@ -1,8 +1,8 @@
 ﻿using Qlarissa.Domain.Securities.Base;
 
-namespace Qlarissa.Domain.Securities.Holdings;
+namespace Qlarissa.Domain.Portfolios;
 
-public class Holding
+public class HoldingMinimal
 {
     public int Id { get; set; }
 
@@ -12,5 +12,5 @@ public class Holding
 
     public string SecurityName { get; set; } = string.Empty;
 
-    public IEnumerable<HoldingEvent> HoldingEvents { get; set; } = [];
+    public double Amount { get; set; }
 }

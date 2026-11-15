@@ -1,4 +1,4 @@
-﻿namespace Qlarissa.Domain.Securities.Holdings;
+﻿namespace Qlarissa.Domain.Portfolios;
 
 public class HoldingEvent
 {
@@ -6,7 +6,7 @@ public class HoldingEvent
 
     public HoldingEventType EventType { get; set; }
 
-    public int Quantity { get; set; }
+    public double Amount { get; set; }
 
     public DateOnly Date { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿
+﻿using Qlarissa.WebAPI.Models.Settings.Graph;
 
 namespace Qlarissa.WebAPI.Tests;
 
@@ -7,22 +7,40 @@ public class SettingsTests
     [Fact]
     public void DividendPayoutGraphSettings_ToDomainEntity()
     {
-        var apiModel = new Models.GraphSettings.DividendPayoutGraphSettings
+        var apiModel = new DividendPayoutGraphSettings
         {
-            StartDate = new DateOnly(2023, 1, 1),
-            EndDate = new DateOnly(2023, 12, 31),
+            Id = 8,
+            GraphType = GraphType.DividendPayouts,
+            Bounds = new()
+            {
+                StartDate = new DateOnly(2023, 1, 1),
+                EndDate = new DateOnly(2023, 12, 31),
+                Start = 2023.0,
+                End = 2023.99
+            },
+            TickCount = 5,
+            ShowXAxisGridLines = true,
+            ShowYAxisGridLines = true,
             LogarithmicScale = true,
-            PriceCardHoverDistance = 10,
+            ValueCardHoverDistance = 10,
             ShowDividendYield = true,
             IsSynchronizedWithSecurityGraph = false
         };
 
         var domainEntity = apiModel.ToDomainEntity();
 
-        Assert.Equal(apiModel.StartDate, domainEntity.StartDate);
-        Assert.Equal(apiModel.EndDate, domainEntity.EndDate);
+        Assert.Equal(apiModel.Id, domainEntity.Id);
+        Assert.Equal(apiModel.GraphType, (GraphType)domainEntity.GraphType);
+        Assert.NotNull(domainEntity.Bounds);
+        Assert.Equal(apiModel.Bounds.StartDate, domainEntity.Bounds.StartDate);
+        Assert.Equal(apiModel.Bounds.EndDate, domainEntity.Bounds.EndDate);
+        Assert.Equal(apiModel.Bounds.Start, domainEntity.Bounds.Start);
+        Assert.Equal(apiModel.Bounds.End, domainEntity.Bounds.End);
+        Assert.Equal(apiModel.TickCount, domainEntity.TickCount);
+        Assert.Equal(apiModel.ShowYAxisGridLines, domainEntity.ShowYAxisGridLines);
+        Assert.Equal(apiModel.ShowYAxisGridLines, domainEntity.ShowYAxisGridLines);
         Assert.Equal(apiModel.LogarithmicScale, domainEntity.LogarithmicScale);
-        Assert.Equal(apiModel.PriceCardHoverDistance, domainEntity.PriceCardHoverDistance);
+        Assert.Equal(apiModel.ValueCardHoverDistance, domainEntity.ValueCardHoverDistance);
         Assert.Equal(apiModel.ShowDividendYield, domainEntity.ShowDividendYield);
         Assert.Equal(apiModel.IsSynchronizedWithSecurityGraph, domainEntity.IsSynchronizedWithSecurityGraph);
     }
@@ -30,21 +48,42 @@ public class SettingsTests
     [Fact]
     public void DividendPayoutGraphSettings_FromDomainEntity()
     {
-        var domainEntity = new Domain.GraphSettings.DividendPayoutGraphSettings
+        var domainEntity = new Domain.Settings.Graph.DividendPayoutGraphSettings
         {
-            StartDate = new DateOnly(2023, 1, 1),
-            EndDate = new DateOnly(2023, 12, 31),
+            Id = 7,
+            GraphType = Domain.Settings.Graph.GraphType.DividendPayouts,
+            Bounds = new()
+            {
+                StartDate = new DateOnly(2023, 1, 1),
+                EndDate = new DateOnly(2023, 12, 31),
+                Start = 2023.0,
+                End = 2023.99
+            },
+            TickCount = 5,
+            ShowXAxisGridLines = true,
+            ShowYAxisGridLines = true,
             LogarithmicScale = true,
-            PriceCardHoverDistance = 10,
+            ValueCardHoverDistance = 10,
             ShowDividendYield = true,
             IsSynchronizedWithSecurityGraph = false
         };
-        var apiModel = new Models.GraphSettings.DividendPayoutGraphSettings();
-        apiModel.FromDomainEntity(domainEntity);
-        Assert.Equal(domainEntity.StartDate, apiModel.StartDate);
-        Assert.Equal(domainEntity.EndDate, apiModel.EndDate);
+
+        var apiModel = IGraphSettingsBase.FromDomainEntity(domainEntity) as DividendPayoutGraphSettings;
+
+        Assert.NotNull(apiModel);
+        Assert.Equal(domainEntity.Id, apiModel.Id);
+        Assert.Equal(domainEntity.GraphType, (Domain.Settings.Graph.GraphType)apiModel.GraphType);
+        Assert.NotNull(apiModel.Bounds);
+        Assert.Equal(domainEntity.Bounds.StartDate, apiModel.Bounds.StartDate);
+        Assert.Equal(domainEntity.Bounds.EndDate, apiModel.Bounds.EndDate);
+        Assert.Equal(domainEntity.Bounds.Start, apiModel.Bounds.Start);
+        Assert.Equal(domainEntity.Bounds.End, apiModel.Bounds.End);
+        Assert.Equal(domainEntity.TickCount, apiModel.TickCount);
+        Assert.Equal(domainEntity.ShowXAxisGridLines, apiModel.ShowXAxisGridLines);
+        Assert.Equal(domainEntity.ShowYAxisGridLines, apiModel.ShowYAxisGridLines);
+        Assert.Equal(domainEntity.TickCount, apiModel.TickCount);
         Assert.Equal(domainEntity.LogarithmicScale, apiModel.LogarithmicScale);
-        Assert.Equal(domainEntity.PriceCardHoverDistance, apiModel.PriceCardHoverDistance);
+        Assert.Equal(domainEntity.ValueCardHoverDistance, apiModel.ValueCardHoverDistance);
         Assert.Equal(domainEntity.ShowDividendYield, apiModel.ShowDividendYield);
         Assert.Equal(domainEntity.IsSynchronizedWithSecurityGraph, apiModel.IsSynchronizedWithSecurityGraph);
     }
@@ -52,35 +91,53 @@ public class SettingsTests
     [Fact]
     public void SecurityGraphSettings_ToDomainEntity()
     {
-        var apiModel = new Models.GraphSettings.SecurityGraphSettings
+        var apiModel = new  SecurityGraphSettings
         {
-            StartDate = new DateOnly(2023, 1, 1),
-            EndDate = new DateOnly(2023, 12, 31),
+            Id = 5,
+            GraphType = GraphType.Security,
+            TickCount = 5,
+            ShowXAxisGridLines = true,
+            ShowYAxisGridLines = true,
             LogarithmicScale = true,
-            PriceCardHoverDistance = 10,
+            ValueCardHoverDistance = 10,
         };
+
         var domainEntity = apiModel.ToDomainEntity();
-        Assert.Equal(apiModel.StartDate, domainEntity.StartDate);
-        Assert.Equal(apiModel.EndDate, domainEntity.EndDate);
+
+        Assert.Equal(apiModel.Id, domainEntity.Id);
+        Assert.Equal(apiModel.GraphType, (GraphType)domainEntity.GraphType);
+        Assert.Null(domainEntity.Bounds);
+        Assert.Equal(apiModel.TickCount, domainEntity.TickCount);
+        Assert.Equal(apiModel.ShowXAxisGridLines, domainEntity.ShowXAxisGridLines);
+        Assert.Equal(apiModel.ShowYAxisGridLines, domainEntity.ShowYAxisGridLines);
         Assert.Equal(apiModel.LogarithmicScale, domainEntity.LogarithmicScale);
-        Assert.Equal(apiModel.PriceCardHoverDistance, domainEntity.PriceCardHoverDistance);
+        Assert.Equal(apiModel.ValueCardHoverDistance, domainEntity.ValueCardHoverDistance);
     }
 
     [Fact]
     public void SecurityGraphSettings_FromDomainEntity()
     {
-        var domainEntity = new Domain.GraphSettings.SecurityGraphSettings
+        var domainEntity = new Domain.Settings.Graph.SecurityGraphSettings
         {
-            StartDate = new DateOnly(2023, 1, 1),
-            EndDate = new DateOnly(2023, 12, 31),
+            Id = 5,
+            GraphType = Domain.Settings.Graph.GraphType.Security,
+            TickCount = 5,
+            ShowXAxisGridLines = true,
+            ShowYAxisGridLines = true,
             LogarithmicScale = true,
-            PriceCardHoverDistance = 10,
+            ValueCardHoverDistance = 10,
         };
-        var apiModel = new Models.GraphSettings.SecurityGraphSettings();
-        apiModel.FromDomainEntity(domainEntity);
-        Assert.Equal(domainEntity.StartDate, apiModel.StartDate);
-        Assert.Equal(domainEntity.EndDate, apiModel.EndDate);
+
+        var apiModel = IGraphSettingsBase.FromDomainEntity(domainEntity) as SecurityGraphSettings;
+
+        Assert.NotNull(apiModel);
+        Assert.Equal(domainEntity.GraphType, (Domain.Settings.Graph.GraphType)apiModel.GraphType);
+        Assert.Equal(domainEntity.Id, apiModel.Id);
+        Assert.Null(apiModel.Bounds);
+        Assert.Equal(domainEntity.TickCount, apiModel.TickCount);
+        Assert.Equal(domainEntity.ShowXAxisGridLines, apiModel.ShowXAxisGridLines);
+        Assert.Equal(domainEntity.ShowYAxisGridLines, apiModel.ShowYAxisGridLines);
         Assert.Equal(domainEntity.LogarithmicScale, apiModel.LogarithmicScale);
-        Assert.Equal(domainEntity.PriceCardHoverDistance, apiModel.PriceCardHoverDistance);
+        Assert.Equal(domainEntity.ValueCardHoverDistance, apiModel.ValueCardHoverDistance);
     }
 }

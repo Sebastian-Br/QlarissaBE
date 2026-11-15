@@ -1,4 +1,4 @@
-﻿namespace Qlarissa.Domain.Securities.Holdings;
+﻿namespace Qlarissa.Domain.Portfolios;
 
 public sealed class CurrencyHolding
 {

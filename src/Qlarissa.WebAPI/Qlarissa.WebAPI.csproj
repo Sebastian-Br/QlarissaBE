@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Qlarissa.Infrastructure\Qlarissa.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Holdings\" />
+  </ItemGroup>
+
 </Project>

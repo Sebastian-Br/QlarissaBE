@@ -1,10 +1,10 @@
-﻿namespace Qlarissa.Domain.Functions;
+﻿namespace Qlarissa.Domain.Settings.Functions;
 
 public enum FunctionType
 {
     /// <summary>
-    /// Functions used to model growth of a security.
-    /// They accept a DateOnly and return a double.
+    /// Functions used to model growth of a security or arbitrary numerical values.
+    /// They accept a DateOnly (for securities) or a double (for numerical input) and return a double.
     /// </summary>
     Regression,
 
