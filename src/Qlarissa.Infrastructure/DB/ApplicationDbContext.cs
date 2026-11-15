@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Infrastructure.DB.Entities.MarketData;
+using Qlarissa.Infrastructure.DB.Entities.Settings;
 using Qlarissa.Infrastructure.DB.Entities.Settings.Graph;
 using Qlarissa.Infrastructure.DB.Entities.Watchlists;
 
@@ -21,6 +22,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Watchlist> Watchlists { get; set; }
     public DbSet<SecurityGraphSettings> SecurityGraphSettings { get; set; }
     public DbSet<DividendPayoutGraphSettings> DividendPayoutGraphSettings { get; set; }
+    public DbSet<Bounds> Bounds { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

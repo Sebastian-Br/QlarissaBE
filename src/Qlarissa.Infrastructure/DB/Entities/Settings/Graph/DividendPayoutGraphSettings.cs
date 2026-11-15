@@ -6,7 +6,10 @@ public class DividendPayoutGraphSettings : GraphSettingsBase<Domain.Settings.Gra
 
     public bool IsSynchronizedWithSecurityGraph { get; set; }
 
-    public DividendPayoutGraphSettings(Domain.Settings.Graph.DividendPayoutGraphSettings? domainEntity = null, string userId = "")
+    public DividendPayoutGraphSettings() { }
+
+    // ~ FromDomainEntity
+    public DividendPayoutGraphSettings(Domain.Settings.Graph.DividendPayoutGraphSettings? domainEntity, string userId)
     {
         if (domainEntity == null)
             return;
