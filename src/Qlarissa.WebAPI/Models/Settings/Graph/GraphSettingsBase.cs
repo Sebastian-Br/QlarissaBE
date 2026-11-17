@@ -1,6 +1,11 @@
-﻿namespace Qlarissa.WebAPI.Models.Settings.Graph;
+﻿using System.Text.Json.Serialization;
 
-public class GraphSettingsBase<TGraphSettings> : IGraphSettingsBase where TGraphSettings : Domain.Settings.Graph.GraphSettingBase, new()
+namespace Qlarissa.WebAPI.Models.Settings.Graph;
+
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "GraphType")]
+[JsonDerivedType(typeof(SecurityGraphSettings), (int)GraphType.Security)]
+[JsonDerivedType(typeof(DividendPayoutGraphSettings), (int)GraphType.DividendPayouts)]
+public abstract class GraphSettingsBase
 {
     public int Id { get; set; }
 
@@ -18,7 +23,19 @@ public class GraphSettingsBase<TGraphSettings> : IGraphSettingsBase where TGraph
 
     public int ValueCardHoverDistance { get; set; }
 
-    internal virtual TGraphSettings ToDomainEntity() => new()
+    public static GraphSettingsBase FromDomainEntity(Domain.Settings.Graph.GraphSettingBase domainEntity) => domainEntity switch
+    {
+        Domain.Settings.Graph.SecurityGraphSettings securityGraphSettings => new SecurityGraphSettings(securityGraphSettings),
+        Domain.Settings.Graph.DividendPayoutGraphSettings dividendPayoutGraphSettings => new DividendPayoutGraphSettings(dividendPayoutGraphSettings),
+        _ => throw new NotSupportedException($"Unsupported graph settings type: {domainEntity.GetType().Name}")
+    };
+
+    public abstract Domain.Settings.Graph.GraphSettingBase ToDomainEntity();
+}
+
+public class GraphSettingsBase<TGraphSettings> : GraphSettingsBase where TGraphSettings : Domain.Settings.Graph.GraphSettingBase, new()
+{
+    public override TGraphSettings ToDomainEntity() => new()
     {
         Id = Id,
         GraphType = (Domain.Settings.Graph.GraphType)GraphType,

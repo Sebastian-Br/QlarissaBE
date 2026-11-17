@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Qlarissa.Domain.Settings.Graph;
 
 namespace Qlarissa.Infrastructure.DB.Entities.Settings.Graph;
 
-public abstract class GraphSettingsBase<TGraphSettings> : IGraphSettingsBase where TGraphSettings : GraphSettingBase, new()
+public abstract class GraphSettingsBase
 {
     public int Id { get; set; }
 
@@ -26,7 +25,24 @@ public abstract class GraphSettingsBase<TGraphSettings> : IGraphSettingsBase whe
 
     public int PriceCardHoverDistance { get; set; }
 
-    public virtual TGraphSettings ToDomainEntity()
+    public static GraphSettingsBase FromDomainEntity(Domain.Settings.Graph.GraphSettingBase domainEntity, string userId) => domainEntity switch
+    {
+        Domain.Settings.Graph.SecurityGraphSettings securityGraphSettings => new SecurityGraphSettings(securityGraphSettings, userId),
+        Domain.Settings.Graph.DividendPayoutGraphSettings dividendPayoutGraphSettings => new DividendPayoutGraphSettings(dividendPayoutGraphSettings, userId),
+        _ => throw new NotSupportedException($"Unsupported graph settings type: {domainEntity.GetType().Name}")
+    };
+
+    public abstract Domain.Settings.Graph.GraphSettingBase ToDomainEntity();
+}
+
+/// <summary>
+/// Used for mapping.
+/// </summary>
+/// <typeparam name="TGraphSettings">The domain GraphSettings type.</typeparam>
+public abstract class GraphSettingsBase<TGraphSettings> : GraphSettingsBase 
+                        where TGraphSettings : Domain.Settings.Graph.GraphSettingBase, new()
+{
+    public override TGraphSettings ToDomainEntity()
     {
         return new TGraphSettings
         {
@@ -55,11 +71,9 @@ public abstract class GraphSettingsBase<TGraphSettings> : IGraphSettingsBase whe
     }
 }
 
-public class GraphSettingsBaseConfiguration<TEntity, TGraphSettings> : IEntityTypeConfiguration<TEntity>
-    where TEntity : GraphSettingsBase<TGraphSettings>
-    where TGraphSettings : GraphSettingBase, new()
+public class GraphSettingsBaseConfiguration : IEntityTypeConfiguration<GraphSettingsBase>
 {
-    public void Configure(EntityTypeBuilder<TEntity> builder)
+    public void Configure(EntityTypeBuilder<GraphSettingsBase> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
@@ -74,8 +88,10 @@ public class GraphSettingsBaseConfiguration<TEntity, TGraphSettings> : IEntityTy
         builder.HasIndex(x => new { x.UserId, x.GraphType });
 
         builder.HasOne(x => x.Bounds)
-            .WithOne()
-            .HasForeignKey<TEntity>(x => x.BoundsId)
-            .OnDelete(DeleteBehavior.Cascade);
+               .WithOne()
+               .HasForeignKey<GraphSettingsBase>(x => x.BoundsId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+        builder.ToTable("GraphSettings");
     }
 }

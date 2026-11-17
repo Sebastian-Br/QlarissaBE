@@ -5,6 +5,22 @@ namespace Qlarissa.WebAPI.Tests;
 public class SettingsTests
 {
     [Fact]
+    public void GraphSettingsBase_ToDomainEntity_ResolvesType()
+    {
+        GraphSettingsBase apiModel = new DividendPayoutGraphSettings();
+        var domainEntity = apiModel.ToDomainEntity() as Domain.Settings.Graph.DividendPayoutGraphSettings;
+        Assert.NotNull(domainEntity);
+    }
+
+    [Fact]
+    public void GraphSettingsBase_FromDomainEntity_ResolvesType()
+    {
+        Domain.Settings.Graph.GraphSettingBase domainEntity = new Domain.Settings.Graph.DividendPayoutGraphSettings();
+        var apiModel = GraphSettingsBase.FromDomainEntity(domainEntity) as DividendPayoutGraphSettings;
+        Assert.NotNull(apiModel);
+    }
+
+    [Fact]
     public void DividendPayoutGraphSettings_ToDomainEntity()
     {
         var apiModel = new DividendPayoutGraphSettings
@@ -68,7 +84,7 @@ public class SettingsTests
             IsSynchronizedWithSecurityGraph = false
         };
 
-        var apiModel = IGraphSettingsBase.FromDomainEntity(domainEntity) as DividendPayoutGraphSettings;
+        var apiModel = GraphSettingsBase.FromDomainEntity(domainEntity) as DividendPayoutGraphSettings;
 
         Assert.NotNull(apiModel);
         Assert.Equal(domainEntity.Id, apiModel.Id);
@@ -128,7 +144,7 @@ public class SettingsTests
             ValueCardHoverDistance = 10,
         };
 
-        var apiModel = IGraphSettingsBase.FromDomainEntity(domainEntity) as SecurityGraphSettings;
+        var apiModel = GraphSettingsBase.FromDomainEntity(domainEntity) as SecurityGraphSettings;
 
         Assert.NotNull(apiModel);
         Assert.Equal(domainEntity.GraphType, (Domain.Settings.Graph.GraphType)apiModel.GraphType);

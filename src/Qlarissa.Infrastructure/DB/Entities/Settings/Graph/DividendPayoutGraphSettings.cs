@@ -29,6 +29,6 @@ public class DividendPayoutGraphSettings : GraphSettingsBase<Domain.Settings.Gra
 }
 
 
-public class DividendPayoutGraphSettingsConfiguration : GraphSettingsBaseConfiguration<DividendPayoutGraphSettings, Domain.Settings.Graph.DividendPayoutGraphSettings>
+/*public class DividendPayoutGraphSettingsConfiguration : GraphSettingsBaseConfiguration<DividendPayoutGraphSettings, Domain.Settings.Graph.DividendPayoutGraphSettings>
 { // Non-generic configuration required for relationship discovery
-}
+}*/

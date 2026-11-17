@@ -21,6 +21,6 @@ public sealed class SecurityGraphSettings : GraphSettingsBase<Domain.Settings.Gr
     }
 }
 
-public class SecurityGraphSettingsConfiguration : GraphSettingsBaseConfiguration<SecurityGraphSettings, Domain.Settings.Graph.SecurityGraphSettings>
+/*public class SecurityGraphSettingsConfiguration : GraphSettingsBaseConfiguration<SecurityGraphSettings, Domain.Settings.Graph.SecurityGraphSettings>
 { // Non-generic configuration required for relationship discovery
-}
+}*/
