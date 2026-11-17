@@ -79,7 +79,7 @@ public class SecurityMappersTests
         Assert.Equal(domainEntity.Symbol, dbEntity.Symbol);
         Assert.Equal(domainEntity.Price, dbEntity.Price);
         Assert.Equal(domainEntity.PriceLastUpdatedTime, dbEntity.PriceLastUpdatedTime);
-        Assert.Equal(domainEntity.PriceHistoryLastDataPointDate, dbEntity.PriceHistoryLastDataPointDate);
+        Assert.Equal(domainEntity.PriceHistory.Last().Date, dbEntity.PriceHistoryLastDataPointDate);
 
         for(int i = 0; i < domainEntity.PriceHistory.Count; i++)
         {
@@ -155,7 +155,7 @@ public class SecurityMappersTests
         Assert.Equal(domainEntity.Symbol, dbEntity.Symbol);
         Assert.Equal(domainEntity.Price, dbEntity.Price);
         Assert.Equal(domainEntity.PriceLastUpdatedTime, dbEntity.PriceLastUpdatedTime);
-        Assert.Equal(domainEntity.PriceHistoryLastDataPointDate, dbEntity.PriceHistoryLastDataPointDate);
+        Assert.Equal(domainEntity.PriceHistory.Last().Date, dbEntity.PriceHistoryLastDataPointDate);
 
         for (int i = 0; i < domainEntity.PriceHistory.Count; i++)
         {
@@ -263,7 +263,7 @@ public class SecurityMappersTests
         Assert.Equal(domainEntity.Symbol, dbEntity.Symbol);
         Assert.Equal(domainEntity.Price, dbEntity.Price);
         Assert.Equal(domainEntity.PriceLastUpdatedTime, dbEntity.PriceLastUpdatedTime);
-        Assert.Equal(domainEntity.PriceHistoryLastDataPointDate, dbEntity.PriceHistoryLastDataPointDate);
+        Assert.Equal(domainEntity.PriceHistory.Last().Date, dbEntity.PriceHistoryLastDataPointDate);
         Assert.Equal(domainEntity.InvestorRelationsURL, dbEntity.InvestorRelationsURL);
 
         for (int i = 0; i < domainEntity.PriceHistory.Count; i++)

@@ -32,6 +32,12 @@ public sealed class DividendPayout
             PayoutDate = dbEntity.PayoutDate,
             PayoutAmount = dbEntity.PayoutAmount,
         };
+
+    public void UpdateFromDbEntity(DividendPayout dp)
+    {
+        PayoutAmount = dp.PayoutAmount;
+        // Other properties are expected to always remain the same
+    }
 }
 
 public class DividendPayoutConfiguration : IEntityTypeConfiguration<DividendPayout>

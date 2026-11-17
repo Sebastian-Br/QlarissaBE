@@ -44,7 +44,7 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
         dbEntity.Symbol = domainEntity.Symbol;
         dbEntity.Price = domainEntity.Price;
         dbEntity.PriceLastUpdatedTime = domainEntity.PriceLastUpdatedTime;
-        dbEntity.PriceHistoryLastDataPointDate = domainEntity.PriceHistoryLastDataPointDate;
+        dbEntity.PriceHistoryLastDataPointDate = domainEntity.PriceHistory.Last().Date;
         dbEntity.InformationLastUpdatedTime = domainEntity.InformationLastUpdatedTime;
         dbEntity.PriceHistory = domainEntity.PriceHistory.Select(x => DailyPrice.FromDomainEntity(x, domainEntity)).ToList();
     }
@@ -114,8 +114,10 @@ public abstract class PubliclyTradedSecurityBase : SecurityBase
         var now = DateTime.UtcNow;
         PriceLastUpdatedTime = now;
         InformationLastUpdatedTime = now;
+
         if (incomingDbEntity.PriceHistory.Any())
         {
+            // this must be set last because the derived types' .UpdateFromDbEntity use this property.
             PriceHistoryLastDataPointDate = incomingDbEntity.PriceHistory.Last().Date;
         }
     }

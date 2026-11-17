@@ -76,10 +76,17 @@ public sealed class Stock : PubliclyTradedSecurityBase
                 }
             }
 
-            var newDividendPayouts = incomingDbEntity.DividendPayouts.Where(dividend => dividend.PayoutDate > DividendPayouts.Last().PayoutDate);
-            foreach (var newPayout in newDividendPayouts)
+            var existingDividendHistory = DividendPayouts.ToDictionary(dp => dp.PayoutDate);
+            foreach (var incomingPayout in incomingDbEntity.DividendPayouts)
             {
-                DividendPayouts.Add(newPayout);
+                if (existingDividendHistory.TryGetValue(incomingPayout.PayoutDate, out var existingDp))
+                {
+                    existingDp.UpdateFromDbEntity(incomingPayout);
+                }
+                else
+                {
+                    DividendPayouts.Add(incomingPayout);
+                }
             }
 
             var newSplits = incomingDbEntity.Splits.Where(split => split.Date > Splits.Last().Date);
