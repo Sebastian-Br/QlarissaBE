@@ -26,9 +26,10 @@ public class DividendPayoutGraphSettings : GraphSettingsBase<Domain.Settings.Gra
         domainEntity.IsSynchronizedWithSecurityGraph = IsSynchronizedWithSecurityGraph;
         return domainEntity;
     }
+
+    public void UpdateFromDbEntity(DividendPayoutGraphSettings dbEntity)
+    {
+        ShowDividendYield = dbEntity.ShowDividendYield;
+        IsSynchronizedWithSecurityGraph = dbEntity.IsSynchronizedWithSecurityGraph;
+    }
 }
-
-
-/*public class DividendPayoutGraphSettingsConfiguration : GraphSettingsBaseConfiguration<DividendPayoutGraphSettings, Domain.Settings.Graph.DividendPayoutGraphSettings>
-{ // Non-generic configuration required for relationship discovery
-}*/

@@ -25,7 +25,6 @@ public class SettingsTests
     {
         var apiModel = new DividendPayoutGraphSettings
         {
-            Id = 8,
             GraphType = GraphType.DividendPayouts,
             Bounds = new()
             {
@@ -45,7 +44,6 @@ public class SettingsTests
 
         var domainEntity = apiModel.ToDomainEntity();
 
-        Assert.Equal(apiModel.Id, domainEntity.Id);
         Assert.Equal(apiModel.GraphType, (GraphType)domainEntity.GraphType);
         Assert.NotNull(domainEntity.Bounds);
         Assert.Equal(apiModel.Bounds.StartDate, domainEntity.Bounds.StartDate);
@@ -87,7 +85,6 @@ public class SettingsTests
         var apiModel = GraphSettingsBase.FromDomainEntity(domainEntity) as DividendPayoutGraphSettings;
 
         Assert.NotNull(apiModel);
-        Assert.Equal(domainEntity.Id, apiModel.Id);
         Assert.Equal(domainEntity.GraphType, (Domain.Settings.Graph.GraphType)apiModel.GraphType);
         Assert.NotNull(apiModel.Bounds);
         Assert.Equal(domainEntity.Bounds.StartDate, apiModel.Bounds.StartDate);
@@ -109,7 +106,6 @@ public class SettingsTests
     {
         var apiModel = new  SecurityGraphSettings
         {
-            Id = 5,
             GraphType = GraphType.Security,
             TickCount = 5,
             ShowXAxisGridLines = true,
@@ -120,7 +116,6 @@ public class SettingsTests
 
         var domainEntity = apiModel.ToDomainEntity();
 
-        Assert.Equal(apiModel.Id, domainEntity.Id);
         Assert.Equal(apiModel.GraphType, (GraphType)domainEntity.GraphType);
         Assert.Null(domainEntity.Bounds);
         Assert.Equal(apiModel.TickCount, domainEntity.TickCount);
@@ -148,7 +143,6 @@ public class SettingsTests
 
         Assert.NotNull(apiModel);
         Assert.Equal(domainEntity.GraphType, (Domain.Settings.Graph.GraphType)apiModel.GraphType);
-        Assert.Equal(domainEntity.Id, apiModel.Id);
         Assert.Null(apiModel.Bounds);
         Assert.Equal(domainEntity.TickCount, apiModel.TickCount);
         Assert.Equal(domainEntity.ShowXAxisGridLines, apiModel.ShowXAxisGridLines);

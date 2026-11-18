@@ -7,8 +7,6 @@ namespace Qlarissa.WebAPI.Models.Settings.Graph;
 [JsonDerivedType(typeof(DividendPayoutGraphSettings), (int)GraphType.DividendPayouts)]
 public abstract class GraphSettingsBase
 {
-    public int Id { get; set; }
-
     public GraphType GraphType { get; set; }
 
     public Bounds? Bounds { get; set; }
@@ -37,7 +35,6 @@ public class GraphSettingsBase<TGraphSettings> : GraphSettingsBase where TGraphS
 {
     public override TGraphSettings ToDomainEntity() => new()
     {
-        Id = Id,
         GraphType = (Domain.Settings.Graph.GraphType)GraphType,
         Bounds = Bounds?.ToDomainEntity(),
         TickCount = TickCount,
@@ -49,7 +46,6 @@ public class GraphSettingsBase<TGraphSettings> : GraphSettingsBase where TGraphS
 
     internal virtual void FromDomainEntity(TGraphSettings domainEntity)
     {
-        Id = domainEntity.Id;
         GraphType = (GraphType)domainEntity.GraphType;
         Bounds = Bounds.FromDomainEntity(domainEntity.Bounds);
         TickCount = domainEntity.TickCount;

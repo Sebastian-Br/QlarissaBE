@@ -20,6 +20,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<CurrencyPair> CurrencyPairs { get; set; }
     public DbSet<WatchedSecurity> WatchedSecurities { get; set; }
     public DbSet<Watchlist> Watchlists { get; set; }
+    public DbSet<GraphSettingsBase> GraphSettings { get; set; }
     public DbSet<SecurityGraphSettings> SecurityGraphSettings { get; set; }
     public DbSet<DividendPayoutGraphSettings> DividendPayoutGraphSettings { get; set; }
     public DbSet<Bounds> Bounds { get; set; }

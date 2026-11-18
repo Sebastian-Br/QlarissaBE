@@ -26,7 +26,6 @@ public sealed class SettingsTests
     {
         var dbEntity = new SecurityGraphSettings
         {
-            Id = 5,
             UserId = "user-123",
             GraphType = GraphType.SecurityGraph,
             Bounds = new Infrastructure.DB.Entities.Settings.Bounds
@@ -41,13 +40,12 @@ public sealed class SettingsTests
             ShowXAxisGridLines = true,
             ShowYAxisGridLines = false,
             LogarithmicScale = true,
-            PriceCardHoverDistance = 14
+            ValueCardHoverDistance = 14
         };
 
         var domainEntity = dbEntity.ToDomainEntity() as Domain.Settings.Graph.SecurityGraphSettings;
 
         Assert.NotNull(domainEntity);
-        Assert.Equal(dbEntity.Id, domainEntity.Id);
         Assert.Equal((Domain.Settings.Graph.GraphType)dbEntity.GraphType, domainEntity.GraphType);
         Assert.NotNull(domainEntity.Bounds);
         Assert.Equal(dbEntity.Bounds.StartDate, domainEntity.Bounds.StartDate);
@@ -58,7 +56,7 @@ public sealed class SettingsTests
         Assert.Equal(dbEntity.ShowXAxisGridLines, domainEntity.ShowXAxisGridLines);
         Assert.Equal(dbEntity.ShowYAxisGridLines, domainEntity.ShowYAxisGridLines);
         Assert.Equal(dbEntity.LogarithmicScale, domainEntity.LogarithmicScale);
-        Assert.Equal(dbEntity.PriceCardHoverDistance, domainEntity.ValueCardHoverDistance);
+        Assert.Equal(dbEntity.ValueCardHoverDistance, domainEntity.ValueCardHoverDistance);
     }
 
     [Fact]
@@ -86,7 +84,6 @@ public sealed class SettingsTests
         var dbEntity = GraphSettingsBase.FromDomainEntity(domainEntity, "user-456") as SecurityGraphSettings;
 
         Assert.NotNull(dbEntity);
-        Assert.Equal(domainEntity.Id, dbEntity.Id);
         Assert.Equal("user-456", dbEntity.UserId);
         Assert.Equal((GraphType)domainEntity.GraphType, dbEntity.GraphType);
         Assert.NotNull(dbEntity.Bounds);
@@ -98,7 +95,7 @@ public sealed class SettingsTests
         Assert.Equal(domainEntity.ShowXAxisGridLines, dbEntity.ShowXAxisGridLines);
         Assert.Equal(domainEntity.ShowYAxisGridLines, dbEntity.ShowYAxisGridLines);
         Assert.Equal(domainEntity.LogarithmicScale, dbEntity.LogarithmicScale);
-        Assert.Equal(domainEntity.ValueCardHoverDistance, dbEntity.PriceCardHoverDistance);
+        Assert.Equal(domainEntity.ValueCardHoverDistance, dbEntity.ValueCardHoverDistance);
     }
 
     [Fact]
@@ -106,7 +103,6 @@ public sealed class SettingsTests
     {
         var dbEntity = new DividendPayoutGraphSettings
         {
-            Id = 7,
             UserId = "user-789",
             GraphType = GraphType.DividendPayoutGraph,
             Bounds = new Infrastructure.DB.Entities.Settings.Bounds
@@ -121,7 +117,7 @@ public sealed class SettingsTests
             ShowXAxisGridLines = false,
             ShowYAxisGridLines = true,
             LogarithmicScale = true,
-            PriceCardHoverDistance = 18,
+            ValueCardHoverDistance = 18,
             ShowDividendYield = true,
             IsSynchronizedWithSecurityGraph = false
         };
@@ -129,7 +125,6 @@ public sealed class SettingsTests
         var domainEntity = dbEntity.ToDomainEntity();
 
         Assert.NotNull(domainEntity);
-        Assert.Equal(dbEntity.Id, domainEntity.Id);
         Assert.Equal((Domain.Settings.Graph.GraphType)dbEntity.GraphType, domainEntity.GraphType);
         Assert.NotNull(domainEntity.Bounds);
         Assert.Equal(dbEntity.Bounds.StartDate, domainEntity.Bounds.StartDate);
@@ -140,7 +135,7 @@ public sealed class SettingsTests
         Assert.Equal(dbEntity.ShowXAxisGridLines, domainEntity.ShowXAxisGridLines);
         Assert.Equal(dbEntity.ShowYAxisGridLines, domainEntity.ShowYAxisGridLines);
         Assert.Equal(dbEntity.LogarithmicScale, domainEntity.LogarithmicScale);
-        Assert.Equal(dbEntity.PriceCardHoverDistance, domainEntity.ValueCardHoverDistance);
+        Assert.Equal(dbEntity.ValueCardHoverDistance, domainEntity.ValueCardHoverDistance);
         Assert.Equal(dbEntity.ShowDividendYield, domainEntity.ShowDividendYield);
         Assert.Equal(dbEntity.IsSynchronizedWithSecurityGraph, domainEntity.IsSynchronizedWithSecurityGraph);
     }
@@ -172,7 +167,6 @@ public sealed class SettingsTests
         var dbEntity = GraphSettingsBase.FromDomainEntity(domainEntity, "user-101") as DividendPayoutGraphSettings;
 
         Assert.NotNull(dbEntity);
-        Assert.Equal(domainEntity.Id, dbEntity.Id);
         Assert.Equal("user-101", dbEntity.UserId);
         Assert.Equal((GraphType)domainEntity.GraphType, dbEntity.GraphType);
         Assert.NotNull(dbEntity.Bounds);
@@ -184,7 +178,7 @@ public sealed class SettingsTests
         Assert.Equal(domainEntity.ShowXAxisGridLines, dbEntity.ShowXAxisGridLines);
         Assert.Equal(domainEntity.ShowYAxisGridLines, dbEntity.ShowYAxisGridLines);
         Assert.Equal(domainEntity.LogarithmicScale, dbEntity.LogarithmicScale);
-        Assert.Equal(domainEntity.ValueCardHoverDistance, dbEntity.PriceCardHoverDistance);
+        Assert.Equal(domainEntity.ValueCardHoverDistance, dbEntity.ValueCardHoverDistance);
         Assert.Equal(domainEntity.ShowDividendYield, dbEntity.ShowDividendYield);
         Assert.Equal(domainEntity.IsSynchronizedWithSecurityGraph, dbEntity.IsSynchronizedWithSecurityGraph);
     }

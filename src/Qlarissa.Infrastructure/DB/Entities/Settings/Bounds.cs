@@ -35,6 +35,19 @@ public class Bounds
         Start = domainEntity.Start,
         End = domainEntity.End
     };
+
+    public Bounds? UpdateFromDbEntity(Bounds? dbEntity)
+    {
+        if (dbEntity is null)
+            return null;
+
+        StartDate = dbEntity.StartDate;
+        EndDate = dbEntity.EndDate;
+        Start = dbEntity.Start;
+        End = dbEntity.End;
+
+        return this;
+    }
 }
 
 public class BoundsConfiguration : IEntityTypeConfiguration<Bounds>
