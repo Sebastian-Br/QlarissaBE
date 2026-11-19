@@ -1,4 +1,5 @@
 using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -25,6 +26,8 @@ namespace Qlarissa.WebAPI;
 
 public class Program
 {
+    private const string LivePriceHubPath = "/hubs/live-prices";
+
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -109,31 +112,73 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
+        var jwtKey = configuration["Jwt:Key"];
+        if (string.IsNullOrWhiteSpace(jwtKey) || Encoding.UTF8.GetByteCount(jwtKey) < 32)
         {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = configuration["Jwt:Issuer"],
-                ValidAudience = configuration["Jwt:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
-            };
-        });
+            throw new InvalidOperationException("Configure Jwt:Key with a secret of at least 32 UTF-8 bytes using a secure configuration provider.");
+        }
 
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = configuration["Jwt:Issuer"],
+                    ValidAudience = configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        if (context.Request.Path.StartsWithSegments(LivePriceHubPath))
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            if (!string.IsNullOrEmpty(accessToken))
+                            {
+                                context.Token = accessToken;
+                            }
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
+        var allowedFrontendOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+        if (allowedFrontendOrigins.Length == 0)
+        {
+            throw new InvalidOperationException("Configure Cors:AllowedOrigins with one or more exact frontend origins.");
+        }
+
+        foreach (var origin in allowedFrontendOrigins)
+        {
+            if (!Uri.TryCreate(origin, UriKind.Absolute, out var originUri)
+                || (originUri.Scheme != Uri.UriSchemeHttp && originUri.Scheme != Uri.UriSchemeHttps)
+                || originUri.AbsolutePath != "/"
+                || !string.IsNullOrEmpty(originUri.UserInfo)
+                || !string.IsNullOrEmpty(originUri.Query)
+                || !string.IsNullOrEmpty(originUri.Fragment)
+                || origin.Contains('*')
+                || !string.Equals(origin, origin.Trim(), StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException($"Cors:AllowedOrigins entry '{origin}' must be an exact HTTP(S) origin without a path, credentials, query, or fragment.");
+            }
+        }
 
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowFrontend",
-                policy =>
-                {
-                    policy.WithOrigins("http://localhost:5173")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod()
-                          .AllowCredentials();
-                });
+                policy => policy
+                    .WithOrigins(allowedFrontendOrigins)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials());
         });
 
         var app = builder.Build();
@@ -146,12 +191,12 @@ public class Program
             app.UseSwaggerUI(); // https://localhost:7145/swagger
         }
 
-        app.MapHub<LivePriceHub>("/hubs/live-prices");
         app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseHttpsRedirection();
         app.UseCors("AllowFrontend");
         app.UseAuthentication();
         app.UseAuthorization();
+        app.MapHub<LivePriceHub>(LivePriceHubPath);
         app.MapControllers();
 
         app.Run();

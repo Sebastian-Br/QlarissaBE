@@ -1,61 +1,43 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Qlarissa.Application.Interfaces.ExternalAPI;
+using Qlarissa.Domain.Securities.MarketData;
 
 namespace Qlarissa.WebAPI.LivePrices;
 
+[Authorize]
 public sealed class LivePriceHub(ILivePriceService livePriceService) : Hub
 {
-    private readonly ILivePriceService _livePriceService = livePriceService;
+    private readonly ILivePriceService _livePriceService = livePriceService ?? throw new ArgumentNullException(nameof(livePriceService));
 
-    public async Task Subscribe(IEnumerable<string> symbols)
+    public async Task<IReadOnlyList<LivePrice>> Subscribe(IEnumerable<string> symbols)
     {
         var normalizedSymbols = NormalizeSymbols(symbols);
 
-        if (normalizedSymbols.Count == 0)
-            return;
-
-        await _livePriceService.SubscribeAsync(
-            Context.ConnectionId,
-            normalizedSymbols,
-            CancellationToken.None);
-
-        // Immediately provide the latest cached prices, if available.
-        var prices = _livePriceService.GetPrices(normalizedSymbols);
-
-        if (prices.Count > 0)
+        foreach (var symbol in normalizedSymbols)
         {
-            await Clients.Caller.SendAsync(
-                "PriceSnapshot",
-                prices);
+            await Groups.AddToGroupAsync(Context.ConnectionId, GetGroupName(symbol));
         }
+
+        return _livePriceService.GetPrices(normalizedSymbols);
     }
 
     public async Task Unsubscribe(IEnumerable<string> symbols)
     {
         var normalizedSymbols = NormalizeSymbols(symbols);
 
-        if (normalizedSymbols.Count == 0)
-            return;
-
-        await _livePriceService.UnsubscribeAsync(
-            Context.ConnectionId,
-            normalizedSymbols,
-            CancellationToken.None);
+        foreach (var symbol in normalizedSymbols)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, GetGroupName(symbol));
+        }
     }
 
-    public override async Task OnDisconnectedAsync(
-        Exception? exception)
-    {
-        await _livePriceService.RemoveConsumerAsync(
-            Context.ConnectionId,
-            CancellationToken.None);
+    internal static string GetGroupName(string symbol) => $"live-price:{symbol}";
 
-        await base.OnDisconnectedAsync(exception);
-    }
-
-    private static IReadOnlyCollection<string> NormalizeSymbols(
-        IEnumerable<string> symbols)
+    private static IReadOnlyCollection<string> NormalizeSymbols(IEnumerable<string> symbols)
     {
+        ArgumentNullException.ThrowIfNull(symbols);
+
         return symbols
             .Where(symbol => !string.IsNullOrWhiteSpace(symbol))
             .Select(symbol => symbol.Trim().ToUpperInvariant())

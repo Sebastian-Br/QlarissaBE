@@ -3,7 +3,6 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Qlarissa.Application.Interfaces.ExternalAPI;
-using Qlarissa.Domain.Securities.MarketData;
 using Qlarissa.Infrastructure.PyFinance.Options;
 
 namespace Qlarissa.WebAPI.LivePrices;
@@ -44,46 +43,19 @@ public sealed class LivePriceBroadcaster(
 
     private async Task BroadcastLatestPricesAsync(CancellationToken cancellationToken)
     {
-        var consumerSubscriptions = _livePriceService.GetConsumerSubscriptions();
+        var prices = _livePriceService.GetLatestPrices();
 
-        if (consumerSubscriptions.Count == 0)
+        if (prices.Count == 0)
             return;
 
-        var sendTasks = new List<Task>();
+        var sendTasks = prices.Select(price =>
+            _hubContext.Clients
+                .Group(LivePriceHub.GetGroupName(price.Symbol))
+                .SendAsync("PriceBatch", new[] { price }, cancellationToken));
 
-        foreach (var consumer in consumerSubscriptions)
-        {
-            var connectionId = consumer.Key;
-            var symbols = consumer.Value;
-
-            if (symbols.Count == 0)
-                continue;
-
-            var prices = _livePriceService.GetPrices(symbols);
-
-            if (prices.Count == 0)
-                continue;
-
-            sendTasks.Add(
-                SendToClientAsync(
-                    connectionId,
-                    prices,
-                    cancellationToken));
-        }
-
-        await Task.WhenAll(sendTasks);
-    }
-
-    private async Task SendToClientAsync(string connectionId, IReadOnlyList<LivePrice> prices, CancellationToken cancellationToken)
-    {
         try
         {
-            await _hubContext.Clients
-                .Client(connectionId)
-                .SendAsync(
-                    "PriceBatch",
-                    prices,
-                    cancellationToken);
+            await Task.WhenAll(sendTasks);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -91,9 +63,7 @@ public sealed class LivePriceBroadcaster(
         }
         catch (Exception ex)
         {
-            // The client may have disconnected between taking the subscription snapshot and sending the message.
-            // OnDisconnectedAsync is responsible for removing the consumer from the live-price service.
-            _logger.LogDebug(ex, "Could not send live-price update to SignalR connection {ConnectionId}.", connectionId);
+            _logger.LogDebug(ex, "Could not broadcast live-price updates to subscribed SignalR clients.");
         }
     }
 }

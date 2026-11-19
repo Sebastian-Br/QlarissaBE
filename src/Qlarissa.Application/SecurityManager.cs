@@ -8,13 +8,19 @@ using Qlarissa.Domain.Watchlists;
 
 namespace Qlarissa.Application;
 
-public sealed class SecurityManager(ISecurityRepository securityRepository, ICurrencyRepository currencyRepository, IMarketDataClient marketDataClient) : ISecurityManager
+public sealed class SecurityManager(
+    ISecurityRepository securityRepository,
+    ICurrencyRepository currencyRepository,
+    IMarketDataClient marketDataClient,
+    ILivePriceService livePriceService) : ISecurityManager
 {
     readonly ISecurityRepository _securityRepository = securityRepository ?? throw new ArgumentNullException(nameof(securityRepository));
 
     readonly ICurrencyRepository _currencyRepository = currencyRepository ?? throw new ArgumentNullException(nameof(currencyRepository));
 
     readonly IMarketDataClient _marketDataClient = marketDataClient ?? throw new ArgumentNullException(nameof(marketDataClient));
+
+    readonly ILivePriceService _livePriceService = livePriceService ?? throw new ArgumentNullException(nameof(livePriceService));
 
     public Task<PubliclyTradedSecurityBase?> GetSecurityAsync(int id, CancellationToken cancellationToken)
         => _securityRepository.GetSecurityFromCacheAsync(id, cancellationToken);
@@ -41,6 +47,7 @@ public sealed class SecurityManager(ISecurityRepository securityRepository, ICur
 
         domainEntity.Currency = currency;
         await _securityRepository.AddSecurityAsync(domainEntity, cancellationToken);
+        await _livePriceService.SubscribeAsync([domainEntity.Symbol], CancellationToken.None);
 
         return FluentResults.Result.Ok(domainEntity.Symbol);
     }

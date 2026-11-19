@@ -55,5 +55,7 @@ public interface ISecurityRepository
     /// <returns></returns>
     Task<FluentResults.Result> UpdateSecurityAsync(PubliclyTradedSecurityBase security, CancellationToken cancellationToken);
 
+    Task<IEnumerable<string>> GetAllSecuritySymbolsAsync();
+
     public record SecuritySymbolAndLastDataPointDate(string Symbol, DateOnly PriceHistoryLastDataPointDate);
 }

@@ -128,4 +128,9 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, IFusi
             return Result.Fail($"Error updating security with ID {security.Id}.");
         }
     }
+
+    public async Task<IEnumerable<string>> GetAllSecuritySymbolsAsync()
+    {
+        return await _context.Set<PubliclyTradedSecurityBase>().Select(x => x.Symbol).ToListAsync();
+    }
 }

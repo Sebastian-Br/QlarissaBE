@@ -5,33 +5,17 @@ namespace Qlarissa.Application.Interfaces.ExternalAPI;
 public interface ILivePriceService
 {
     /// <summary>
-    /// Subscribes a consumer to the specified symbols.
+    /// Ensures the application is subscribed to the specified symbols. Repeated symbols are ignored.
     /// </summary>
-    Task SubscribeAsync(string consumerId, IEnumerable<string> symbols, CancellationToken cancellationToken = default);
+    Task SubscribeAsync(IEnumerable<string> symbols, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Removes a consumer's subscriptions for the specified symbols.
+    /// Returns the latest known prices. Symbols for which no price has been received yet are omitted.
     /// </summary>
-    Task UnsubscribeAsync(string consumerId, IEnumerable<string> symbols, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Removes all subscriptions belonging to a consumer.
-    /// Should be called when a SignalR connection disconnects.
-    /// </summary>
-    Task RemoveConsumerAsync(string consumerId, CancellationToken cancellationToken = default);
+    IReadOnlyList<LivePrice> GetLatestPrices();
 
     /// <summary>
     /// Returns the latest known prices for the requested symbols.
-    /// Symbols for which no price has been received yet are omitted.
     /// </summary>
     IReadOnlyList<LivePrice> GetPrices(IEnumerable<string> symbols);
-
-    /// <summary>
-    /// Prevents the specified symbols from being automatically
-    /// unsubscribed while the returned lock is held.
-    /// </summary>
-    Task<SubscriptionLock> AcquireLockAsync(IEnumerable<string> symbols, CancellationToken cancellationToken = default);
-
-    IReadOnlyDictionary<string, IReadOnlyCollection<string>> GetConsumerSubscriptions();
-
 }
