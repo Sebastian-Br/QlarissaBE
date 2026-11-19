@@ -1,6 +1,5 @@
 ﻿using Qlarissa.Domain.Securities;
 using Qlarissa.Domain.Securities.Base;
-using Qlarissa.Domain.Watchlists;
 
 namespace Qlarissa.Application.Interfaces.Repositories;
 

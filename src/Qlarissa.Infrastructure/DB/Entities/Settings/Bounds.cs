@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Qlarissa.Infrastructure.DB.Entities.Settings.Graph;
 
 namespace Qlarissa.Infrastructure.DB.Entities.Settings;
 

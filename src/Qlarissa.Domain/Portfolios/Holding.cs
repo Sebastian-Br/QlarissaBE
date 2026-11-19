@@ -1,6 +1,4 @@
-﻿using Qlarissa.Domain.Securities.Base;
-
-namespace Qlarissa.Domain.Portfolios;
+﻿namespace Qlarissa.Domain.Portfolios;
 
 public class Holding : HoldingMinimal
 {

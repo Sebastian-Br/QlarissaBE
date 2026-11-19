@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Qlarissa.Infrastructure.DB.Entities;
 using Qlarissa.Application.Interfaces.Repositories;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;

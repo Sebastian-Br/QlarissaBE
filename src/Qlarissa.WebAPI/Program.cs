@@ -1,8 +1,6 @@
-using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -12,7 +10,6 @@ using Qlarissa.Application.Interfaces.Authorization;
 using Qlarissa.Application.Interfaces.ExternalAPI;
 using Qlarissa.Application.Interfaces.Repositories;
 using Qlarissa.Domain;
-using Qlarissa.Infrastructure;
 using Qlarissa.Infrastructure.Authorization;
 using Qlarissa.Infrastructure.DB;
 using Qlarissa.Infrastructure.DB.Repositories;

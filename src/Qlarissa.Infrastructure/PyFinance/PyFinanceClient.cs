@@ -1,5 +1,4 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Qlarissa.Application.Interfaces.ExternalAPI;
 using Qlarissa.Domain.Securities.Base;
 using Qlarissa.Infrastructure.PyFinance.Options;
