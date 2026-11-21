@@ -9,6 +9,8 @@ public abstract class GraphSettingsBase
 
     public GraphDataSource DataSource { get; set; }
 
+    public PlotType PlotType { get; set; }
+
     public int BoundsId { get; set; }
 
     public Bounds? Bounds { get; set; }
@@ -47,6 +49,7 @@ public abstract class GraphSettingsBase<TGraphSettings> : GraphSettingsBase
         return new TGraphSettings
         {
             DataSource = (Domain.Settings.Graph.GraphDataSource)DataSource,
+            PlotType = (Domain.Settings.Graph.PlotType)PlotType,
             Bounds = Bounds?.ToDomainEntity(),
             TickCount = TickCount,
             ShowHorizontalGridLines = ShowHorizontalGridLines,
@@ -60,6 +63,7 @@ public abstract class GraphSettingsBase<TGraphSettings> : GraphSettingsBase
     {
         UserId = userId;
         DataSource = (GraphDataSource)domainEntity.DataSource;
+        PlotType = (PlotType)domainEntity.PlotType;
         Bounds = Bounds.FromDomainEntity(domainEntity.Bounds);
         TickCount = domainEntity.TickCount;
         ShowHorizontalGridLines = domainEntity.ShowHorizontalGridLines;
@@ -70,6 +74,7 @@ public abstract class GraphSettingsBase<TGraphSettings> : GraphSettingsBase
 
     public override void UpdateFromDbEntity(GraphSettingsBase dbEntity)
     {
+        PlotType = dbEntity.PlotType;
         Bounds = Bounds?.UpdateFromDbEntity(dbEntity.Bounds)
                 ?? (dbEntity.Bounds is null
                  ? null
@@ -101,10 +106,10 @@ public class GraphSettingsBaseConfiguration : IEntityTypeConfiguration<GraphSett
 {
     public void Configure(EntityTypeBuilder<GraphSettingsBase> builder)
     {
-        // querying by UserId x GraphType
+        // querying by unique UserId x DataSource
         builder.HasKey(x => new { x.UserId, x.DataSource });
 
-        // querying by UserId
+        // querying by UserId to get all their GraphSettings
         builder.HasIndex(x => x.UserId);
 
         builder.HasOne(x => x.Bounds)

@@ -545,6 +545,9 @@ namespace Qlarissa.Infrastructure.Migrations
                     b.Property<bool>("LogarithmicScale")
                         .HasColumnType("bit");
 
+                    b.Property<int>("PlotType")
+                        .HasColumnType("int");
+
                     b.Property<bool>("ShowHorizontalGridLines")
                         .HasColumnType("bit");
 

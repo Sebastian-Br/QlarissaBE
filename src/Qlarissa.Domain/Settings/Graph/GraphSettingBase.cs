@@ -6,6 +6,8 @@ public abstract class GraphSettingBase
 
     public GraphDataSource DataSource { get; set; }
 
+    public PlotType PlotType { get; set; }
+
     public Bounds? Bounds { get; set; }
 
     public int TickCount { get; set; }

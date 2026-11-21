@@ -9,6 +9,8 @@ public abstract class GraphSettingsBase
 {
     public GraphDataSource DataSource { get; set; }
 
+    public PlotType PlotType { get; set; }
+
     public Bounds? Bounds { get; set; }
 
     public int TickCount { get; set; }
@@ -36,6 +38,7 @@ public class GraphSettingsBase<TGraphSettings> : GraphSettingsBase where TGraphS
     public override TGraphSettings ToDomainEntity() => new()
     {
         DataSource = (Domain.Settings.Graph.GraphDataSource)DataSource,
+        PlotType = (Domain.Settings.Graph.PlotType)PlotType,
         Bounds = Bounds?.ToDomainEntity(),
         TickCount = TickCount,
         ShowHorizontalGridLines = ShowHorizontalGridLines,
@@ -47,6 +50,7 @@ public class GraphSettingsBase<TGraphSettings> : GraphSettingsBase where TGraphS
     internal virtual void FromDomainEntity(TGraphSettings domainEntity)
     {
         DataSource = (GraphDataSource)domainEntity.DataSource;
+        PlotType = (PlotType)domainEntity.PlotType;
         Bounds = Bounds.FromDomainEntity(domainEntity.Bounds);
         TickCount = domainEntity.TickCount;
         ShowHorizontalGridLines = domainEntity.ShowHorizontalGridLines;
