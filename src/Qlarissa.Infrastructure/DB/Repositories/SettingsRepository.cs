@@ -12,7 +12,7 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
     {
         var existingEntity = await _context.GraphSettings
                                 .Include(x => x.Bounds)
-                                .FirstOrDefaultAsync(x => x.UserId == userId && (int)x.GraphType == (int)graphSetting.GraphType);
+                                .FirstOrDefaultAsync(x => x.UserId == userId && (int)x.DataSource == (int)graphSetting.DataSource);
 
         var incomingDbEntity = GraphSettingsBase.FromDomainEntity(graphSetting, userId);
         if (existingEntity is null)

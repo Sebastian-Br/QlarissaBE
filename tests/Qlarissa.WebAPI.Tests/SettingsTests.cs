@@ -25,7 +25,7 @@ public class SettingsTests
     {
         var apiModel = new DividendPayoutGraphSettings
         {
-            GraphType = GraphType.DividendPayouts,
+            DataSource = GraphDataSource.DividendPayouts,
             Bounds = new()
             {
                 StartDate = new DateOnly(2023, 1, 1),
@@ -34,8 +34,8 @@ public class SettingsTests
                 End = 2023.99
             },
             TickCount = 5,
-            ShowXAxisGridLines = true,
-            ShowYAxisGridLines = true,
+            ShowHorizontalGridLines = true,
+            ShowVerticalGridLines = true,
             LogarithmicScale = true,
             ValueCardHoverDistance = 10,
             ShowDividendYield = true,
@@ -44,15 +44,15 @@ public class SettingsTests
 
         var domainEntity = apiModel.ToDomainEntity();
 
-        Assert.Equal(apiModel.GraphType, (GraphType)domainEntity.GraphType);
+        Assert.Equal(apiModel.DataSource, (GraphDataSource)domainEntity.DataSource);
         Assert.NotNull(domainEntity.Bounds);
         Assert.Equal(apiModel.Bounds.StartDate, domainEntity.Bounds.StartDate);
         Assert.Equal(apiModel.Bounds.EndDate, domainEntity.Bounds.EndDate);
         Assert.Equal(apiModel.Bounds.Start, domainEntity.Bounds.Start);
         Assert.Equal(apiModel.Bounds.End, domainEntity.Bounds.End);
         Assert.Equal(apiModel.TickCount, domainEntity.TickCount);
-        Assert.Equal(apiModel.ShowYAxisGridLines, domainEntity.ShowYAxisGridLines);
-        Assert.Equal(apiModel.ShowYAxisGridLines, domainEntity.ShowYAxisGridLines);
+        Assert.Equal(apiModel.ShowVerticalGridLines, domainEntity.ShowVerticalGridLines);
+        Assert.Equal(apiModel.ShowVerticalGridLines, domainEntity.ShowVerticalGridLines);
         Assert.Equal(apiModel.LogarithmicScale, domainEntity.LogarithmicScale);
         Assert.Equal(apiModel.ValueCardHoverDistance, domainEntity.ValueCardHoverDistance);
         Assert.Equal(apiModel.ShowDividendYield, domainEntity.ShowDividendYield);
@@ -65,7 +65,7 @@ public class SettingsTests
         var domainEntity = new Domain.Settings.Graph.DividendPayoutGraphSettings
         {
             Id = 7,
-            GraphType = Domain.Settings.Graph.GraphType.DividendPayouts,
+            DataSource = Domain.Settings.Graph.GraphDataSource.DividendPayouts,
             Bounds = new()
             {
                 StartDate = new DateOnly(2023, 1, 1),
@@ -74,8 +74,8 @@ public class SettingsTests
                 End = 2023.99
             },
             TickCount = 5,
-            ShowXAxisGridLines = true,
-            ShowYAxisGridLines = true,
+            ShowHorizontalGridLines = true,
+            ShowVerticalGridLines = true,
             LogarithmicScale = true,
             ValueCardHoverDistance = 10,
             ShowDividendYield = true,
@@ -85,15 +85,15 @@ public class SettingsTests
         var apiModel = GraphSettingsBase.FromDomainEntity(domainEntity) as DividendPayoutGraphSettings;
 
         Assert.NotNull(apiModel);
-        Assert.Equal(domainEntity.GraphType, (Domain.Settings.Graph.GraphType)apiModel.GraphType);
+        Assert.Equal(domainEntity.DataSource, (Domain.Settings.Graph.GraphDataSource)apiModel.DataSource);
         Assert.NotNull(apiModel.Bounds);
         Assert.Equal(domainEntity.Bounds.StartDate, apiModel.Bounds.StartDate);
         Assert.Equal(domainEntity.Bounds.EndDate, apiModel.Bounds.EndDate);
         Assert.Equal(domainEntity.Bounds.Start, apiModel.Bounds.Start);
         Assert.Equal(domainEntity.Bounds.End, apiModel.Bounds.End);
         Assert.Equal(domainEntity.TickCount, apiModel.TickCount);
-        Assert.Equal(domainEntity.ShowXAxisGridLines, apiModel.ShowXAxisGridLines);
-        Assert.Equal(domainEntity.ShowYAxisGridLines, apiModel.ShowYAxisGridLines);
+        Assert.Equal(domainEntity.ShowHorizontalGridLines, apiModel.ShowHorizontalGridLines);
+        Assert.Equal(domainEntity.ShowVerticalGridLines, apiModel.ShowVerticalGridLines);
         Assert.Equal(domainEntity.TickCount, apiModel.TickCount);
         Assert.Equal(domainEntity.LogarithmicScale, apiModel.LogarithmicScale);
         Assert.Equal(domainEntity.ValueCardHoverDistance, apiModel.ValueCardHoverDistance);
@@ -106,21 +106,21 @@ public class SettingsTests
     {
         var apiModel = new  SecurityGraphSettings
         {
-            GraphType = GraphType.Security,
+            DataSource = GraphDataSource.Security,
             TickCount = 5,
-            ShowXAxisGridLines = true,
-            ShowYAxisGridLines = true,
+            ShowHorizontalGridLines = true,
+            ShowVerticalGridLines = true,
             LogarithmicScale = true,
             ValueCardHoverDistance = 10,
         };
 
         var domainEntity = apiModel.ToDomainEntity();
 
-        Assert.Equal(apiModel.GraphType, (GraphType)domainEntity.GraphType);
+        Assert.Equal(apiModel.DataSource, (GraphDataSource)domainEntity.DataSource);
         Assert.Null(domainEntity.Bounds);
         Assert.Equal(apiModel.TickCount, domainEntity.TickCount);
-        Assert.Equal(apiModel.ShowXAxisGridLines, domainEntity.ShowXAxisGridLines);
-        Assert.Equal(apiModel.ShowYAxisGridLines, domainEntity.ShowYAxisGridLines);
+        Assert.Equal(apiModel.ShowHorizontalGridLines, domainEntity.ShowHorizontalGridLines);
+        Assert.Equal(apiModel.ShowVerticalGridLines, domainEntity.ShowVerticalGridLines);
         Assert.Equal(apiModel.LogarithmicScale, domainEntity.LogarithmicScale);
         Assert.Equal(apiModel.ValueCardHoverDistance, domainEntity.ValueCardHoverDistance);
     }
@@ -131,10 +131,10 @@ public class SettingsTests
         var domainEntity = new Domain.Settings.Graph.SecurityGraphSettings
         {
             Id = 5,
-            GraphType = Domain.Settings.Graph.GraphType.Security,
+            DataSource = Domain.Settings.Graph.GraphDataSource.Security,
             TickCount = 5,
-            ShowXAxisGridLines = true,
-            ShowYAxisGridLines = true,
+            ShowHorizontalGridLines = true,
+            ShowVerticalGridLines = true,
             LogarithmicScale = true,
             ValueCardHoverDistance = 10,
         };
@@ -142,11 +142,11 @@ public class SettingsTests
         var apiModel = GraphSettingsBase.FromDomainEntity(domainEntity) as SecurityGraphSettings;
 
         Assert.NotNull(apiModel);
-        Assert.Equal(domainEntity.GraphType, (Domain.Settings.Graph.GraphType)apiModel.GraphType);
+        Assert.Equal(domainEntity.DataSource, (Domain.Settings.Graph.GraphDataSource)apiModel.DataSource);
         Assert.Null(apiModel.Bounds);
         Assert.Equal(domainEntity.TickCount, apiModel.TickCount);
-        Assert.Equal(domainEntity.ShowXAxisGridLines, apiModel.ShowXAxisGridLines);
-        Assert.Equal(domainEntity.ShowYAxisGridLines, apiModel.ShowYAxisGridLines);
+        Assert.Equal(domainEntity.ShowHorizontalGridLines, apiModel.ShowHorizontalGridLines);
+        Assert.Equal(domainEntity.ShowVerticalGridLines, apiModel.ShowVerticalGridLines);
         Assert.Equal(domainEntity.LogarithmicScale, apiModel.LogarithmicScale);
         Assert.Equal(domainEntity.ValueCardHoverDistance, apiModel.ValueCardHoverDistance);
     }

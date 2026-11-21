@@ -2,20 +2,20 @@
 
 namespace Qlarissa.WebAPI.Models.Settings.Graph;
 
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "GraphType")]
-[JsonDerivedType(typeof(SecurityGraphSettings), (int)GraphType.Security)]
-[JsonDerivedType(typeof(DividendPayoutGraphSettings), (int)GraphType.DividendPayouts)]
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "DataSource")]
+[JsonDerivedType(typeof(SecurityGraphSettings), (int)GraphDataSource.Security)]
+[JsonDerivedType(typeof(DividendPayoutGraphSettings), (int)GraphDataSource.DividendPayouts)]
 public abstract class GraphSettingsBase
 {
-    public GraphType GraphType { get; set; }
+    public GraphDataSource DataSource { get; set; }
 
     public Bounds? Bounds { get; set; }
 
     public int TickCount { get; set; }
 
-    public bool ShowXAxisGridLines { get; set; }
+    public bool ShowHorizontalGridLines { get; set; }
 
-    public bool ShowYAxisGridLines { get; set; }
+    public bool ShowVerticalGridLines { get; set; }
 
     public bool LogarithmicScale { get; set; }
 
@@ -35,22 +35,22 @@ public class GraphSettingsBase<TGraphSettings> : GraphSettingsBase where TGraphS
 {
     public override TGraphSettings ToDomainEntity() => new()
     {
-        GraphType = (Domain.Settings.Graph.GraphType)GraphType,
+        DataSource = (Domain.Settings.Graph.GraphDataSource)DataSource,
         Bounds = Bounds?.ToDomainEntity(),
         TickCount = TickCount,
-        ShowXAxisGridLines = ShowXAxisGridLines,
-        ShowYAxisGridLines = ShowYAxisGridLines,
+        ShowHorizontalGridLines = ShowHorizontalGridLines,
+        ShowVerticalGridLines = ShowVerticalGridLines,
         LogarithmicScale = LogarithmicScale,
         ValueCardHoverDistance = ValueCardHoverDistance
     };
 
     internal virtual void FromDomainEntity(TGraphSettings domainEntity)
     {
-        GraphType = (GraphType)domainEntity.GraphType;
+        DataSource = (GraphDataSource)domainEntity.DataSource;
         Bounds = Bounds.FromDomainEntity(domainEntity.Bounds);
         TickCount = domainEntity.TickCount;
-        ShowXAxisGridLines = domainEntity.ShowXAxisGridLines;
-        ShowYAxisGridLines = domainEntity.ShowYAxisGridLines;
+        ShowHorizontalGridLines = domainEntity.ShowHorizontalGridLines;
+        ShowVerticalGridLines = domainEntity.ShowVerticalGridLines;
         LogarithmicScale = domainEntity.LogarithmicScale;
         ValueCardHoverDistance = domainEntity.ValueCardHoverDistance;
     }

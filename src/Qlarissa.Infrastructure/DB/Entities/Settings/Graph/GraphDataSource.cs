@@ -1,7 +1,7 @@
 ﻿namespace Qlarissa.Infrastructure.DB.Entities.Settings.Graph;
 
-public enum GraphType
+public enum GraphDataSource
 {
-    SecurityGraph,
-    DividendPayoutGraph
+    Security,
+    DividendPayouts
 }

@@ -4,15 +4,15 @@ public abstract class GraphSettingBase
 {
     public int Id { get; set; }
 
-    public GraphType GraphType { get; set; }
+    public GraphDataSource DataSource { get; set; }
 
     public Bounds? Bounds { get; set; }
 
     public int TickCount { get; set; }
 
-    public bool ShowYAxisGridLines { get; set; }
+    public bool ShowHorizontalGridLines { get; set; }
 
-    public bool ShowXAxisGridLines { get; set; }
+    public bool ShowVerticalGridLines { get; set; }
 
     public bool LogarithmicScale { get; set; } = true;
 

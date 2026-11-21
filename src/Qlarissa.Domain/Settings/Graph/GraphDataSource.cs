@@ -1,7 +1,7 @@
 ﻿
 namespace Qlarissa.Domain.Settings.Graph;
 
-public enum GraphType
+public enum GraphDataSource
 {
     Security,
     DividendPayouts

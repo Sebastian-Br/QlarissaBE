@@ -27,7 +27,7 @@ public sealed class SettingsTests
         var dbEntity = new SecurityGraphSettings
         {
             UserId = "user-123",
-            GraphType = GraphType.SecurityGraph,
+            DataSource = GraphDataSource.Security,
             Bounds = new Infrastructure.DB.Entities.Settings.Bounds
             {
                 Id = 11,
@@ -37,8 +37,8 @@ public sealed class SettingsTests
                 End = 99.9
             },
             TickCount = 7,
-            ShowXAxisGridLines = true,
-            ShowYAxisGridLines = false,
+            ShowHorizontalGridLines = true,
+            ShowVerticalGridLines = false,
             LogarithmicScale = true,
             ValueCardHoverDistance = 14
         };
@@ -46,15 +46,15 @@ public sealed class SettingsTests
         var domainEntity = dbEntity.ToDomainEntity() as Domain.Settings.Graph.SecurityGraphSettings;
 
         Assert.NotNull(domainEntity);
-        Assert.Equal((Domain.Settings.Graph.GraphType)dbEntity.GraphType, domainEntity.GraphType);
+        Assert.Equal((Domain.Settings.Graph.GraphDataSource)dbEntity.DataSource, domainEntity.DataSource);
         Assert.NotNull(domainEntity.Bounds);
         Assert.Equal(dbEntity.Bounds.StartDate, domainEntity.Bounds.StartDate);
         Assert.Equal(dbEntity.Bounds.EndDate, domainEntity.Bounds.EndDate);
         Assert.Equal(dbEntity.Bounds.Start, domainEntity.Bounds.Start);
         Assert.Equal(dbEntity.Bounds.End, domainEntity.Bounds.End);
         Assert.Equal(dbEntity.TickCount, domainEntity.TickCount);
-        Assert.Equal(dbEntity.ShowXAxisGridLines, domainEntity.ShowXAxisGridLines);
-        Assert.Equal(dbEntity.ShowYAxisGridLines, domainEntity.ShowYAxisGridLines);
+        Assert.Equal(dbEntity.ShowHorizontalGridLines, domainEntity.ShowHorizontalGridLines);
+        Assert.Equal(dbEntity.ShowVerticalGridLines, domainEntity.ShowVerticalGridLines);
         Assert.Equal(dbEntity.LogarithmicScale, domainEntity.LogarithmicScale);
         Assert.Equal(dbEntity.ValueCardHoverDistance, domainEntity.ValueCardHoverDistance);
     }
@@ -65,7 +65,7 @@ public sealed class SettingsTests
         var domainEntity = new Domain.Settings.Graph.SecurityGraphSettings
         {
             Id = 6,
-            GraphType = Domain.Settings.Graph.GraphType.Security,
+            DataSource = Domain.Settings.Graph.GraphDataSource.Security,
             Bounds = new Domain.Settings.Bounds
             {
                 Id = 12,
@@ -75,8 +75,8 @@ public sealed class SettingsTests
                 End = 150.0
             },
             TickCount = 9,
-            ShowXAxisGridLines = true,
-            ShowYAxisGridLines = true,
+            ShowHorizontalGridLines = true,
+            ShowVerticalGridLines = true,
             LogarithmicScale = false,
             ValueCardHoverDistance = 22
         };
@@ -85,15 +85,15 @@ public sealed class SettingsTests
 
         Assert.NotNull(dbEntity);
         Assert.Equal("user-456", dbEntity.UserId);
-        Assert.Equal((GraphType)domainEntity.GraphType, dbEntity.GraphType);
+        Assert.Equal((GraphDataSource)domainEntity.DataSource, dbEntity.DataSource);
         Assert.NotNull(dbEntity.Bounds);
         Assert.Equal(domainEntity.Bounds.StartDate, dbEntity.Bounds.StartDate);
         Assert.Equal(domainEntity.Bounds.EndDate, dbEntity.Bounds.EndDate);
         Assert.Equal(domainEntity.Bounds.Start, dbEntity.Bounds.Start);
         Assert.Equal(domainEntity.Bounds.End, dbEntity.Bounds.End);
         Assert.Equal(domainEntity.TickCount, dbEntity.TickCount);
-        Assert.Equal(domainEntity.ShowXAxisGridLines, dbEntity.ShowXAxisGridLines);
-        Assert.Equal(domainEntity.ShowYAxisGridLines, dbEntity.ShowYAxisGridLines);
+        Assert.Equal(domainEntity.ShowHorizontalGridLines, dbEntity.ShowHorizontalGridLines);
+        Assert.Equal(domainEntity.ShowVerticalGridLines, dbEntity.ShowVerticalGridLines);
         Assert.Equal(domainEntity.LogarithmicScale, dbEntity.LogarithmicScale);
         Assert.Equal(domainEntity.ValueCardHoverDistance, dbEntity.ValueCardHoverDistance);
     }
@@ -104,7 +104,7 @@ public sealed class SettingsTests
         var dbEntity = new DividendPayoutGraphSettings
         {
             UserId = "user-789",
-            GraphType = GraphType.DividendPayoutGraph,
+            DataSource = GraphDataSource.DividendPayouts,
             Bounds = new Infrastructure.DB.Entities.Settings.Bounds
             {
                 Id = 13,
@@ -114,8 +114,8 @@ public sealed class SettingsTests
                 End = 5.5
             },
             TickCount = 6,
-            ShowXAxisGridLines = false,
-            ShowYAxisGridLines = true,
+            ShowHorizontalGridLines = false,
+            ShowVerticalGridLines = true,
             LogarithmicScale = true,
             ValueCardHoverDistance = 18,
             ShowDividendYield = true,
@@ -125,15 +125,15 @@ public sealed class SettingsTests
         var domainEntity = dbEntity.ToDomainEntity();
 
         Assert.NotNull(domainEntity);
-        Assert.Equal((Domain.Settings.Graph.GraphType)dbEntity.GraphType, domainEntity.GraphType);
+        Assert.Equal((Domain.Settings.Graph.GraphDataSource)dbEntity.DataSource, domainEntity.DataSource);
         Assert.NotNull(domainEntity.Bounds);
         Assert.Equal(dbEntity.Bounds.StartDate, domainEntity.Bounds.StartDate);
         Assert.Equal(dbEntity.Bounds.EndDate, domainEntity.Bounds.EndDate);
         Assert.Equal(dbEntity.Bounds.Start, domainEntity.Bounds.Start);
         Assert.Equal(dbEntity.Bounds.End, domainEntity.Bounds.End);
         Assert.Equal(dbEntity.TickCount, domainEntity.TickCount);
-        Assert.Equal(dbEntity.ShowXAxisGridLines, domainEntity.ShowXAxisGridLines);
-        Assert.Equal(dbEntity.ShowYAxisGridLines, domainEntity.ShowYAxisGridLines);
+        Assert.Equal(dbEntity.ShowHorizontalGridLines, domainEntity.ShowHorizontalGridLines);
+        Assert.Equal(dbEntity.ShowVerticalGridLines, domainEntity.ShowVerticalGridLines);
         Assert.Equal(dbEntity.LogarithmicScale, domainEntity.LogarithmicScale);
         Assert.Equal(dbEntity.ValueCardHoverDistance, domainEntity.ValueCardHoverDistance);
         Assert.Equal(dbEntity.ShowDividendYield, domainEntity.ShowDividendYield);
@@ -146,7 +146,7 @@ public sealed class SettingsTests
         var domainEntity = new Domain.Settings.Graph.DividendPayoutGraphSettings
         {
             Id = 8,
-            GraphType = Domain.Settings.Graph.GraphType.DividendPayouts,
+            DataSource = Domain.Settings.Graph.GraphDataSource.DividendPayouts,
             Bounds = new Domain.Settings.Bounds
             {
                 Id = 14,
@@ -156,8 +156,8 @@ public sealed class SettingsTests
                 End = 10.0
             },
             TickCount = 8,
-            ShowXAxisGridLines = false,
-            ShowYAxisGridLines = true,
+            ShowHorizontalGridLines = false,
+            ShowVerticalGridLines = true,
             LogarithmicScale = false,
             ValueCardHoverDistance = 19,
             ShowDividendYield = true,
@@ -168,15 +168,15 @@ public sealed class SettingsTests
 
         Assert.NotNull(dbEntity);
         Assert.Equal("user-101", dbEntity.UserId);
-        Assert.Equal((GraphType)domainEntity.GraphType, dbEntity.GraphType);
+        Assert.Equal((GraphDataSource)domainEntity.DataSource, dbEntity.DataSource);
         Assert.NotNull(dbEntity.Bounds);
         Assert.Equal(domainEntity.Bounds.StartDate, dbEntity.Bounds.StartDate);
         Assert.Equal(domainEntity.Bounds.EndDate, dbEntity.Bounds.EndDate);
         Assert.Equal(domainEntity.Bounds.Start, dbEntity.Bounds.Start);
         Assert.Equal(domainEntity.Bounds.End, dbEntity.Bounds.End);
         Assert.Equal(domainEntity.TickCount, dbEntity.TickCount);
-        Assert.Equal(domainEntity.ShowXAxisGridLines, dbEntity.ShowXAxisGridLines);
-        Assert.Equal(domainEntity.ShowYAxisGridLines, dbEntity.ShowYAxisGridLines);
+        Assert.Equal(domainEntity.ShowHorizontalGridLines, dbEntity.ShowHorizontalGridLines);
+        Assert.Equal(domainEntity.ShowVerticalGridLines, dbEntity.ShowVerticalGridLines);
         Assert.Equal(domainEntity.LogarithmicScale, dbEntity.LogarithmicScale);
         Assert.Equal(domainEntity.ValueCardHoverDistance, dbEntity.ValueCardHoverDistance);
         Assert.Equal(domainEntity.ShowDividendYield, dbEntity.ShowDividendYield);

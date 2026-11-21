@@ -7,7 +7,7 @@ public abstract class GraphSettingsBase
 {
     public string UserId { get; set; } = string.Empty;
 
-    public GraphType GraphType { get; set; }
+    public GraphDataSource DataSource { get; set; }
 
     public int BoundsId { get; set; }
 
@@ -15,9 +15,9 @@ public abstract class GraphSettingsBase
 
     public int TickCount { get; set; }
 
-    public bool ShowXAxisGridLines { get; set; }
+    public bool ShowHorizontalGridLines { get; set; }
 
-    public bool ShowYAxisGridLines { get; set; }
+    public bool ShowVerticalGridLines { get; set; }
 
     public bool LogarithmicScale { get; set; } = true;
 
@@ -46,11 +46,11 @@ public abstract class GraphSettingsBase<TGraphSettings> : GraphSettingsBase
     {
         return new TGraphSettings
         {
-            GraphType = (Domain.Settings.Graph.GraphType)GraphType,
+            DataSource = (Domain.Settings.Graph.GraphDataSource)DataSource,
             Bounds = Bounds?.ToDomainEntity(),
             TickCount = TickCount,
-            ShowXAxisGridLines = ShowXAxisGridLines,
-            ShowYAxisGridLines = ShowYAxisGridLines,
+            ShowHorizontalGridLines = ShowHorizontalGridLines,
+            ShowVerticalGridLines = ShowVerticalGridLines,
             LogarithmicScale = LogarithmicScale,
             ValueCardHoverDistance = ValueCardHoverDistance
         };
@@ -59,11 +59,11 @@ public abstract class GraphSettingsBase<TGraphSettings> : GraphSettingsBase
     protected virtual void FromDomainEntity(TGraphSettings domainEntity, string userId)
     {
         UserId = userId;
-        GraphType = (GraphType)domainEntity.GraphType;
+        DataSource = (GraphDataSource)domainEntity.DataSource;
         Bounds = Bounds.FromDomainEntity(domainEntity.Bounds);
         TickCount = domainEntity.TickCount;
-        ShowXAxisGridLines = domainEntity.ShowXAxisGridLines;
-        ShowYAxisGridLines = domainEntity.ShowYAxisGridLines;
+        ShowHorizontalGridLines = domainEntity.ShowHorizontalGridLines;
+        ShowVerticalGridLines = domainEntity.ShowVerticalGridLines;
         LogarithmicScale = domainEntity.LogarithmicScale;
         ValueCardHoverDistance = domainEntity.ValueCardHoverDistance;
     }
@@ -76,8 +76,8 @@ public abstract class GraphSettingsBase<TGraphSettings> : GraphSettingsBase
                  : new Bounds().UpdateFromDbEntity(dbEntity.Bounds));
 
         TickCount = dbEntity.TickCount;
-        ShowXAxisGridLines = dbEntity.ShowXAxisGridLines;
-        ShowYAxisGridLines = dbEntity.ShowYAxisGridLines;
+        ShowHorizontalGridLines = dbEntity.ShowHorizontalGridLines;
+        ShowVerticalGridLines = dbEntity.ShowVerticalGridLines;
         LogarithmicScale = dbEntity.LogarithmicScale;
         ValueCardHoverDistance = dbEntity.ValueCardHoverDistance;
 
@@ -102,7 +102,7 @@ public class GraphSettingsBaseConfiguration : IEntityTypeConfiguration<GraphSett
     public void Configure(EntityTypeBuilder<GraphSettingsBase> builder)
     {
         // querying by UserId x GraphType
-        builder.HasKey(x => new { x.UserId, x.GraphType });
+        builder.HasKey(x => new { x.UserId, x.DataSource });
 
         // querying by UserId
         builder.HasIndex(x => x.UserId);

@@ -531,7 +531,7 @@ namespace Qlarissa.Infrastructure.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("GraphType")
+                    b.Property<int>("DataSource")
                         .HasColumnType("int");
 
                     b.Property<int>("BoundsId")
@@ -545,10 +545,10 @@ namespace Qlarissa.Infrastructure.Migrations
                     b.Property<bool>("LogarithmicScale")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("ShowXAxisGridLines")
+                    b.Property<bool>("ShowHorizontalGridLines")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("ShowYAxisGridLines")
+                    b.Property<bool>("ShowVerticalGridLines")
                         .HasColumnType("bit");
 
                     b.Property<int>("TickCount")
@@ -557,7 +557,7 @@ namespace Qlarissa.Infrastructure.Migrations
                     b.Property<int>("ValueCardHoverDistance")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "GraphType");
+                    b.HasKey("UserId", "DataSource");
 
                     b.HasIndex("BoundsId")
                         .IsUnique();
