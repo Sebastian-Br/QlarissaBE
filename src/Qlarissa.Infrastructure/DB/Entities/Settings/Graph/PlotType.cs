@@ -28,5 +28,9 @@ public enum PlotType
 
     Sankey,
 
-    Venn
+    Venn,
+
+    Heatmap,
+
+    Workflow
 }
