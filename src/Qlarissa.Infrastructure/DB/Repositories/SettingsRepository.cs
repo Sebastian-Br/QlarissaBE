@@ -8,7 +8,7 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<Domain.Settings.Graph.GraphSettingBase> AddOrUpdateGraphSettingAsync(Domain.Settings.Graph.GraphSettingBase graphSetting, string userId)
+    public async Task AddOrUpdateGraphSettingAsync(string userId, Domain.Settings.Graph.GraphSettingBase graphSetting)
     {
         var existingEntity = await _context.GraphSettings
                                 .FirstOrDefaultAsync(x => x.UserId == userId && (int)x.DataSource == (int)graphSetting.DataSource);
@@ -18,17 +18,12 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
         {
             await _context.GraphSettings.AddAsync(incomingDbEntity);
             await _context.SaveChangesAsync();
-
-            return incomingDbEntity.ToDomainEntity();
+            return;
         }
 
         existingEntity.UpdateFromDbEntity(incomingDbEntity);
         await _context.SaveChangesAsync();
-
-        return existingEntity.ToDomainEntity();
     }
-
-    
 
     public async Task<IEnumerable<Domain.Settings.Graph.GraphSettingBase>> GetGraphSettingsAsync(string userId)
     {
@@ -39,23 +34,99 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
         return dbEntities.Select(x => x.ToDomainEntity());
     }
 
-    public Task AddOrUpdateGraphSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.GraphSettingBase> tags)
+    public async Task AddOrUpdateGraphSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.GraphSettingBase> tags)
     {
-        throw new NotImplementedException();
+        var graphSetting = (GraphDataSource)tags.SettingsTypeId;
+        var existingTags = await _context.GraphSettingsTags
+            .Where(x => x.UserId == userId && x.GraphSetting == graphSetting)
+            .ToListAsync();
+        List<GraphSettingsTag> newTags = [];
+
+        foreach (var tag in tags.Tags)
+        {
+            var existingTag = existingTags.FirstOrDefault(x => x.Key == tag.Key);
+            if (existingTag is null)
+            {
+                newTags.Add(new GraphSettingsTag
+                {
+                    UserId = userId,
+                    GraphSetting = graphSetting,
+                    Key = tag.Key,
+                    Value = tag.Value
+                });
+            }
+            else
+            {
+                existingTag.Value = tag.Value;
+            }
+        }
+
+        _context.GraphSettingsTags.AddRange(newTags);
+        await _context.SaveChangesAsync();
     }
 
-    public Task AddOrUpdatePlotSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.PlotType> tags)
+    public async Task AddOrUpdatePlotSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.PlotType> tags)
     {
-        throw new NotImplementedException();
+        var plotType = (PlotType)tags.SettingsTypeId;
+        var existingTags = await _context.PlotSettingsTags
+            .Where(x => x.UserId == userId && x.PlotType == plotType)
+            .ToListAsync();
+        List<PlotSettingsTag> newTags = [];
+
+        foreach (var tag in tags.Tags)
+        {
+            var existingTag = existingTags.FirstOrDefault(x => x.Key == tag.Key);
+            if (existingTag is null)
+            {
+                newTags.Add(new PlotSettingsTag
+                {
+                    UserId = userId,
+                    PlotType = plotType,
+                    Key = tag.Key,
+                    Value = tag.Value
+                });
+            }
+            else
+            {
+                existingTag.Value = tag.Value;
+            }
+        }
+
+        _context.PlotSettingsTags.AddRange(newTags);
+        await _context.SaveChangesAsync();
     }
 
-    public Task RemoveGraphSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.GraphSettingBase> tags)
+    public async Task RemoveGraphSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.GraphSettingBase> tags)
     {
-        throw new NotImplementedException();
+        if (tags.Tags.Count == 0)
+        {
+            return;
+        }
+
+        var graphSetting = (GraphDataSource)tags.SettingsTypeId;
+        var keys = tags.Tags.Keys.ToArray();
+        var existingTags = await _context.GraphSettingsTags
+            .Where(x => x.UserId == userId && x.GraphSetting == graphSetting && keys.Contains(x.Key))
+            .ToListAsync();
+
+        _context.GraphSettingsTags.RemoveRange(existingTags);
+        await _context.SaveChangesAsync();
     }
 
-    public Task RemovePlotSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.PlotType> tags)
+    public async Task RemovePlotSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.PlotType> tags)
     {
-        throw new NotImplementedException();
+        if (tags.Tags.Count == 0)
+        {
+            return;
+        }
+
+        var plotType = (PlotType)tags.SettingsTypeId;
+        var keys = tags.Tags.Keys.ToArray();
+        var existingTags = await _context.PlotSettingsTags
+            .Where(x => x.UserId == userId && x.PlotType == plotType && keys.Contains(x.Key))
+            .ToListAsync();
+
+        _context.PlotSettingsTags.RemoveRange(existingTags);
+        await _context.SaveChangesAsync();
     }
 }

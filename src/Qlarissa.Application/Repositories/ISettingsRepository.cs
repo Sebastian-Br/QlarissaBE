@@ -7,7 +7,7 @@ public interface ISettingsRepository
 {
     Task<IEnumerable<GraphSettingBase>> GetGraphSettingsAsync(string userId);
 
-    Task<GraphSettingBase> AddOrUpdateGraphSettingAsync(GraphSettingBase graphSetting, string userId);
+    Task AddOrUpdateGraphSettingAsync(string userId, GraphSettingBase graphSetting);
 
     Task AddOrUpdatePlotSettingsTags(string userId, SettingsTags<PlotType> tags);
 
