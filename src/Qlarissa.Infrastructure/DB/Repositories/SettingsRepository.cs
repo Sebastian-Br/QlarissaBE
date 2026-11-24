@@ -34,6 +34,24 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
         return dbEntities.Select(x => x.ToDomainEntity());
     }
 
+    public async Task<Domain.Settings.Graph.GraphSettingBase> GetGraphSettingAsync(string userId, Domain.Settings.Graph.GraphDataSource graphSetting)
+    {
+        var dbEntity = await _context.GraphSettings
+            .Include(x => x.Tags)
+            .FirstAsync(x => x.UserId == userId && (int)x.DataSource == (int)graphSetting);
+
+        return dbEntity.ToDomainEntity();
+    }
+
+    public async Task<Domain.Settings.SettingsTags<Domain.Settings.Graph.PlotType>> GetPlotSettingAsync(string userId, Domain.Settings.Graph.PlotType plotType)
+    {
+        var tags = await _context.PlotSettingsTags
+            .Where(x => x.UserId == userId && x.PlotType == (PlotType)plotType)
+            .ToDictionaryAsync(x => x.Key, x => x.Value);
+
+        return new Domain.Settings.SettingsTags<Domain.Settings.Graph.PlotType>((int)plotType, tags);
+    }
+
     public async Task AddOrUpdateGraphSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.GraphSettingBase> tags)
     {
         var graphSetting = (GraphDataSource)tags.SettingsTypeId;
