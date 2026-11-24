@@ -2,7 +2,7 @@
 
 public class DividendPayoutGraphSettings : GraphSettingsBase<Domain.Settings.Graph.DividendPayoutGraphSettings>
 {
-    public bool ShowDividendYield { get; set; }
+    // public bool ShowDividendYield { get; set; } -- move to tags
 
     public bool IsSynchronizedWithSecurityGraph { get; set; }
 
@@ -15,21 +15,18 @@ public class DividendPayoutGraphSettings : GraphSettingsBase<Domain.Settings.Gra
             return;
 
         base.FromDomainEntity(domainEntity, userId);
-        ShowDividendYield = domainEntity.ShowDividendYield;
         IsSynchronizedWithSecurityGraph = domainEntity.IsSynchronizedWithSecurityGraph;
     }
 
     public new Domain.Settings.Graph.DividendPayoutGraphSettings ToDomainEntity()
     {
         var domainEntity = base.ToDomainEntity();
-        domainEntity.ShowDividendYield = ShowDividendYield;
         domainEntity.IsSynchronizedWithSecurityGraph = IsSynchronizedWithSecurityGraph;
         return domainEntity;
     }
 
     public void UpdateFromDbEntity(DividendPayoutGraphSettings dbEntity)
     {
-        ShowDividendYield = dbEntity.ShowDividendYield;
         IsSynchronizedWithSecurityGraph = dbEntity.IsSynchronizedWithSecurityGraph;
     }
 }

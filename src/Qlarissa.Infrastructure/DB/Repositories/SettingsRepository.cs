@@ -16,7 +16,7 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
         var incomingDbEntity = GraphSettingsBase.FromDomainEntity(graphSetting, userId);
         if (existingEntity is null)
         {
-            await _context.GraphSettings.AddAsync(incomingDbEntity);
+            _context.GraphSettings.Add(incomingDbEntity);
             await _context.SaveChangesAsync();
             return;
         }

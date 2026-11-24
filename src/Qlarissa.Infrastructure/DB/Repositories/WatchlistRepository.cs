@@ -17,7 +17,7 @@ public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, IFus
     public async Task<Domain.Watchlists.WatchlistMinimal> AddWatchlistAsync(Domain.Watchlists.WatchlistMinimal watchlist, string userId)
     {
         var dbEntity = Watchlist.FromDomainEntityWithoutCollections(watchlist, userId);
-        await _context.Watchlists.AddAsync(dbEntity);
+        _context.Watchlists.Add(dbEntity);
         await _context.SaveChangesAsync();
 
         return dbEntity.ToDomainEntity();

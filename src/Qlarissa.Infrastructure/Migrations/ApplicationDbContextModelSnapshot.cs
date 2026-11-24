@@ -534,44 +534,61 @@ namespace Qlarissa.Infrastructure.Migrations
                     b.Property<int>("DataSource")
                         .HasColumnType("int");
 
-                    b.Property<int>("BoundsId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(34)
                         .HasColumnType("nvarchar(34)");
 
-                    b.Property<bool>("LogarithmicScale")
-                        .HasColumnType("bit");
-
                     b.Property<int>("PlotType")
                         .HasColumnType("int");
 
-                    b.Property<bool>("ShowHorizontalGridLines")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("ShowVerticalGridLines")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("TickCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ValueCardHoverDistance")
-                        .HasColumnType("int");
-
                     b.HasKey("UserId", "DataSource");
-
-                    b.HasIndex("BoundsId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("GraphSettings");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("GraphSettingsBase");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Settings.Graph.GraphSettingsTag", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("GraphSetting")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "GraphSetting", "Key");
+
+                    b.ToTable("GraphSettingsTags");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Settings.Graph.PlotSettingsTag", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("PlotType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "PlotType", "Key");
+
+                    b.ToTable("PlotSettingsTags");
                 });
 
             modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Watchlists.WatchedSecurity", b =>
@@ -678,9 +695,6 @@ namespace Qlarissa.Infrastructure.Migrations
                     b.HasBaseType("Qlarissa.Infrastructure.DB.Entities.Settings.Graph.GraphSettingsBase");
 
                     b.Property<bool>("IsSynchronizedWithSecurityGraph")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("ShowDividendYield")
                         .HasColumnType("bit");
 
                     b.HasDiscriminator().HasValue("DividendPayoutGraphSettings");
@@ -896,15 +910,13 @@ namespace Qlarissa.Infrastructure.Migrations
                     b.Navigation("AccountCurrency");
                 });
 
-            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Settings.Graph.GraphSettingsBase", b =>
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Settings.Graph.GraphSettingsTag", b =>
                 {
-                    b.HasOne("Qlarissa.Infrastructure.DB.Entities.Settings.Bounds", "Bounds")
-                        .WithOne()
-                        .HasForeignKey("Qlarissa.Infrastructure.DB.Entities.Settings.Graph.GraphSettingsBase", "BoundsId")
+                    b.HasOne("Qlarissa.Infrastructure.DB.Entities.Settings.Graph.GraphSettingsBase", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("UserId", "GraphSetting")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Bounds");
                 });
 
             modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Watchlists.WatchedSecurity", b =>
@@ -941,6 +953,11 @@ namespace Qlarissa.Infrastructure.Migrations
             modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Portfolio", b =>
                 {
                     b.Navigation("Holdings");
+                });
+
+            modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Settings.Graph.GraphSettingsBase", b =>
+                {
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("Qlarissa.Infrastructure.DB.Entities.Watchlists.Watchlist", b =>

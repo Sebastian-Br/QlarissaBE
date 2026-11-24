@@ -27,14 +27,12 @@ public class SettingsTests
         var apiModel = new DividendPayoutGraphSettings
         {
             DataSource = GraphDataSource.DividendPayouts,
-            ShowDividendYield = true,
             IsSynchronizedWithSecurityGraph = false
         };
 
         var domainEntity = apiModel.ToDomainEntity();
 
         Assert.Equal(apiModel.DataSource, (GraphDataSource)domainEntity.DataSource);
-        Assert.Equal(apiModel.ShowDividendYield, domainEntity.ShowDividendYield);
         Assert.Equal(apiModel.IsSynchronizedWithSecurityGraph, domainEntity.IsSynchronizedWithSecurityGraph);
     }
 
@@ -45,7 +43,6 @@ public class SettingsTests
         {
             Id = 7,
             DataSource = Domain.Settings.Graph.GraphDataSource.DividendPayouts,
-            ShowDividendYield = true,
             IsSynchronizedWithSecurityGraph = false
         };
 
@@ -53,7 +50,6 @@ public class SettingsTests
 
         Assert.NotNull(apiModel);
         Assert.Equal(domainEntity.DataSource, (Domain.Settings.Graph.GraphDataSource)apiModel.DataSource);
-        Assert.Equal(domainEntity.ShowDividendYield, apiModel.ShowDividendYield);
         Assert.Equal(domainEntity.IsSynchronizedWithSecurityGraph, apiModel.IsSynchronizedWithSecurityGraph);
     }
 

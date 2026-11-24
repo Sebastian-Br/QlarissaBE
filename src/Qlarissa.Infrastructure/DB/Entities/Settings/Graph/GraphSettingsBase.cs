@@ -11,6 +11,8 @@ public abstract class GraphSettingsBase
 
     public PlotType PlotType { get; set; }
 
+    // No need to include a PlotTypeTags collection here. The relationship may be n to n and they can change independently.
+
     /// <summary>
     /// GraphSettings tags will override PlotType tags when set.
     /// Purely display related settings can be stored as tags. They will never be accessed by the Back-End.

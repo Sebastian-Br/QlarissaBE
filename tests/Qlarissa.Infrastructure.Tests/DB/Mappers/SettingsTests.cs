@@ -59,7 +59,6 @@ public sealed class SettingsTests
         {
             UserId = "user-789",
             DataSource = GraphDataSource.DividendPayouts,
-            ShowDividendYield = true,
             IsSynchronizedWithSecurityGraph = false
         };
 
@@ -67,7 +66,6 @@ public sealed class SettingsTests
 
         Assert.NotNull(domainEntity);
         Assert.Equal((Domain.Settings.Graph.GraphDataSource)dbEntity.DataSource, domainEntity.DataSource);
-        Assert.Equal(dbEntity.ShowDividendYield, domainEntity.ShowDividendYield);
         Assert.Equal(dbEntity.IsSynchronizedWithSecurityGraph, domainEntity.IsSynchronizedWithSecurityGraph);
     }
 
@@ -78,7 +76,6 @@ public sealed class SettingsTests
         {
             Id = 8,
             DataSource = Domain.Settings.Graph.GraphDataSource.DividendPayouts,
-            ShowDividendYield = true,
             IsSynchronizedWithSecurityGraph = true
         };
 
@@ -87,7 +84,6 @@ public sealed class SettingsTests
         Assert.NotNull(dbEntity);
         Assert.Equal("user-101", dbEntity.UserId);
         Assert.Equal((GraphDataSource)domainEntity.DataSource, dbEntity.DataSource);
-        Assert.Equal(domainEntity.ShowDividendYield, dbEntity.ShowDividendYield);
         Assert.Equal(domainEntity.IsSynchronizedWithSecurityGraph, dbEntity.IsSynchronizedWithSecurityGraph);
     }
 }
