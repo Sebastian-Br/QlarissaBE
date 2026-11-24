@@ -1,7 +1,7 @@
 ﻿using Qlarissa.Domain.Securities;
 using Qlarissa.Domain.Securities.Base;
 
-namespace Qlarissa.Application.Interfaces.Repositories;
+namespace Qlarissa.Application.Repositories;
 
 public interface ISecurityRepository
 {

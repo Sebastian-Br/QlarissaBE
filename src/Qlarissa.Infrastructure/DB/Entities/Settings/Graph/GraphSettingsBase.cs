@@ -11,19 +11,25 @@ public abstract class GraphSettingsBase
 
     public PlotType PlotType { get; set; }
 
-    public int BoundsId { get; set; }
+    /// <summary>
+    /// GraphSettings tags will override PlotType tags when set.
+    /// Purely display related settings can be stored as tags. They will never be accessed by the Back-End.
+    /// </summary>
+    public ICollection<GraphSettingsTag> Tags { get; set; } = [];
 
-    public Bounds? Bounds { get; set; }
+    // public int BoundsId { get; set; } redundant
 
-    public int TickCount { get; set; }
+    // public Bounds? Bounds { get; set; } -- move to tags
 
-    public bool ShowHorizontalGridLines { get; set; }
+    // public int TickCount { get; set; } -- move to tags
 
-    public bool ShowVerticalGridLines { get; set; }
+    // public bool ShowHorizontalGridLines { get; set; } tags
 
-    public bool LogarithmicScale { get; set; } = true;
+    // public bool ShowVerticalGridLines { get; set; } tags
 
-    public int ValueCardHoverDistance { get; set; }
+    // public bool LogarithmicScale { get; set; } = true; tags
+
+    // public int ValueCardHoverDistance { get; set; } tags
 
     public static GraphSettingsBase FromDomainEntity(Domain.Settings.Graph.GraphSettingBase domainEntity, string userId) => domainEntity switch
     {
@@ -50,12 +56,7 @@ public abstract class GraphSettingsBase<TGraphSettings> : GraphSettingsBase
         {
             DataSource = (Domain.Settings.Graph.GraphDataSource)DataSource,
             PlotType = (Domain.Settings.Graph.PlotType)PlotType,
-            Bounds = Bounds?.ToDomainEntity(),
-            TickCount = TickCount,
-            ShowHorizontalGridLines = ShowHorizontalGridLines,
-            ShowVerticalGridLines = ShowVerticalGridLines,
-            LogarithmicScale = LogarithmicScale,
-            ValueCardHoverDistance = ValueCardHoverDistance
+            Tags = Tags.ToDictionary(x => x.Key, y => y.Value)
         };
     }
 
@@ -64,27 +65,14 @@ public abstract class GraphSettingsBase<TGraphSettings> : GraphSettingsBase
         UserId = userId;
         DataSource = (GraphDataSource)domainEntity.DataSource;
         PlotType = (PlotType)domainEntity.PlotType;
-        Bounds = Bounds.FromDomainEntity(domainEntity.Bounds);
-        TickCount = domainEntity.TickCount;
-        ShowHorizontalGridLines = domainEntity.ShowHorizontalGridLines;
-        ShowVerticalGridLines = domainEntity.ShowVerticalGridLines;
-        LogarithmicScale = domainEntity.LogarithmicScale;
-        ValueCardHoverDistance = domainEntity.ValueCardHoverDistance;
+        Tags = GraphSettingsTag.FromDomainEntities(domainEntity.Tags, userId, (GraphDataSource)domainEntity.DataSource);
     }
 
     public override void UpdateFromDbEntity(GraphSettingsBase dbEntity)
     {
         PlotType = dbEntity.PlotType;
-        Bounds = Bounds?.UpdateFromDbEntity(dbEntity.Bounds)
-                ?? (dbEntity.Bounds is null
-                 ? null
-                 : new Bounds().UpdateFromDbEntity(dbEntity.Bounds));
 
-        TickCount = dbEntity.TickCount;
-        ShowHorizontalGridLines = dbEntity.ShowHorizontalGridLines;
-        ShowVerticalGridLines = dbEntity.ShowVerticalGridLines;
-        LogarithmicScale = dbEntity.LogarithmicScale;
-        ValueCardHoverDistance = dbEntity.ValueCardHoverDistance;
+        // Tags are updated separately.
 
         if (this is SecurityGraphSettings securityGraphSettingsEntity && dbEntity is SecurityGraphSettings incomingSecurityGraphSettings)
         {
@@ -109,13 +97,14 @@ public class GraphSettingsBaseConfiguration : IEntityTypeConfiguration<GraphSett
         // querying by unique UserId x DataSource
         builder.HasKey(x => new { x.UserId, x.DataSource });
 
-        // querying by UserId to get all their GraphSettings
-        builder.HasIndex(x => x.UserId);
-
-        builder.HasOne(x => x.Bounds)
-               .WithOne()
-               .HasForeignKey<GraphSettingsBase>(x => x.BoundsId)
-               .OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(x => x.Tags)
+                .WithOne()
+                .HasForeignKey(x => new
+                {
+                    x.UserId,
+                    x.GraphSetting
+                })
+                .OnDelete(DeleteBehavior.Cascade);
 
         //builder.ToTable("GraphSettings");
     }

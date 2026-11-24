@@ -1,7 +1,7 @@
 ﻿using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Qlarissa.Application.Interfaces.Repositories;
+using Qlarissa.Application.Repositories;
 using Qlarissa.Infrastructure.DB.Entities.Base;
 using ZiggyCreatures.Caching.Fusion;
 

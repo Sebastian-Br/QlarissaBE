@@ -1,5 +1,5 @@
 ﻿using Qlarissa.Application.Interfaces;
-using Qlarissa.Application.Interfaces.Repositories;
+using Qlarissa.Application.Repositories;
 using Qlarissa.Domain;
 
 namespace Qlarissa.Application;

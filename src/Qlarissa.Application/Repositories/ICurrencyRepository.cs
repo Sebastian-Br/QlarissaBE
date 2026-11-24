@@ -1,6 +1,6 @@
 ﻿using Qlarissa.Domain;
 
-namespace Qlarissa.Application.Interfaces.Repositories;
+namespace Qlarissa.Application.Repositories;
 
 public interface ICurrencyRepository
 {

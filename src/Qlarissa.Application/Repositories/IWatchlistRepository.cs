@@ -1,6 +1,6 @@
 ﻿using Qlarissa.Domain.Watchlists;
 
-namespace Qlarissa.Application.Interfaces.Repositories;
+namespace Qlarissa.Application.Repositories;
 
 public interface IWatchlistRepository
 {
