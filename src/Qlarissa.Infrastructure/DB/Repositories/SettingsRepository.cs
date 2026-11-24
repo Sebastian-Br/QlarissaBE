@@ -28,6 +28,7 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
     public async Task<IEnumerable<Domain.Settings.Graph.GraphSettingBase>> GetGraphSettingsAsync(string userId)
     {
         var dbEntities = await _context.GraphSettings
+                                    .Include(x => x.Tags)
                                     .Where(x => x.UserId == userId)
                                     .ToListAsync();
 

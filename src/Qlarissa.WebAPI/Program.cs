@@ -81,6 +81,9 @@ public class Program
         builder.Services.AddScoped<IWatchlistRepository, WatchlistRepository>();
         builder.Services.AddScoped<IWatchlistManager, WatchlistManager>();
 
+        builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
+        builder.Services.AddScoped<ISettingsManager, SettingsManager>();
+
         builder.Services.Configure<PyFinanceOptions>(configuration.GetSection("PyFinance"));
 
         builder.Services.AddHttpClient("PyFinanceSearch", (sp, client) =>
