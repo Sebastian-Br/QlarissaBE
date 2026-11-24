@@ -1,4 +1,5 @@
-﻿using Qlarissa.WebAPI.Models.Settings.Graph;
+﻿using Qlarissa.WebAPI.Models.Settings;
+using Qlarissa.WebAPI.Models.Settings.Graph;
 
 namespace Qlarissa.WebAPI.Tests;
 
@@ -82,5 +83,35 @@ public class SettingsTests
 
         Assert.NotNull(apiModel);
         Assert.Equal(domainEntity.DataSource, (Domain.Settings.Graph.GraphDataSource)apiModel.DataSource);
+    }
+
+    [Fact]
+    public void SettingsTags_ToDomainEntity()
+    {
+        IReadOnlyDictionary<string, string> tags = new Dictionary<string, string>
+        {
+            ["Region"] = "Europe"
+        };
+        var apiModel = new SettingsTags<DividendPayoutGraphSettings>(42, tags);
+
+        var domainEntity = apiModel.ToDomainEntity<Domain.Settings.Graph.DividendPayoutGraphSettings>();
+
+        Assert.Equal(apiModel.SettingsTypeId, domainEntity.SettingsTypeId);
+        Assert.Same(apiModel.Tags, domainEntity.Tags);
+    }
+
+    [Fact]
+    public void SettingsTags_FromDomainEntity()
+    {
+        IReadOnlyDictionary<string, string> tags = new Dictionary<string, string>
+        {
+            ["Region"] = "Europe"
+        };
+        var domainEntity = new Domain.Settings.SettingsTags<Domain.Settings.Graph.DividendPayoutGraphSettings>(42, tags);
+
+        var apiModel = SettingsTags<DividendPayoutGraphSettings>.FromDomainEntity(domainEntity);
+
+        Assert.Equal(domainEntity.SettingsTypeId, apiModel.SettingsTypeId);
+        Assert.Same(domainEntity.Tags, apiModel.Tags);
     }
 }
