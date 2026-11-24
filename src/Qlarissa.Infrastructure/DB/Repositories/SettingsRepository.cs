@@ -105,12 +105,9 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
 
         var graphSetting = (GraphDataSource)tags.SettingsTypeId;
         var keys = tags.Tags.Keys.ToArray();
-        var existingTags = await _context.GraphSettingsTags
+        await _context.GraphSettingsTags
             .Where(x => x.UserId == userId && x.GraphSetting == graphSetting && keys.Contains(x.Key))
-            .ToListAsync();
-
-        _context.GraphSettingsTags.RemoveRange(existingTags);
-        await _context.SaveChangesAsync();
+            .ExecuteDeleteAsync();
     }
 
     public async Task RemovePlotSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.PlotType> tags)
@@ -122,11 +119,8 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
 
         var plotType = (PlotType)tags.SettingsTypeId;
         var keys = tags.Tags.Keys.ToArray();
-        var existingTags = await _context.PlotSettingsTags
+        await _context.PlotSettingsTags
             .Where(x => x.UserId == userId && x.PlotType == plotType && keys.Contains(x.Key))
-            .ToListAsync();
-
-        _context.PlotSettingsTags.RemoveRange(existingTags);
-        await _context.SaveChangesAsync();
+            .ExecuteDeleteAsync();
     }
 }
