@@ -108,7 +108,6 @@ public class GraphSettingsBaseConfiguration : IEntityTypeConfiguration<GraphSett
                 })
                 .OnDelete(DeleteBehavior.Cascade);
 
-        
         //builder.ToTable("GraphSettings");
     }
 }

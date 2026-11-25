@@ -17,7 +17,7 @@ public sealed class GraphSettingsTag
     {
         List<GraphSettingsTag> result = [];
 
-        foreach(KeyValuePair<string, string> kvp in domainTags)
+        foreach (KeyValuePair<string, string> kvp in domainTags)
         {
             result.Add(
                 new GraphSettingsTag()
@@ -31,11 +31,6 @@ public sealed class GraphSettingsTag
         }
 
         return result;
-    }
-
-    public void UpdateFromDomainEntity(GraphSettingsTag dbEntity)
-    {
-
     }
 }
 
