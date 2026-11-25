@@ -1,16 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ZiggyCreatures.Caching.Fusion;
 using Qlarissa.Infrastructure.DB.Entities.Watchlists;
 using Qlarissa.Application.Repositories;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
-public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, IFusionCache cache, ApplicationDbContext context) : IWatchlistRepository
+public sealed class WatchlistRepository(ILogger<WatchlistRepository> logger, ApplicationDbContext context) : IWatchlistRepository
 {
-    private readonly ILogger<SecurityRepository> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-    private readonly IFusionCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+    private readonly ILogger<WatchlistRepository> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
@@ -96,12 +93,12 @@ public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, IFus
 
     public async Task WatchSecurityAsync(int watchlistId, int securityId, string userId)
     {
-        var watchlist = await _context.Watchlists
+        await _context.Watchlists
             .Where(w => w.Id == watchlistId && w.UserId == userId)
-            .Include(w => w.WatchedSecurities)
+            .Select(w => w.Id)
             .FirstAsync();
 
-        watchlist.WatchedSecurities.Add(new WatchedSecurity()
+        _context.WatchedSecurities.Add(new WatchedSecurity
         {
             WatchlistId = watchlistId,
             SecurityId = securityId
@@ -112,15 +109,16 @@ public sealed class WatchlistRepository(ILogger<SecurityRepository> logger, IFus
 
     public async Task UnwatchSecurityAsync(int watchlistId, int securityId, string userId)
     {
-        var watchlist = await _context.Watchlists
+        var affectedRows = await _context.Watchlists
             .Where(w => w.Id == watchlistId && w.UserId == userId)
-            .Include(w => w.WatchedSecurities)
-            .FirstAsync();
+            .SelectMany(w => w.WatchedSecurities)
+            .Where(ws => ws.SecurityId == securityId)
+            .ExecuteDeleteAsync();
 
-        var watchedSecurity = watchlist.WatchedSecurities.First(ws => ws.SecurityId == securityId);
-
-        _context.WatchedSecurities.Remove(watchedSecurity);
-        await _context.SaveChangesAsync();
+        if (affectedRows == 0)
+        {
+            throw new InvalidOperationException($"No security with id {securityId} found in watchlist {watchlistId} for user {userId}");
+        }
     }
 
     public async Task<IEnumerable<Domain.Watchlists.WatchlistMinimal>> GetWatchlistsMinimalAsync(string userId)

@@ -121,7 +121,7 @@ public sealed class SecurityRepository(ILogger<SecurityRepository> logger, IFusi
             await cache.RemoveByTagAsync(Tag.Security(security.Id), token: cancellationToken);
             return Result.Ok();
         }
-        catch (Exception ex)
+        catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Error updating security with ID {SecurityId}", security.Id);
             return Result.Fail($"Error updating security with ID {security.Id}.");

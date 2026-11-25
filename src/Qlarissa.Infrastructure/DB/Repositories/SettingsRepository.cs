@@ -58,13 +58,12 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
         var graphSetting = (GraphDataSource)tags.SettingsTypeId;
         var existingTags = await _context.GraphSettingsTags
             .Where(x => x.UserId == userId && x.GraphSetting == graphSetting)
-            .ToListAsync();
+            .ToDictionaryAsync(x => x.Key);
         List<GraphSettingsTag> newTags = [];
 
         foreach (var tag in tags.Tags)
         {
-            var existingTag = existingTags.FirstOrDefault(x => x.Key == tag.Key);
-            if (existingTag is null)
+            if (!existingTags.TryGetValue(tag.Key, out var existingTag))
             {
                 newTags.Add(new GraphSettingsTag
                 {
@@ -89,13 +88,12 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
         var plotType = (PlotType)tags.SettingsTypeId;
         var existingTags = await _context.PlotSettingsTags
             .Where(x => x.UserId == userId && x.PlotType == plotType)
-            .ToListAsync();
+            .ToDictionaryAsync(x => x.Key);
         List<PlotSettingsTag> newTags = [];
 
         foreach (var tag in tags.Tags)
         {
-            var existingTag = existingTags.FirstOrDefault(x => x.Key == tag.Key);
-            if (existingTag is null)
+            if (!existingTags.TryGetValue(tag.Key, out var existingTag))
             {
                 newTags.Add(new PlotSettingsTag
                 {
