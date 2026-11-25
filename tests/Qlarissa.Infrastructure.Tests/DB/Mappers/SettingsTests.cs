@@ -28,12 +28,14 @@ public sealed class SettingsTests
         {
             UserId = "user-123",
             DataSource = GraphDataSource.Security,
+            AsTotalReturn = true
         };
 
         var domainEntity = dbEntity.ToDomainEntity() as Domain.Settings.Graph.SecurityGraphSettings;
 
         Assert.NotNull(domainEntity);
         Assert.Equal((Domain.Settings.Graph.GraphDataSource)dbEntity.DataSource, domainEntity.DataSource);
+        Assert.Equal(dbEntity.AsTotalReturn, domainEntity.AsTotalReturn);
     }
 
     [Fact]
@@ -43,6 +45,7 @@ public sealed class SettingsTests
         {
             Id = 6,
             DataSource = Domain.Settings.Graph.GraphDataSource.Security,
+            AsTotalReturn = true
         };
 
         var dbEntity = GraphSettingsBase.FromDomainEntity(domainEntity, "user-456") as SecurityGraphSettings;
@@ -50,6 +53,7 @@ public sealed class SettingsTests
         Assert.NotNull(dbEntity);
         Assert.Equal("user-456", dbEntity.UserId);
         Assert.Equal((GraphDataSource)domainEntity.DataSource, dbEntity.DataSource);
+        Assert.Equal(domainEntity.AsTotalReturn, dbEntity.AsTotalReturn);
     }
 
     [Fact]

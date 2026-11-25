@@ -56,14 +56,16 @@ public class SettingsTests
     [Fact]
     public void SecurityGraphSettings_ToDomainEntity()
     {
-        var apiModel = new  SecurityGraphSettings
+        var apiModel = new SecurityGraphSettings
         {
             DataSource = GraphDataSource.Security,
+            AsTotalReturn = true
         };
 
         var domainEntity = apiModel.ToDomainEntity();
 
         Assert.Equal(apiModel.DataSource, (GraphDataSource)domainEntity.DataSource);
+        Assert.Equal(apiModel.AsTotalReturn, domainEntity.AsTotalReturn);
     }
 
     [Fact]
@@ -73,12 +75,14 @@ public class SettingsTests
         {
             Id = 5,
             DataSource = Domain.Settings.Graph.GraphDataSource.Security,
+            AsTotalReturn = true
         };
 
         var apiModel = GraphSettingsBase.FromDomainEntity(domainEntity) as SecurityGraphSettings;
 
         Assert.NotNull(apiModel);
         Assert.Equal(domainEntity.DataSource, (Domain.Settings.Graph.GraphDataSource)apiModel.DataSource);
+        Assert.Equal(domainEntity.AsTotalReturn, apiModel.AsTotalReturn);
     }
 
     [Fact]

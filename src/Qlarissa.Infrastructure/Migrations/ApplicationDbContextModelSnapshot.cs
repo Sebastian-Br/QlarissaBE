@@ -704,6 +704,9 @@ namespace Qlarissa.Infrastructure.Migrations
                 {
                     b.HasBaseType("Qlarissa.Infrastructure.DB.Entities.Settings.Graph.GraphSettingsBase");
 
+                    b.Property<bool>("AsTotalReturn")
+                        .HasColumnType("bit");
+
                     b.HasDiscriminator().HasValue("SecurityGraphSettings");
                 });
 
