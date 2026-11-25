@@ -8,13 +8,13 @@ namespace Qlarissa.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
+[Authorize]
 public class WatchlistController(IQlarissaUserManager userManager, IWatchlistManager watchlistManager) : ControllerBase
 {
     private readonly IQlarissaUserManager _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
     private readonly IWatchlistManager _watchlistManager = watchlistManager ?? throw new ArgumentNullException(nameof(watchlistManager));
 
     [HttpPost]
-    [Authorize]
     public async Task<ActionResult<WatchlistMinimal>> AddWatchlistAsync(WatchlistMinimal watchlistMinimal)
     {
         var user = await _userManager.GetAsync(User);
@@ -23,7 +23,6 @@ public class WatchlistController(IQlarissaUserManager userManager, IWatchlistMan
     }
 
     [HttpDelete]
-    [Authorize]
     public async Task<IActionResult> RemoveWatchlistAsync([FromQuery] int watchlistId)
     {
         var user = await _userManager.GetAsync(User);
@@ -32,7 +31,6 @@ public class WatchlistController(IQlarissaUserManager userManager, IWatchlistMan
     }
 
     [HttpPut]
-    [Authorize]
     public async Task<ActionResult<WatchlistMinimal>> UpdateWatchlistAsync(WatchlistMinimal watchlist)
     {
         var user = await _userManager.GetAsync(User);
@@ -41,7 +39,6 @@ public class WatchlistController(IQlarissaUserManager userManager, IWatchlistMan
     }
 
     [HttpPost]
-    [Authorize]
     public async Task<IActionResult> WatchSecurityAsync([FromQuery] int watchlistId, [FromQuery] int securityId)
     {
         var user = await _userManager.GetAsync(User);
@@ -50,7 +47,6 @@ public class WatchlistController(IQlarissaUserManager userManager, IWatchlistMan
     }
 
     [HttpDelete]
-    [Authorize]
     public async Task<IActionResult> UnwatchSecurityAsync([FromQuery] int watchlistId, [FromQuery] int securityId)
     {
         var user = await _userManager.GetAsync(User);
@@ -59,7 +55,6 @@ public class WatchlistController(IQlarissaUserManager userManager, IWatchlistMan
     }
 
     [HttpGet]
-    [Authorize]
     public async Task<ActionResult<IEnumerable<int>>> GetWatchlistIdsForSecurityAsync([FromQuery] int securityId)
     {
         var user = await _userManager.GetAsync(User);
@@ -68,7 +63,6 @@ public class WatchlistController(IQlarissaUserManager userManager, IWatchlistMan
     }
 
     [HttpGet]
-    [Authorize]
     public async Task<ActionResult<IEnumerable<Watchlist>>> GetAllWatchlistsAsync(CancellationToken cancellationToken)
     {
         var user = await _userManager.GetAsync(User);
@@ -77,7 +71,6 @@ public class WatchlistController(IQlarissaUserManager userManager, IWatchlistMan
     }
 
     [HttpGet]
-    [Authorize]
     public async Task<ActionResult<IEnumerable<WatchlistMinimal>>> GetWatchlistsMinimalAsync()
     {
         var user = await _userManager.GetAsync(User);

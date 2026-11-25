@@ -6,12 +6,12 @@ namespace Qlarissa.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
+[Authorize]
 public class SecurityController(ISecurityManager securityManager) : ControllerBase
 {
     private readonly ISecurityManager _securityManager = securityManager ?? throw new ArgumentNullException(nameof(securityManager));
 
     [HttpPost]
-    [Authorize]
     public async Task<IActionResult> Add([FromQuery] string tickerSymbol, CancellationToken cancellationToken)
     {
         var result = await _securityManager.AddSecurityAsync(tickerSymbol, cancellationToken);
@@ -25,7 +25,6 @@ public class SecurityController(ISecurityManager securityManager) : ControllerBa
     }
 
     [HttpGet]
-    [Authorize]
     public async Task<ActionResult<Models.Security.Base.PubliclyTradedSecurityBase>> Get([FromQuery] int id, CancellationToken cancellationToken)
     {
         var security = await _securityManager.GetSecurityAsync(id, cancellationToken);
@@ -39,7 +38,6 @@ public class SecurityController(ISecurityManager securityManager) : ControllerBa
     }
 
     [HttpPost]
-    [Authorize]
     public async Task<ActionResult<FluentResults.Result>> Update([FromQuery] int id, CancellationToken cancellationToken)
     {
         var result = await _securityManager.UpdateSecurityAsync(id, cancellationToken);
