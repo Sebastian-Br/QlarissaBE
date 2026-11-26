@@ -104,6 +104,11 @@ public class Program
             .Validate(options => options.IsValid, "DisplaySettings configuration contains an invalid limit.")
             .ValidateOnStart();
         builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<Qlarissa.Application.Settings.DisplaySettingsOptions>>().Value);
+        builder.Services.AddOptions<Qlarissa.Application.Settings.AuthTokenOptions>()
+            .Bind(configuration.GetSection(Qlarissa.Application.Settings.AuthTokenOptions.SectionName))
+            .Validate(options => options.IsValid, "JWT lifetime settings contain an invalid limit.")
+            .ValidateOnStart();
+        builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<Qlarissa.Application.Settings.AuthTokenOptions>>().Value);
         AddDisplaySettingsRateLimiter(builder.Services);
         builder.Services.AddIdentityCore<Qlarissa.Domain.QlarissaUser>()
         .AddRoles<IdentityRole>()
@@ -125,6 +130,7 @@ public class Program
         builder.Services.AddScoped<Qlarissa.Application.Interfaces.Authorization.IJwtService, Qlarissa.Infrastructure.Authorization.JwtService>();
 
         builder.Services.AddScoped<Qlarissa.Application.Repositories.IUserRepository, Qlarissa.Infrastructure.DB.Repositories.UserRepository>();
+        builder.Services.AddScoped<Qlarissa.Application.Repositories.IRefreshTokenRepository, Qlarissa.Infrastructure.DB.Repositories.RefreshTokenRepository>();
         builder.Services.AddScoped<Qlarissa.Application.Interfaces.IQlarissaUserManager, Qlarissa.Application.QlarissaUserManager>();
 
         builder.Services.AddScoped<Qlarissa.Application.Repositories.ISecurityRepository, Qlarissa.Infrastructure.DB.Repositories.SecurityRepository>();
@@ -184,7 +190,9 @@ public class Program
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = configuration["Jwt:Issuer"],
                     ValidAudience = configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+                    NameClaimType = System.Security.Claims.ClaimTypes.Name,
+                    RoleClaimType = System.Security.Claims.ClaimTypes.Role
                 };
 
                 options.Events = new JwtBearerEvents
@@ -254,7 +262,8 @@ public class Program
         app.UseAuthentication();
         app.UseRateLimiter();
         app.UseAuthorization();
-        app.MapHub<LivePriceHub>(LivePriceHubPath);
+        app.MapHub<LivePriceHub>(LivePriceHubPath, options =>
+            options.CloseOnAuthenticationExpiration = true);
         app.MapControllers();
 
         app.Run();

@@ -20,6 +20,8 @@ public interface IUserRepository
     /// <returns>The user, or null if none is found.</returns>
     Task<QlarissaUser?> GetAsync(string username);
 
+    Task<QlarissaUser?> GetByIdAsync(string userId);
+
     /// <summary>
     /// Checks if the specified password is correct for the given user.
     /// </summary>

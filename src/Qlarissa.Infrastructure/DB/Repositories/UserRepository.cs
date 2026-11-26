@@ -55,6 +55,11 @@ public sealed class UserRepository(UserManager<Qlarissa.Domain.QlarissaUser> use
         return await _identityUserManager.FindByNameAsync(username);
     }
 
+    public Task<Qlarissa.Domain.QlarissaUser?> GetByIdAsync(string userId)
+    {
+        return _identityUserManager.FindByIdAsync(userId);
+    }
+
     public Task<bool> CheckPasswordAsync(Qlarissa.Domain.QlarissaUser user, string password)
     {
         return _identityUserManager.CheckPasswordAsync(user, password);

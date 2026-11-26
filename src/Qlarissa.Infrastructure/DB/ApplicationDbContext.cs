@@ -22,6 +22,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Watchlist> Watchlists { get; set; }
     public DbSet<GraphSettingsBase> GraphSettings { get; set; }
     public DbSet<UserDisplaySetting> DisplaySettings { get; set; }
+    public DbSet<RefreshTokenSession> RefreshTokenSessions { get; set; }
     public DbSet<SecurityGraphSettings> SecurityGraphSettings { get; set; }
     public DbSet<DividendPayoutGraphSettings> DividendPayoutGraphSettings { get; set; }
 

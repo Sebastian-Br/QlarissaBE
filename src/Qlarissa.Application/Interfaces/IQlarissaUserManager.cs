@@ -1,12 +1,17 @@
 ﻿using FluentResults;
 using Qlarissa.Domain;
+using Qlarissa.Application.Models;
 using System.Security.Claims;
 
 namespace Qlarissa.Application.Interfaces;
 
 public interface IQlarissaUserManager
 {
-    Task<Result<string>> LoginAsync(string username, string password);
+    Task<Result<AuthenticationSession>> LoginAsync(string username, string password);
+
+    Task<Result<AuthenticationSession>> RefreshAsync(string refreshToken);
+
+    Task RevokeRefreshTokenAsync(string refreshToken);
 
     Task<Result<QlarissaUser>> GetAsync(ClaimsPrincipal user);
 
