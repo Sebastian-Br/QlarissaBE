@@ -6,7 +6,6 @@ namespace Qlarissa.Infrastructure.DB.Entities.Settings;
 
 public class Bounds
 {
-    public int Id { get; set; }
 
     public DateOnly? StartDate { get; set; }
 
@@ -16,19 +15,17 @@ public class Bounds
 
     public double? End { get; set; }
 
-    public Domain.Settings.Bounds? ToDomainEntity() => new()
+    public Qlarissa.Domain.Settings.Bounds ToDomainEntity() => new()
     {
-        Id = Id,
         StartDate = StartDate,
         EndDate = EndDate,
         Start = Start,
         End = End
     };
 
-    public static Bounds? FromDomainEntity(Domain.Settings.Bounds? domainEntity) =>
+    public static Bounds? FromDomainEntity(Qlarissa.Domain.Settings.Bounds? domainEntity) =>
         domainEntity is null ? null : new()
     {
-        Id = domainEntity.Id,
         StartDate = domainEntity.StartDate,
         EndDate = domainEntity.EndDate,
         Start = domainEntity.Start,
@@ -46,13 +43,5 @@ public class Bounds
         End = dbEntity.End;
 
         return this;
-    }
-}
-
-public class BoundsConfiguration : IEntityTypeConfiguration<Bounds>
-{
-    public void Configure(EntityTypeBuilder<Bounds> builder)
-    {
-        builder.Property(x => x.Id).ValueGeneratedOnAdd();
     }
 }

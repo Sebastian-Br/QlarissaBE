@@ -8,5 +8,5 @@ public abstract class GraphSettingBase
 
     public PlotType PlotType { get; set; }
 
-    public Dictionary<string, string> Tags = [];
+    public Bounds? Bounds { get; set; }
 }

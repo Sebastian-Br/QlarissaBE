@@ -1,15 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Qlarissa.Application;
-using Qlarissa.Application.Interfaces;
-using Qlarissa.Application.Interfaces.Authorization;
-using Qlarissa.Application.Interfaces.ExternalAPI;
-using Qlarissa.Application.Repositories;
-using Qlarissa.Domain;
 using Qlarissa.Infrastructure.Authorization;
 using Qlarissa.Infrastructure.DB;
 using Qlarissa.Infrastructure.DB.Repositories;
@@ -17,6 +12,8 @@ using Qlarissa.Infrastructure.PyFinance;
 using Qlarissa.Infrastructure.PyFinance.Options;
 using Qlarissa.WebAPI.LivePrices;
 using System.Text;
+using System.Security.Claims;
+using System.Threading.RateLimiting;
 using ZiggyCreatures.Caching.Fusion;
 
 namespace Qlarissa.WebAPI;
@@ -24,6 +21,58 @@ namespace Qlarissa.WebAPI;
 public class Program
 {
     private const string LivePriceHubPath = "/hubs/live-prices";
+
+    private static void AddDisplaySettingsRateLimiter(IServiceCollection services)
+    {
+        services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+            options.AddPolicy("DisplaySettings", context =>
+            {
+                var limits = context.RequestServices
+                    .GetRequiredService<IOptions<Qlarissa.Application.Settings.DisplaySettingsOptions>>()
+                    .Value;
+                var userKey = context.User.FindFirstValue(ClaimTypes.NameIdentifier)
+                    ?? context.User.FindFirst("sub")?.Value
+                    ?? context.User.FindFirstValue(ClaimTypes.Email)
+                    ?? context.User.FindFirst("email")?.Value
+                    ?? context.Connection.RemoteIpAddress?.ToString()
+                    ?? "unknown";
+                return RateLimitPartition.GetFixedWindowLimiter(userKey, _ =>
+                    new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = limits.RequestsPerWindow,
+                        Window = TimeSpan.FromSeconds(limits.RateLimitWindowSeconds),
+                        QueueLimit = 0,
+                        AutoReplenishment = true
+                    });
+            });
+        });
+    }
+
+    private static void UseDisplaySettingsRequestSizeLimit(WebApplication app)
+    {
+        app.Use(async (context, next) =>
+        {
+            if (context.Request.Path.Equals("/api/Settings/SyncDisplaySettings", StringComparison.OrdinalIgnoreCase))
+            {
+                var maxRequestBytes = context.RequestServices
+                    .GetRequiredService<IOptions<Qlarissa.Application.Settings.DisplaySettingsOptions>>()
+                    .Value.MaxRequestBodyBytes;
+                var requestBodySize = context.Features.Get<Microsoft.AspNetCore.Http.Features.IHttpMaxRequestBodySizeFeature>();
+                if (requestBodySize is not null && !requestBodySize.IsReadOnly)
+                    requestBodySize.MaxRequestBodySize = maxRequestBytes;
+
+                if (context.Request.ContentLength > maxRequestBytes)
+                {
+                    context.Response.StatusCode = StatusCodes.Status413PayloadTooLarge;
+                    return;
+                }
+            }
+
+            await next();
+        });
+    }
 
     public static void Main(string[] args)
     {
@@ -50,39 +99,45 @@ public class Program
             );
 
         builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-        builder.Services.AddIdentityCore<QlarissaUser>()
+        builder.Services.AddOptions<Qlarissa.Application.Settings.DisplaySettingsOptions>()
+            .Bind(configuration.GetSection(Qlarissa.Application.Settings.DisplaySettingsOptions.SectionName))
+            .Validate(options => options.IsValid, "DisplaySettings configuration contains an invalid limit.")
+            .ValidateOnStart();
+        builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<Qlarissa.Application.Settings.DisplaySettingsOptions>>().Value);
+        AddDisplaySettingsRateLimiter(builder.Services);
+        builder.Services.AddIdentityCore<Qlarissa.Domain.QlarissaUser>()
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddSignInManager()
-        .AddUserManager<UserManager<QlarissaUser>>()
+        .AddUserManager<UserManager<Qlarissa.Domain.QlarissaUser>>()
         .AddDefaultTokenProviders();
 
         builder.Services.AddSignalR();
         builder.Services.Configure<LivePriceOptions>(builder.Configuration.GetSection("LivePrices"));
         builder.Services.AddSingleton<YahooLivePriceService>();
-        builder.Services.AddSingleton<ILivePriceService>(s => s.GetRequiredService<YahooLivePriceService>());
+        builder.Services.AddSingleton<Qlarissa.Application.Interfaces.ExternalAPI.ILivePriceService>(s => s.GetRequiredService<YahooLivePriceService>());
         builder.Services.AddHostedService(s => s.GetRequiredService<YahooLivePriceService>());
         builder.Services.AddSingleton<LivePriceBroadcaster>();
 
         builder.Services.AddHostedService(
             sp => sp.GetRequiredService<LivePriceBroadcaster>());
 
-        builder.Services.AddScoped<IJwtService, JwtService>();
+        builder.Services.AddScoped<Qlarissa.Application.Interfaces.Authorization.IJwtService, Qlarissa.Infrastructure.Authorization.JwtService>();
 
-        builder.Services.AddScoped<IUserRepository, UserRepository>();
-        builder.Services.AddScoped<IQlarissaUserManager, QlarissaUserManager>();
+        builder.Services.AddScoped<Qlarissa.Application.Repositories.IUserRepository, Qlarissa.Infrastructure.DB.Repositories.UserRepository>();
+        builder.Services.AddScoped<Qlarissa.Application.Interfaces.IQlarissaUserManager, Qlarissa.Application.QlarissaUserManager>();
 
-        builder.Services.AddScoped<ISecurityRepository, SecurityRepository>();
-        builder.Services.AddScoped<ISecurityManager, SecurityManager>();
+        builder.Services.AddScoped<Qlarissa.Application.Repositories.ISecurityRepository, Qlarissa.Infrastructure.DB.Repositories.SecurityRepository>();
+        builder.Services.AddScoped<Qlarissa.Application.Interfaces.ISecurityManager, Qlarissa.Application.SecurityManager>();
 
-        builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
-        builder.Services.AddScoped<ICurrencyManager, CurrencyManager>();
+        builder.Services.AddScoped<Qlarissa.Application.Repositories.ICurrencyRepository, Qlarissa.Infrastructure.DB.Repositories.CurrencyRepository>();
+        builder.Services.AddScoped<Qlarissa.Application.Interfaces.ICurrencyManager, Qlarissa.Application.CurrencyManager>();
 
-        builder.Services.AddScoped<IWatchlistRepository, WatchlistRepository>();
-        builder.Services.AddScoped<IWatchlistManager, WatchlistManager>();
+        builder.Services.AddScoped<Qlarissa.Application.Repositories.IWatchlistRepository, Qlarissa.Infrastructure.DB.Repositories.WatchlistRepository>();
+        builder.Services.AddScoped<Qlarissa.Application.Interfaces.IWatchlistManager, Qlarissa.Application.WatchlistManager>();
 
-        builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
-        builder.Services.AddScoped<ISettingsManager, SettingsManager>();
+        builder.Services.AddScoped<Qlarissa.Application.Repositories.ISettingsRepository, Qlarissa.Infrastructure.DB.Repositories.SettingsRepository>();
+        builder.Services.AddScoped<Qlarissa.Application.Interfaces.ISettingsManager, Qlarissa.Application.SettingsManager>();
 
         builder.Services.Configure<PyFinanceOptions>(configuration.GetSection("PyFinance"));
 
@@ -104,7 +159,7 @@ public class Program
             client.BaseAddress = new Uri(options.MarketDataAPI.BaseUrl);
         });
 
-        builder.Services.AddScoped<IMarketDataClient, PyFinanceClient>();
+        builder.Services.AddScoped<Qlarissa.Application.Interfaces.ExternalAPI.IMarketDataClient, PyFinanceClient>();
 
         builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -192,9 +247,12 @@ public class Program
         }
 
         app.UseMiddleware<ExceptionHandlingMiddleware>();
+        UseDisplaySettingsRequestSizeLimit(app);
         app.UseHttpsRedirection();
+        app.UseRouting();
         app.UseCors("AllowFrontend");
         app.UseAuthentication();
+        app.UseRateLimiter();
         app.UseAuthorization();
         app.MapHub<LivePriceHub>(LivePriceHubPath);
         app.MapControllers();

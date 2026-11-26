@@ -11,7 +11,7 @@ public abstract class GraphSettingsBase
 
     public PlotType PlotType { get; set; }
 
-    public Dictionary<string, string> Tags = [];
+    public Bounds? Bounds { get; set; }
 
     public static GraphSettingsBase FromDomainEntity(Domain.Settings.Graph.GraphSettingBase domainEntity) => domainEntity switch
     {
@@ -29,13 +29,13 @@ public class GraphSettingsBase<TGraphSettings> : GraphSettingsBase where TGraphS
     {
         DataSource = (Domain.Settings.Graph.GraphDataSource)DataSource,
         PlotType = (Domain.Settings.Graph.PlotType)PlotType,
-        Tags = Tags
+        Bounds = Bounds?.ToDomainEntity()
     };
 
     internal virtual void FromDomainEntity(TGraphSettings domainEntity)
     {
         DataSource = (GraphDataSource)domainEntity.DataSource;
         PlotType = (PlotType)domainEntity.PlotType;
-        Tags = domainEntity.Tags;
+        Bounds = Qlarissa.WebAPI.Models.Settings.Bounds.FromDomainEntity(domainEntity.Bounds);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Qlarissa.Application.Interfaces.ExternalAPI;
-using Qlarissa.Domain.Securities.MarketData;
 
 namespace Qlarissa.WebAPI.LivePrices;
 
@@ -10,7 +9,7 @@ public sealed class LivePriceHub(ILivePriceService livePriceService) : Hub
 {
     private readonly ILivePriceService _livePriceService = livePriceService ?? throw new ArgumentNullException(nameof(livePriceService));
 
-    public async Task<IReadOnlyList<LivePrice>> Subscribe(IEnumerable<string> symbols)
+    public async Task<IReadOnlyList<Qlarissa.Domain.Securities.MarketData.LivePrice>> Subscribe(IEnumerable<string> symbols)
     {
         var normalizedSymbols = NormalizeSymbols(symbols);
 

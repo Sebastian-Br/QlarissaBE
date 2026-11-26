@@ -4,7 +4,6 @@ using Qlarissa.Application.Interfaces.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Qlarissa.Domain;
 
 namespace Qlarissa.Infrastructure.Authorization;
 
@@ -12,7 +11,7 @@ public sealed class JwtService(IConfiguration configuration) : IJwtService
 {
     private readonly IConfiguration _configuration = configuration;
 
-    public string GenerateToken(QlarissaUser user)
+    public string GenerateToken(Qlarissa.Domain.QlarissaUser user)
     {
         var claims = new[]
         {

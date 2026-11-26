@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Qlarissa.Application.Interfaces;
-using Qlarissa.WebAPI.Models.Settings;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Options;
 using Qlarissa.WebAPI.Models.Settings.Graph;
 
 namespace Qlarissa.WebAPI.Controllers;
@@ -9,10 +9,17 @@ namespace Qlarissa.WebAPI.Controllers;
 [ApiController]
 [Route("api/[controller]/[action]")]
 [Authorize]
-public sealed class SettingsController(IQlarissaUserManager userManager, ISettingsManager settingsManager) : ControllerBase
+public sealed class SettingsController(
+    Qlarissa.Application.Interfaces.IQlarissaUserManager userManager,
+    Qlarissa.Application.Interfaces.ISettingsManager settingsManager,
+    IOptions<Qlarissa.Application.Settings.DisplaySettingsOptions> displaySettingsOptions) : ControllerBase
 {
-    private readonly IQlarissaUserManager _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-    private readonly ISettingsManager _settingsManager = settingsManager ?? throw new ArgumentNullException(nameof(settingsManager));
+    private readonly Qlarissa.Application.Interfaces.IQlarissaUserManager _userManager =
+        userManager ?? throw new ArgumentNullException(nameof(userManager));
+    private readonly Qlarissa.Application.Interfaces.ISettingsManager _settingsManager =
+        settingsManager ?? throw new ArgumentNullException(nameof(settingsManager));
+    private readonly Qlarissa.Application.Settings.DisplaySettingsOptions _displaySettingsOptions =
+        displaySettingsOptions.Value;
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<GraphSettingsBase>>> GetGraphSettingsAsync()
@@ -23,58 +30,76 @@ public sealed class SettingsController(IQlarissaUserManager userManager, ISettin
     }
 
     [HttpGet]
-    public async Task<ActionResult<GraphSettingsBase>> GetGraphSettingAsync([FromQuery] GraphDataSource graphSetting)
+    public async Task<ActionResult<GraphSettingsBase>> GetGraphSettingAsync(
+        [FromQuery] GraphDataSource graphSetting)
     {
         var user = await _userManager.GetAsync(User);
-        var graphSettings = await _settingsManager.GetGraphSettingAsync(user.Value.Id, (Domain.Settings.Graph.GraphDataSource)graphSetting);
+        var graphSettings = await _settingsManager.GetGraphSettingAsync(
+            user.Value.Id,
+            (Qlarissa.Domain.Settings.Graph.GraphDataSource)graphSetting);
         return Ok(GraphSettingsBase.FromDomainEntity(graphSettings));
     }
 
-    [HttpGet]
-    public async Task<ActionResult<SettingsTags<PlotType>>> GetPlotSettingAsync([FromQuery] PlotType plotType)
-    {
-        var user = await _userManager.GetAsync(User);
-        var tags = await _settingsManager.GetPlotSettingAsync(user.Value.Id, (Domain.Settings.Graph.PlotType)plotType);
-        return Ok(SettingsTags<PlotType>.FromDomainEntity(tags));
-    }
-
     [HttpPut]
-    public async Task<IActionResult> AddOrUpdateGraphSettingAsync([FromBody] GraphSettingsBase graphSetting)
+    public async Task<IActionResult> AddOrUpdateGraphSettingAsync(
+        [FromBody] GraphSettingsBase graphSetting)
     {
         var user = await _userManager.GetAsync(User);
         await _settingsManager.AddOrUpdateGraphSettingAsync(user.Value.Id, graphSetting.ToDomainEntity());
         return Ok();
     }
 
+    [HttpGet]
+    [EnableRateLimiting("DisplaySettings")]
+    public async Task<ActionResult<Qlarissa.WebAPI.Models.Settings.DisplaySettingsSnapshot>>
+        GetDisplaySettingsAsync([FromQuery] Qlarissa.Domain.Settings.DeviceProfile deviceProfile)
+    {
+        if (!Enum.IsDefined(deviceProfile))
+            return BadRequest("Unknown device profile.");
+
+        var user = await _userManager.GetAsync(User);
+        var settings = await _settingsManager.GetDisplaySettingsAsync(user.Value.Id, deviceProfile);
+        return Ok(new Qlarissa.WebAPI.Models.Settings.DisplaySettingsSnapshot(
+            _displaySettingsOptions.SyncDebounceMilliseconds,
+            _displaySettingsOptions.MaxChangedKeysPerRequest,
+            settings.Select(setting =>
+                new Qlarissa.WebAPI.Models.Settings.DisplaySettingItem(setting.Key, setting.Value)).ToArray()));
+    }
+
     [HttpPut]
-    public async Task<IActionResult> AddOrUpdatePlotSettingsTags([FromBody] SettingsTags<PlotType> tags)
+    [EnableRateLimiting("DisplaySettings")]
+    public async Task<IActionResult> SyncDisplaySettingsAsync(
+        [FromBody] Qlarissa.WebAPI.Models.Settings.SyncDisplaySettingsRequest request)
     {
-        var user = await _userManager.GetAsync(User);
-        await _settingsManager.AddOrUpdatePlotSettingsTags(user.Value.Id, tags.ToDomainEntity<Domain.Settings.Graph.PlotType>());
-        return Ok();
-    }
+        if (request is null)
+            return BadRequest("A display settings request is required.");
 
-    [HttpDelete]
-    public async Task<IActionResult> RemovePlotSettingsTags([FromBody] SettingsTags<PlotType> tags)
-    {
-        var user = await _userManager.GetAsync(User);
-        await _settingsManager.RemovePlotSettingsTags(user.Value.Id, tags.ToDomainEntity<Domain.Settings.Graph.PlotType>());
-        return Ok();
-    }
+        if (!Enum.IsDefined(request.DeviceProfile))
+            return BadRequest("Unknown device profile.");
 
-    [HttpPut]
-    public async Task<IActionResult> AddOrUpdateGraphSettingsTags([FromBody] SettingsTags<GraphSettingsBase> tags)
-    {
-        var user = await _userManager.GetAsync(User);
-        await _settingsManager.AddOrUpdateGraphSettingsTags(user.Value.Id, tags.ToDomainEntity<Domain.Settings.Graph.GraphSettingBase>());
-        return Ok();
-    }
+        if (request.Changes is null)
+            return BadRequest("Changes are required.");
 
-    [HttpDelete]
-    public async Task<IActionResult> RemoveGraphSettingsTags([FromBody] SettingsTags<GraphSettingsBase> tags)
-    {
+        if (request.Changes.Count > _displaySettingsOptions.MaxChangedKeysPerRequest)
+            return BadRequest(
+                $"A display settings request may change at most {_displaySettingsOptions.MaxChangedKeysPerRequest} keys.");
+
+        if (request.Changes.Any(change => change is null || change.Key is null))
+            return BadRequest("Every change must contain a key.");
+
         var user = await _userManager.GetAsync(User);
-        await _settingsManager.RemoveGraphSettingsTags(user.Value.Id, tags.ToDomainEntity<Domain.Settings.Graph.GraphSettingBase>());
-        return Ok();
+        var result = await _settingsManager.SyncDisplaySettingsAsync(
+            user.Value.Id,
+            request.DeviceProfile,
+            request.Changes.Select(change =>
+                new Qlarissa.Domain.Settings.DisplaySettingChange(change.Key, change.Value)).ToArray());
+
+        if (result.IsSuccess)
+            return Ok();
+
+        var error = string.Join("; ", result.Errors.Select(reason => reason.Message));
+        if (error.Contains("quota exceeded", StringComparison.OrdinalIgnoreCase))
+            return Conflict(error);
+        return BadRequest(error);
     }
 }

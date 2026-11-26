@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+using System.Data;
+using FluentResults;
+using Microsoft.EntityFrameworkCore;
 using Qlarissa.Application.Repositories;
 using Qlarissa.Infrastructure.DB.Entities.Settings.Graph;
+using Qlarissa.Infrastructure.DB.Entities.Settings;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
@@ -28,7 +31,6 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
     public async Task<IEnumerable<Domain.Settings.Graph.GraphSettingBase>> GetGraphSettingsAsync(string userId)
     {
         var dbEntities = await _context.GraphSettings
-                                    .Include(x => x.Tags)
                                     .Where(x => x.UserId == userId)
                                     .ToListAsync();
 
@@ -38,106 +40,79 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
     public async Task<Domain.Settings.Graph.GraphSettingBase> GetGraphSettingAsync(string userId, Domain.Settings.Graph.GraphDataSource graphSetting)
     {
         var dbEntity = await _context.GraphSettings
-            .Include(x => x.Tags)
             .FirstAsync(x => x.UserId == userId && (int)x.DataSource == (int)graphSetting);
 
         return dbEntity.ToDomainEntity();
     }
 
-    public async Task<Domain.Settings.SettingsTags<Domain.Settings.Graph.PlotType>> GetPlotSettingAsync(string userId, Domain.Settings.Graph.PlotType plotType)
+    public async Task<IReadOnlyList<Qlarissa.Domain.Settings.DisplaySetting>> GetDisplaySettingsAsync(
+        string userId,
+        Qlarissa.Domain.Settings.DeviceProfile deviceProfile)
     {
-        var tags = await _context.PlotSettingsTags
-            .Where(x => x.UserId == userId && x.PlotType == (PlotType)plotType)
-            .ToDictionaryAsync(x => x.Key, x => x.Value);
+        var storedSettings = await _context.DisplaySettings
+            .AsNoTracking()
+            .Where(setting => setting.UserId == userId && setting.DeviceProfile == deviceProfile)
+            .Select(setting => new { setting.Key, setting.Value })
+            .ToListAsync();
 
-        return new Domain.Settings.SettingsTags<Domain.Settings.Graph.PlotType>((int)plotType, tags);
+        return storedSettings
+            .Select(setting => new Qlarissa.Domain.Settings.DisplaySetting(setting.Key, setting.Value))
+            .ToList();
     }
 
-    public async Task AddOrUpdateGraphSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.GraphSettingBase> tags)
+    public async Task<FluentResults.Result> SyncDisplaySettingsAsync(
+        string userId,
+        Qlarissa.Domain.Settings.DeviceProfile deviceProfile,
+        IReadOnlyCollection<Qlarissa.Domain.Settings.DisplaySettingChange> changes,
+        int maxRowsPerUser)
     {
-        var graphSetting = (GraphDataSource)tags.SettingsTypeId;
-        var existingTags = await _context.GraphSettingsTags
-            .Where(x => x.UserId == userId && x.GraphSetting == graphSetting)
-            .ToDictionaryAsync(x => x.Key);
-        List<GraphSettingsTag> newTags = [];
+        if (changes.Count == 0)
+            return FluentResults.Result.Ok();
 
-        foreach (var tag in tags.Tags)
+        await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        var userSettings = await _context.DisplaySettings
+            .Where(setting => setting.UserId == userId)
+            .ToListAsync();
+        var profileSettings = userSettings
+            .Where(setting => setting.DeviceProfile == deviceProfile)
+            .ToDictionary(setting => setting.Key, StringComparer.Ordinal);
+
+        foreach (var change in changes)
         {
-            if (!existingTags.TryGetValue(tag.Key, out var existingTag))
+            if (change.Value is null)
             {
-                newTags.Add(new GraphSettingsTag
+                if (profileSettings.Remove(change.Key, out var removed))
                 {
-                    UserId = userId,
-                    GraphSetting = graphSetting,
-                    Key = tag.Key,
-                    Value = tag.Value
-                });
+                    _context.DisplaySettings.Remove(removed);
+                    userSettings.Remove(removed);
+                }
+                continue;
             }
-            else
+
+            if (profileSettings.TryGetValue(change.Key, out var existing))
             {
-                existingTag.Value = tag.Value;
+                existing.Value = change.Value;
+                continue;
             }
+
+            var added = new UserDisplaySetting
+            {
+                UserId = userId,
+                DeviceProfile = deviceProfile,
+                Key = change.Key,
+                Value = change.Value
+            };
+            profileSettings.Add(change.Key, added);
+            userSettings.Add(added);
+            _context.DisplaySettings.Add(added);
         }
 
-        _context.GraphSettingsTags.AddRange(newTags);
+        if (userSettings.Count > maxRowsPerUser)
+            return FluentResults.Result.Fail(
+                $"Display settings quota exceeded. A user may store at most {maxRowsPerUser} settings across all device profiles.");
+
         await _context.SaveChangesAsync();
-    }
-
-    public async Task AddOrUpdatePlotSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.PlotType> tags)
-    {
-        var plotType = (PlotType)tags.SettingsTypeId;
-        var existingTags = await _context.PlotSettingsTags
-            .Where(x => x.UserId == userId && x.PlotType == plotType)
-            .ToDictionaryAsync(x => x.Key);
-        List<PlotSettingsTag> newTags = [];
-
-        foreach (var tag in tags.Tags)
-        {
-            if (!existingTags.TryGetValue(tag.Key, out var existingTag))
-            {
-                newTags.Add(new PlotSettingsTag
-                {
-                    UserId = userId,
-                    PlotType = plotType,
-                    Key = tag.Key,
-                    Value = tag.Value
-                });
-            }
-            else
-            {
-                existingTag.Value = tag.Value;
-            }
-        }
-
-        _context.PlotSettingsTags.AddRange(newTags);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task RemoveGraphSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.GraphSettingBase> tags)
-    {
-        if (tags.Tags.Count == 0)
-        {
-            return;
-        }
-
-        var graphSetting = (GraphDataSource)tags.SettingsTypeId;
-        var keys = tags.Tags.Keys.ToArray();
-        await _context.GraphSettingsTags
-            .Where(x => x.UserId == userId && x.GraphSetting == graphSetting && keys.Contains(x.Key))
-            .ExecuteDeleteAsync();
-    }
-
-    public async Task RemovePlotSettingsTags(string userId, Domain.Settings.SettingsTags<Domain.Settings.Graph.PlotType> tags)
-    {
-        if (tags.Tags.Count == 0)
-        {
-            return;
-        }
-
-        var plotType = (PlotType)tags.SettingsTypeId;
-        var keys = tags.Tags.Keys.ToArray();
-        await _context.PlotSettingsTags
-            .Where(x => x.UserId == userId && x.PlotType == plotType && keys.Contains(x.Key))
-            .ExecuteDeleteAsync();
+        await transaction.CommitAsync();
+        return FluentResults.Result.Ok();
     }
 }

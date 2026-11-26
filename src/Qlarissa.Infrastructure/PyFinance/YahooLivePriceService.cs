@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Qlarissa.Application.Interfaces.ExternalAPI;
 using Qlarissa.Application.Repositories;
-using Qlarissa.Domain.Securities.MarketData;
 using Qlarissa.Infrastructure.PyFinance.Options;
 using System.Net.WebSockets;
 using System.Text;
@@ -27,7 +26,7 @@ public sealed class YahooLivePriceService : BackgroundService, ILivePriceService
     private readonly HashSet<string> _subscribedSymbols = new(StringComparer.OrdinalIgnoreCase);
 
     // symbol -> latest received price
-    private readonly Dictionary<string, LivePrice> _latestPrices = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, Qlarissa.Domain.Securities.MarketData.LivePrice> _latestPrices = new(StringComparer.OrdinalIgnoreCase);
 
     private readonly Channel<bool> _subscriptionChanges = Channel.CreateBounded<bool>(
         new BoundedChannelOptions(1)
@@ -90,7 +89,7 @@ public sealed class YahooLivePriceService : BackgroundService, ILivePriceService
         return Task.CompletedTask;
     }
 
-    public IReadOnlyList<LivePrice> GetLatestPrices()
+    public IReadOnlyList<Qlarissa.Domain.Securities.MarketData.LivePrice> GetLatestPrices()
     {
         lock (_stateLock)
         {
@@ -98,7 +97,7 @@ public sealed class YahooLivePriceService : BackgroundService, ILivePriceService
         }
     }
 
-    public IReadOnlyList<LivePrice> GetPrices(IEnumerable<string> symbols)
+    public IReadOnlyList<Qlarissa.Domain.Securities.MarketData.LivePrice> GetPrices(IEnumerable<string> symbols)
     {
         ArgumentNullException.ThrowIfNull(symbols);
         var requestedSymbols = symbols.ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -286,7 +285,7 @@ public sealed class YahooLivePriceService : BackgroundService, ILivePriceService
             var symbol = data.Id.Trim().ToUpperInvariant();
             var timestamp = ConvertYahooTimestamp(data.Time);
 
-            var livePrice = new LivePrice
+            var livePrice = new Qlarissa.Domain.Securities.MarketData.LivePrice
             {
                 Symbol = symbol,
                 Timestamp = timestamp,

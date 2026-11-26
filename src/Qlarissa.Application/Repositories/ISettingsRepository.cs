@@ -1,5 +1,6 @@
 ﻿using Qlarissa.Domain.Settings;
 using Qlarissa.Domain.Settings.Graph;
+using FluentResults;
 
 namespace Qlarissa.Application.Repositories;
 
@@ -9,15 +10,13 @@ public interface ISettingsRepository
 
     Task<GraphSettingBase> GetGraphSettingAsync(string userId, GraphDataSource graphSetting);
 
-    Task<SettingsTags<PlotType>> GetPlotSettingAsync(string userId, PlotType graphSetting);
-
     Task AddOrUpdateGraphSettingAsync(string userId, GraphSettingBase graphSetting);
 
-    Task AddOrUpdatePlotSettingsTags(string userId, SettingsTags<PlotType> tags);
+    Task<IReadOnlyList<DisplaySetting>> GetDisplaySettingsAsync(string userId, DeviceProfile deviceProfile);
 
-    Task RemovePlotSettingsTags(string userId, SettingsTags<PlotType> tags);
-
-    Task AddOrUpdateGraphSettingsTags(string userId, SettingsTags<GraphSettingBase> tags);
-
-    Task RemoveGraphSettingsTags(string userId, SettingsTags<GraphSettingBase> tags);
+    Task<FluentResults.Result> SyncDisplaySettingsAsync(
+        string userId,
+        DeviceProfile deviceProfile,
+        IReadOnlyCollection<DisplaySettingChange> changes,
+        int maxRowsPerUser);
 }

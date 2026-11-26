@@ -1,17 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Qlarissa.Domain;
 using Qlarissa.Application.Repositories;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
-public sealed class UserRepository(UserManager<QlarissaUser> userManager, ApplicationDbContext context, IWatchlistRepository watchlistRepository) : IUserRepository
+public sealed class UserRepository(UserManager<Qlarissa.Domain.QlarissaUser> userManager, ApplicationDbContext context, IWatchlistRepository watchlistRepository) : IUserRepository
 {
-    readonly UserManager<QlarissaUser> _identityUserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+    readonly UserManager<Qlarissa.Domain.QlarissaUser> _identityUserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
     readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
     readonly IWatchlistRepository _watchlistRepository = watchlistRepository ?? throw new ArgumentNullException(nameof(watchlistRepository));
 
-    public async Task<IdentityResult> CreateAsync(QlarissaUser user, string password)
+    public async Task<IdentityResult> CreateAsync(Qlarissa.Domain.QlarissaUser user, string password)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
         try
@@ -51,12 +50,12 @@ public sealed class UserRepository(UserManager<QlarissaUser> userManager, Applic
         }
     }
 
-    public async Task<QlarissaUser?> GetAsync(string username)
+    public async Task<Qlarissa.Domain.QlarissaUser?> GetAsync(string username)
     {
         return await _identityUserManager.FindByNameAsync(username);
     }
 
-    public Task<bool> CheckPasswordAsync(QlarissaUser user, string password)
+    public Task<bool> CheckPasswordAsync(Qlarissa.Domain.QlarissaUser user, string password)
     {
         return _identityUserManager.CheckPasswordAsync(user, password);
     }

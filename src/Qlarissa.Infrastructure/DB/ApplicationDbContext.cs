@@ -21,11 +21,9 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<WatchedSecurity> WatchedSecurities { get; set; }
     public DbSet<Watchlist> Watchlists { get; set; }
     public DbSet<GraphSettingsBase> GraphSettings { get; set; }
-    public DbSet<GraphSettingsTag> GraphSettingsTags { get; set; }
+    public DbSet<UserDisplaySetting> DisplaySettings { get; set; }
     public DbSet<SecurityGraphSettings> SecurityGraphSettings { get; set; }
     public DbSet<DividendPayoutGraphSettings> DividendPayoutGraphSettings { get; set; }
-    public DbSet<PlotSettingsTag> PlotSettingsTags { get; set; }
-    public DbSet<Bounds> Bounds { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
 using Qlarissa.Application.Interfaces.ExternalAPI;
-using Qlarissa.Domain.Securities.Base;
 using Qlarissa.Infrastructure.PyFinance.Options;
 using System.Net.Http.Json;
 
@@ -22,10 +21,10 @@ public class PyFinanceClient(IHttpClientFactory httpClientFactory, IOptions<PyFi
         return resultDtos?.Select(dto => dto.ToDomainEntity()) ?? [];
     }
 
-    public Task<PubliclyTradedSecurityBase?> GetSecurityWithHistoryAsync(string tickerSymbol, CancellationToken cancellationToken)
+    public Task<Qlarissa.Domain.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityWithHistoryAsync(string tickerSymbol, CancellationToken cancellationToken)
         => GetSecurityWithHistoryFromDateAsync(tickerSymbol, _options.MarketDataAPI.StartDate, cancellationToken);
 
-    public async Task<PubliclyTradedSecurityBase?> GetSecurityWithHistoryFromDateAsync(string tickerSymbol, DateOnly date, CancellationToken cancellationToken)
+    public async Task<Qlarissa.Domain.Securities.Base.PubliclyTradedSecurityBase?> GetSecurityWithHistoryFromDateAsync(string tickerSymbol, DateOnly date, CancellationToken cancellationToken)
     {
         var response = await _marketDataClient.GetAsync($"security?symbol={Uri.EscapeDataString(tickerSymbol)}&startdate={date:yyyy-MM-dd}", cancellationToken);
         response.EnsureSuccessStatusCode();

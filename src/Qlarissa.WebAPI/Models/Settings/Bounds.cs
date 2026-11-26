@@ -2,8 +2,6 @@
 
 public class Bounds
 {
-    public int Id { get; set; }
-
     public DateOnly? StartDate { get; set; }
 
     public DateOnly? EndDate { get; set; }
@@ -14,7 +12,6 @@ public class Bounds
 
     public Domain.Settings.Bounds ToDomainEntity() => new()
     {
-        Id = Id,
         StartDate = StartDate,
         EndDate = EndDate,
         Start = Start,
@@ -24,7 +21,6 @@ public class Bounds
     public static Bounds? FromDomainEntity(Domain.Settings.Bounds? domainEntity) =>
         domainEntity is null ? null : new()
     {
-        Id = domainEntity.Id,
         StartDate = domainEntity.StartDate,
         EndDate = domainEntity.EndDate,
         Start = domainEntity.Start,
