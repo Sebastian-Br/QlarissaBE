@@ -5,6 +5,7 @@ public sealed class WatchedSecurity
     public int SecurityId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Symbol { get; set; } = string.Empty;
+    public string CurrencySymbol { get; set; } = string.Empty;
     public double PreviousClosePrice { get; set; }
 
     public static WatchedSecurity FromDomainEntity(Domain.Watchlists.WatchedSecurity domainEntity) => new()
@@ -12,6 +13,7 @@ public sealed class WatchedSecurity
         SecurityId = domainEntity.SecurityId,
         Name = domainEntity.Name,
         Symbol = domainEntity.Symbol,
+        CurrencySymbol = domainEntity.CurrencySymbol,
         PreviousClosePrice = domainEntity.PreviousClosePrice
     };
 }

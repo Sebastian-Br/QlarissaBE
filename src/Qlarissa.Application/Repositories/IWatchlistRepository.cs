@@ -26,5 +26,10 @@ public interface IWatchlistRepository
 
     Task<IEnumerable<Watchlist>> GetPinnedWatchlistsAsync(string userId, CancellationToken cancellationToken);
 
+    Task<bool> UpdatePinnedWatchlistOrderAsync(
+        IReadOnlyList<int> orderedWatchlistIds,
+        string userId,
+        CancellationToken cancellationToken);
+
     Task<IEnumerable<Watchlist>> GetWatchlistsAsync(string userId, CancellationToken cancellationToken);
 }

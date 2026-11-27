@@ -8,5 +8,7 @@ public sealed class WatchedSecurity
 
     public string Symbol { get; set; } = string.Empty;
 
+    public string CurrencySymbol { get; set; } = string.Empty;
+
     public double PreviousClosePrice { get; set; }
 }

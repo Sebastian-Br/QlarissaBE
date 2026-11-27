@@ -77,4 +77,28 @@ public class WatchlistController(IQlarissaUserManager userManager, IWatchlistMan
         var domainWatchlists = await _watchlistManager.GetWatchlistsMinimalAsync(user.Value.Id);
         return Ok(domainWatchlists.Select(WatchlistMinimal.FromDomainEntity));
     }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Watchlist>>> GetPinnedWatchlistsAsync(CancellationToken cancellationToken)
+    {
+        var user = await _userManager.GetAsync(User);
+        var domainWatchlists = await _watchlistManager.GetPinnedWatchlistsAsync(user.Value.Id, cancellationToken);
+        return Ok(domainWatchlists.Select(Watchlist.FromDomainEntity));
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdatePinnedWatchlistOrderAsync(
+        [FromBody] int[] orderedWatchlistIds,
+        CancellationToken cancellationToken)
+    {
+        if (orderedWatchlistIds is null || orderedWatchlistIds.Distinct().Count() != orderedWatchlistIds.Length)
+            return BadRequest();
+
+        var user = await _userManager.GetAsync(User);
+        var updated = await _watchlistManager.UpdatePinnedWatchlistOrderAsync(
+            orderedWatchlistIds,
+            user.Value.Id,
+            cancellationToken);
+        return updated ? NoContent() : BadRequest();
+    }
 }
