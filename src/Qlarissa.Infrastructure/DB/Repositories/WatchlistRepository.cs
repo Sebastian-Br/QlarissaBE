@@ -69,6 +69,7 @@ public sealed class WatchlistRepository(ILogger<WatchlistRepository> logger, App
                     SecurityId = ws.SecurityId,
                     Name = ws.Security.Name,
                     Symbol = ws.Security.Symbol,
+                    CurrencySymbol = ws.Security.Currency.Symbol,
                     PreviousClosePrice = ws.Security.PriceHistory
                                             .OrderByDescending(ph => ph.Id) // we can assume ascending order for price history ids of a security by default.
                                             .Skip(w.TrackedChangeDurationTradingDays - 1)
@@ -159,6 +160,7 @@ public sealed class WatchlistRepository(ILogger<WatchlistRepository> logger, App
                     SecurityId = ws.SecurityId,
                     Name = ws.Security.Name,
                     Symbol = ws.Security.Symbol,
+                    CurrencySymbol = ws.Security.Currency.Symbol,
                     PreviousClosePrice = ws.Security.PriceHistory
                                             .OrderByDescending(ph => ph.Id) // we can assume ascending order for price history ids of a security by default.
                                             .Skip(w.TrackedChangeDurationTradingDays - 1)
@@ -169,5 +171,34 @@ public sealed class WatchlistRepository(ILogger<WatchlistRepository> logger, App
             .ToListAsync(cancellationToken);
 
         return domainWatchlists;
+    }
+
+    public async Task<bool> UpdatePinnedWatchlistOrderAsync(
+        IReadOnlyList<int> orderedWatchlistIds,
+        string userId,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(orderedWatchlistIds);
+
+        var pinnedWatchlists = await _context.Watchlists
+            .Where(w => w.UserId == userId && w.IsPinned)
+            .ToListAsync(cancellationToken);
+
+        if (pinnedWatchlists.Count != orderedWatchlistIds.Count
+            || orderedWatchlistIds.Distinct().Count() != orderedWatchlistIds.Count
+            || pinnedWatchlists.Any(watchlist => !orderedWatchlistIds.Contains(watchlist.Id)))
+        {
+            return false;
+        }
+
+        var positions = orderedWatchlistIds
+            .Select((watchlistId, index) => new { WatchlistId = watchlistId, Position = index + 1 })
+            .ToDictionary(item => item.WatchlistId, item => item.Position);
+
+        foreach (var watchlist in pinnedWatchlists)
+            watchlist.PinPosition = positions[watchlist.Id];
+
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
     }
 }

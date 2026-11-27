@@ -34,4 +34,9 @@ public interface IWatchlistManager
     Task<IEnumerable<WatchlistMinimal>> GetWatchlistsMinimalAsync(string userId);
 
     Task<IEnumerable<Watchlist>> GetPinnedWatchlistsAsync(string userId, CancellationToken cancellationToken);
+
+    Task<bool> UpdatePinnedWatchlistOrderAsync(
+        IReadOnlyList<int> orderedWatchlistIds,
+        string userId,
+        CancellationToken cancellationToken);
 }

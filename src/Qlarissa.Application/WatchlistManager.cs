@@ -17,6 +17,12 @@ public sealed class WatchlistManager(IWatchlistRepository watchlistRepository) :
     public Task<IEnumerable<Watchlist>> GetPinnedWatchlistsAsync(string userId, CancellationToken cancellationToken)
         => _watchlistRepository.GetPinnedWatchlistsAsync(userId, cancellationToken);
 
+    public Task<bool> UpdatePinnedWatchlistOrderAsync(
+        IReadOnlyList<int> orderedWatchlistIds,
+        string userId,
+        CancellationToken cancellationToken)
+        => _watchlistRepository.UpdatePinnedWatchlistOrderAsync(orderedWatchlistIds, userId, cancellationToken);
+
     public Task<IEnumerable<int>> GetWatchlistsForSecurityAsync(int securityId, string userId)
         => _watchlistRepository.GetWatchlistsForSecurityAsync(securityId, userId);
     
