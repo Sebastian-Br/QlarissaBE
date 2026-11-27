@@ -71,14 +71,11 @@ public sealed class SettingsController(
     public async Task<IActionResult> SyncDisplaySettingsAsync(
         [FromBody] Models.Settings.SyncDisplaySettingsRequest request)
     {
-        if (request is null)
-            return BadRequest("A display settings request is required.");
+        if (request is null || request.Changes is null)
+            return BadRequest("A display settings request with Changes is required.");
 
         if (!Enum.IsDefined(request.DeviceProfile))
             return BadRequest("Unknown device profile.");
-
-        if (request.Changes is null)
-            return BadRequest("Changes are required.");
 
         if (request.Changes.Count > _displaySettingsOptions.MaxChangedKeysPerRequest)
             return BadRequest(
