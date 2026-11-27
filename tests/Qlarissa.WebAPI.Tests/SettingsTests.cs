@@ -27,7 +27,7 @@ public class SettingsTests
         {
             DataSource = GraphDataSource.DividendPayouts,
             IsSynchronizedWithSecurityGraph = false,
-            Bounds = new Qlarissa.WebAPI.Models.Settings.Bounds { StartDate = new DateOnly(2024, 1, 1) }
+            Bounds = new Models.Settings.Bounds { StartDate = new DateOnly(2024, 1, 1) }
         };
 
         var domainEntity = apiModel.ToDomainEntity();
@@ -63,7 +63,7 @@ public class SettingsTests
         {
             DataSource = GraphDataSource.Security,
             AsTotalReturn = true,
-            Bounds = new Qlarissa.WebAPI.Models.Settings.Bounds { EndDate = new DateOnly(2025, 1, 1) }
+            Bounds = new Models.Settings.Bounds { EndDate = new DateOnly(2025, 1, 1) }
         };
 
         var domainEntity = apiModel.ToDomainEntity();

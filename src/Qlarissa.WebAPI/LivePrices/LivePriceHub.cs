@@ -9,7 +9,7 @@ public sealed class LivePriceHub(ILivePriceService livePriceService) : Hub
 {
     private readonly ILivePriceService _livePriceService = livePriceService ?? throw new ArgumentNullException(nameof(livePriceService));
 
-    public async Task<IReadOnlyList<Qlarissa.Domain.Securities.MarketData.LivePrice>> Subscribe(IEnumerable<string> symbols)
+    public async Task<IReadOnlyList<Domain.Securities.MarketData.LivePrice>> Subscribe(IEnumerable<string> symbols)
     {
         var normalizedSymbols = NormalizeSymbols(symbols);
 

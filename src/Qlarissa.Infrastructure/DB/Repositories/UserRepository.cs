@@ -4,13 +4,13 @@ using Qlarissa.Application.Repositories;
 
 namespace Qlarissa.Infrastructure.DB.Repositories;
 
-public sealed class UserRepository(UserManager<Qlarissa.Domain.QlarissaUser> userManager, ApplicationDbContext context, IWatchlistRepository watchlistRepository) : IUserRepository
+public sealed class UserRepository(UserManager<Domain.QlarissaUser> userManager, ApplicationDbContext context, IWatchlistRepository watchlistRepository) : IUserRepository
 {
-    readonly UserManager<Qlarissa.Domain.QlarissaUser> _identityUserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+    readonly UserManager<Domain.QlarissaUser> _identityUserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
     readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
     readonly IWatchlistRepository _watchlistRepository = watchlistRepository ?? throw new ArgumentNullException(nameof(watchlistRepository));
 
-    public async Task<IdentityResult> CreateAsync(Qlarissa.Domain.QlarissaUser user, string password)
+    public async Task<IdentityResult> CreateAsync(Domain.QlarissaUser user, string password)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
         try
@@ -50,17 +50,17 @@ public sealed class UserRepository(UserManager<Qlarissa.Domain.QlarissaUser> use
         }
     }
 
-    public async Task<Qlarissa.Domain.QlarissaUser?> GetAsync(string username)
+    public async Task<Domain.QlarissaUser?> GetAsync(string username)
     {
         return await _identityUserManager.FindByNameAsync(username);
     }
 
-    public Task<Qlarissa.Domain.QlarissaUser?> GetByIdAsync(string userId)
+    public Task<Domain.QlarissaUser?> GetByIdAsync(string userId)
     {
         return _identityUserManager.FindByIdAsync(userId);
     }
 
-    public Task<bool> CheckPasswordAsync(Qlarissa.Domain.QlarissaUser user, string password)
+    public Task<bool> CheckPasswordAsync(Domain.QlarissaUser user, string password)
     {
         return _identityUserManager.CheckPasswordAsync(user, password);
     }

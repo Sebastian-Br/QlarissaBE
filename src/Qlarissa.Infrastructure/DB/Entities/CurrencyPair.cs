@@ -7,14 +7,14 @@ public class CurrencyPair : PubliclyTradedSecurityBase
     internal static CurrencyPair FromDomainEntity(Domain.Securities.CurrencyPair domainEntity)
     {
         CurrencyPair dbEntity = new();
-        PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, dbEntity);
+        FromDomainEntity(domainEntity, dbEntity);
         return dbEntity;
     }
 
     internal new Domain.Securities.CurrencyPair ToDomainEntity()
     {
         Domain.Securities.CurrencyPair domainEntity = new();
-        PubliclyTradedSecurityBase.ToDomainEntity(domainEntity, this);
+        ToDomainEntity(domainEntity, this);
         return domainEntity;
     }
 

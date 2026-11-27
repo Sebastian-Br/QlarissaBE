@@ -45,9 +45,9 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
         return dbEntity.ToDomainEntity();
     }
 
-    public async Task<IReadOnlyList<Qlarissa.Domain.Settings.DisplaySetting>> GetDisplaySettingsAsync(
+    public async Task<IReadOnlyList<Domain.Settings.DisplaySetting>> GetDisplaySettingsAsync(
         string userId,
-        Qlarissa.Domain.Settings.DeviceProfile deviceProfile)
+        Domain.Settings.DeviceProfile deviceProfile)
     {
         var storedSettings = await _context.DisplaySettings
             .AsNoTracking()
@@ -56,18 +56,18 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
             .ToListAsync();
 
         return storedSettings
-            .Select(setting => new Qlarissa.Domain.Settings.DisplaySetting(setting.Key, setting.Value))
+            .Select(setting => new Domain.Settings.DisplaySetting(setting.Key, setting.Value))
             .ToList();
     }
 
-    public async Task<FluentResults.Result> SyncDisplaySettingsAsync(
+    public async Task<Result> SyncDisplaySettingsAsync(
         string userId,
-        Qlarissa.Domain.Settings.DeviceProfile deviceProfile,
-        IReadOnlyCollection<Qlarissa.Domain.Settings.DisplaySettingChange> changes,
+        Domain.Settings.DeviceProfile deviceProfile,
+        IReadOnlyCollection<Domain.Settings.DisplaySettingChange> changes,
         int maxRowsPerUser)
     {
         if (changes.Count == 0)
-            return FluentResults.Result.Ok();
+            return Result.Ok();
 
         await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var userSettings = await _context.DisplaySettings
@@ -108,11 +108,11 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
         }
 
         if (userSettings.Count > maxRowsPerUser)
-            return FluentResults.Result.Fail(
+            return Result.Fail(
                 $"Display settings quota exceeded. A user may store at most {maxRowsPerUser} settings across all device profiles.");
 
         await _context.SaveChangesAsync();
         await transaction.CommitAsync();
-        return FluentResults.Result.Ok();
+        return Result.Ok();
     }
 }

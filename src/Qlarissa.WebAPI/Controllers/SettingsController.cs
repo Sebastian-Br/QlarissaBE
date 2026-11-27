@@ -10,15 +10,15 @@ namespace Qlarissa.WebAPI.Controllers;
 [Route("api/[controller]/[action]")]
 [Authorize]
 public sealed class SettingsController(
-    Qlarissa.Application.Interfaces.IQlarissaUserManager userManager,
-    Qlarissa.Application.Interfaces.ISettingsManager settingsManager,
-    IOptions<Qlarissa.Application.Settings.DisplaySettingsOptions> displaySettingsOptions) : ControllerBase
+    Application.Interfaces.IQlarissaUserManager userManager,
+    Application.Interfaces.ISettingsManager settingsManager,
+    IOptions<Application.Settings.DisplaySettingsOptions> displaySettingsOptions) : ControllerBase
 {
-    private readonly Qlarissa.Application.Interfaces.IQlarissaUserManager _userManager =
+    private readonly Application.Interfaces.IQlarissaUserManager _userManager =
         userManager ?? throw new ArgumentNullException(nameof(userManager));
-    private readonly Qlarissa.Application.Interfaces.ISettingsManager _settingsManager =
+    private readonly Application.Interfaces.ISettingsManager _settingsManager =
         settingsManager ?? throw new ArgumentNullException(nameof(settingsManager));
-    private readonly Qlarissa.Application.Settings.DisplaySettingsOptions _displaySettingsOptions =
+    private readonly Application.Settings.DisplaySettingsOptions _displaySettingsOptions =
         displaySettingsOptions.Value;
 
     [HttpGet]
@@ -36,7 +36,7 @@ public sealed class SettingsController(
         var user = await _userManager.GetAsync(User);
         var graphSettings = await _settingsManager.GetGraphSettingAsync(
             user.Value.Id,
-            (Qlarissa.Domain.Settings.Graph.GraphDataSource)graphSetting);
+            (Domain.Settings.Graph.GraphDataSource)graphSetting);
         return Ok(GraphSettingsBase.FromDomainEntity(graphSettings));
     }
 
@@ -51,25 +51,25 @@ public sealed class SettingsController(
 
     [HttpGet]
     [EnableRateLimiting("DisplaySettings")]
-    public async Task<ActionResult<Qlarissa.WebAPI.Models.Settings.DisplaySettingsSnapshot>>
-        GetDisplaySettingsAsync([FromQuery] Qlarissa.Domain.Settings.DeviceProfile deviceProfile)
+    public async Task<ActionResult<Models.Settings.DisplaySettingsSnapshot>>
+        GetDisplaySettingsAsync([FromQuery] Domain.Settings.DeviceProfile deviceProfile)
     {
         if (!Enum.IsDefined(deviceProfile))
             return BadRequest("Unknown device profile.");
 
         var user = await _userManager.GetAsync(User);
         var settings = await _settingsManager.GetDisplaySettingsAsync(user.Value.Id, deviceProfile);
-        return Ok(new Qlarissa.WebAPI.Models.Settings.DisplaySettingsSnapshot(
+        return Ok(new Models.Settings.DisplaySettingsSnapshot(
             _displaySettingsOptions.SyncDebounceMilliseconds,
             _displaySettingsOptions.MaxChangedKeysPerRequest,
             settings.Select(setting =>
-                new Qlarissa.WebAPI.Models.Settings.DisplaySettingItem(setting.Key, setting.Value)).ToArray()));
+                new Models.Settings.DisplaySettingItem(setting.Key, setting.Value)).ToArray()));
     }
 
     [HttpPut]
     [EnableRateLimiting("DisplaySettings")]
     public async Task<IActionResult> SyncDisplaySettingsAsync(
-        [FromBody] Qlarissa.WebAPI.Models.Settings.SyncDisplaySettingsRequest request)
+        [FromBody] Models.Settings.SyncDisplaySettingsRequest request)
     {
         if (request is null)
             return BadRequest("A display settings request is required.");
@@ -92,7 +92,7 @@ public sealed class SettingsController(
             user.Value.Id,
             request.DeviceProfile,
             request.Changes.Select(change =>
-                new Qlarissa.Domain.Settings.DisplaySettingChange(change.Key, change.Value)).ToArray());
+                new Domain.Settings.DisplaySettingChange(change.Key, change.Value)).ToArray());
 
         if (result.IsSuccess)
             return Ok();

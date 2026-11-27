@@ -24,31 +24,31 @@ public sealed class SecurityManager(
     public Task<PubliclyTradedSecurityBase?> GetSecurityAsync(int id, CancellationToken cancellationToken)
         => _securityRepository.GetSecurityFromCacheAsync(id, cancellationToken);
 
-    public async Task<FluentResults.Result<string>> AddSecurityAsync(string securityTickerSymbol, CancellationToken cancellationToken)
+    public async Task<Result<string>> AddSecurityAsync(string securityTickerSymbol, CancellationToken cancellationToken)
     {
         if (await _securityRepository.SecurityExistsAsync(securityTickerSymbol))
         {
-            return FluentResults.Result.Fail($"Security with ticker symbol '{securityTickerSymbol}' already exists.");
+            return Result.Fail($"Security with ticker symbol '{securityTickerSymbol}' already exists.");
         }
 
         var domainEntity = await _marketDataClient.GetSecurityWithHistoryAsync(securityTickerSymbol, cancellationToken);
         if (domainEntity == null)
         {
-            return FluentResults.Result.Fail($"Security with ticker symbol '{securityTickerSymbol}' could not be found.");
+            return Result.Fail($"Security with ticker symbol '{securityTickerSymbol}' could not be found.");
         }
 
         var currency = await _currencyRepository.GetCurrencyAsync(domainEntity.Currency.Symbol);
 
         if (currency == null)
         {
-            return FluentResults.Result.Fail($"Currency with symbol '{domainEntity.Currency.Symbol}' does not exist.");
+            return Result.Fail($"Currency with symbol '{domainEntity.Currency.Symbol}' does not exist.");
         }
 
         domainEntity.Currency = currency;
         await _securityRepository.AddSecurityAsync(domainEntity, cancellationToken);
         await _livePriceService.SubscribeAsync([domainEntity.Symbol], CancellationToken.None);
 
-        return FluentResults.Result.Ok(domainEntity.Symbol);
+        return Result.Ok(domainEntity.Symbol);
     }
 
     public Task<bool> SecurityExistsAsync(string securityTickerSymbol)

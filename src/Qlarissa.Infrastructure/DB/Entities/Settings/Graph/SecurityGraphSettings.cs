@@ -13,7 +13,7 @@ public sealed class SecurityGraphSettings : GraphSettingsBase<Domain.Settings.Gr
         if (domainEntity == null)
             return;
 
-        base.FromDomainEntity(domainEntity, userId);
+        FromDomainEntity(domainEntity, userId);
         AsTotalReturn = domainEntity.AsTotalReturn;
     }
 

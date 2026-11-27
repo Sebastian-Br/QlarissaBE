@@ -28,7 +28,7 @@ public class CurrencyControllerTests
 
         var result = await controller.GetCurrenciesAsync();
         var okResult = Assert.IsType<OkObjectResult>(result);
-        var currencies = Assert.IsAssignableFrom<IEnumerable<WebAPI.Models.Currency>>(okResult.Value);
+        var currencies = Assert.IsAssignableFrom<IEnumerable<Models.Currency>>(okResult.Value);
         Assert.NotNull(currencies);
         Assert.Equal(2, currencies.Count());
         Assert.Contains(currencies, c => c.Id == 1 && c.Symbol == "USD" && c.Name == "US Dollar");

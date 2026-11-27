@@ -21,7 +21,7 @@ public sealed class Stock : PubliclyTradedSecurityBase
     internal static Stock FromDomainEntity(Domain.Securities.Stock domainEntity)
     {
         Stock stock = new();
-        PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, stock);
+        FromDomainEntity(domainEntity, stock);
         stock.DividendPayouts = domainEntity.DividendPayouts.Select(x => DividendPayout.FromDomainEntity(x, domainEntity)).ToList();
         stock.Splits = domainEntity.Splits.Select(x => Split.FromDomainEntity(x, domainEntity)).ToList();
         stock.ISIN = domainEntity.ISIN;
@@ -37,7 +37,7 @@ public sealed class Stock : PubliclyTradedSecurityBase
     internal new Domain.Securities.Stock ToDomainEntity()
     {
         Domain.Securities.Stock domainEntity = new();
-        PubliclyTradedSecurityBase.ToDomainEntity(domainEntity, this);
+        ToDomainEntity(domainEntity, this);
         domainEntity.DividendPayouts = DividendPayouts.Select(DividendPayout.ToDomainEntity).ToList();
         domainEntity.Splits = Splits.Select(Split.ToDomainEntity).ToList();
         domainEntity.ISIN = ISIN;

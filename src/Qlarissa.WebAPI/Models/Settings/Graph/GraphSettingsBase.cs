@@ -36,6 +36,6 @@ public class GraphSettingsBase<TGraphSettings> : GraphSettingsBase where TGraphS
     {
         DataSource = (GraphDataSource)domainEntity.DataSource;
         PlotType = (PlotType)domainEntity.PlotType;
-        Bounds = Qlarissa.WebAPI.Models.Settings.Bounds.FromDomainEntity(domainEntity.Bounds);
+        Bounds = Bounds.FromDomainEntity(domainEntity.Bounds);
     }
 }

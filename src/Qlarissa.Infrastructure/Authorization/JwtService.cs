@@ -14,7 +14,7 @@ public sealed class JwtService(IConfiguration configuration, IOptions<AuthTokenO
     private readonly IConfiguration _configuration = configuration;
     private readonly AuthTokenOptions _options = options.Value;
 
-    public string GenerateToken(Qlarissa.Domain.QlarissaUser user)
+    public string GenerateToken(Domain.QlarissaUser user)
     {
         var claims = new[]
         {

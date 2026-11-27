@@ -11,7 +11,7 @@ public sealed class CurrencyPair : PubliclyTradedSecurityBase
     public static CurrencyPair FromDomainEntity(Domain.Securities.CurrencyPair domainEntity)
     {
         CurrencyPair currencyPair = new();
-        PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, currencyPair);
+        FromDomainEntity(domainEntity, currencyPair);
         return currencyPair;
     }
 }

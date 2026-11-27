@@ -14,7 +14,7 @@ public interface ISettingsManager
 
     Task<IReadOnlyList<DisplaySetting>> GetDisplaySettingsAsync(string userId, DeviceProfile deviceProfile);
 
-    Task<FluentResults.Result> SyncDisplaySettingsAsync(
+    Task<Result> SyncDisplaySettingsAsync(
         string userId,
         DeviceProfile deviceProfile,
         IReadOnlyCollection<DisplaySettingChange> changes);

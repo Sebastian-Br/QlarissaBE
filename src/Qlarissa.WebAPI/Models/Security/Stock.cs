@@ -26,7 +26,7 @@ public sealed class Stock : PubliclyTradedSecurityBase
     public static Stock FromDomainEntity(Domain.Securities.Stock domainEntity)
     {
         Stock stock = new();
-        PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, stock);
+        FromDomainEntity(domainEntity, stock);
         stock.DividendPayouts = domainEntity.DividendPayouts.Select(DividendPayout.FromDomainEntity).ToList();
         stock.Splits = domainEntity.Splits.Select(Split.FromDomainEntity).ToList();
         stock.ISIN = domainEntity.ISIN;

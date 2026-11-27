@@ -18,7 +18,7 @@ public sealed class ETF : PubliclyTradedSecurityBase
     public static ETF FromDomainEntity(Domain.Securities.ETF domainEntity)
     {
         ETF etf = new();
-        PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, etf);
+        FromDomainEntity(domainEntity, etf);
         etf.DistributionEvents = domainEntity.DistributionEvents.Select(DividendPayout.FromDomainEntity).ToList();
         etf.Splits = domainEntity.Splits.Select(Split.FromDomainEntity).ToList();
         etf.ISIN = domainEntity.ISIN;

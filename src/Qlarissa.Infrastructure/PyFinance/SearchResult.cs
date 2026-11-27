@@ -24,19 +24,19 @@ public class SearchResult
 
         if (typeDisp == "Equity")
         {
-            domainEntity.SecurityType = Qlarissa.Domain.Securities.Base.SecurityType.Stock;
+            domainEntity.SecurityType = Domain.Securities.Base.SecurityType.Stock;
         }
         else if (typeDisp == "ETF")
         {
-            domainEntity.SecurityType = Qlarissa.Domain.Securities.Base.SecurityType.ETF;
+            domainEntity.SecurityType = Domain.Securities.Base.SecurityType.ETF;
         }
         else if (typeDisp == "Cryptocurrency")
         {
-            domainEntity.SecurityType = Qlarissa.Domain.Securities.Base.SecurityType.Cryptocurrency;
+            domainEntity.SecurityType = Domain.Securities.Base.SecurityType.Cryptocurrency;
         }
         else if (typeDisp == "Currency")
         {
-            domainEntity.SecurityType = Qlarissa.Domain.Securities.Base.SecurityType.CurrencyPair;
+            domainEntity.SecurityType = Domain.Securities.Base.SecurityType.CurrencyPair;
         }
         else
         {

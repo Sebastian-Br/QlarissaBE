@@ -11,7 +11,7 @@ public abstract class GraphSettingsBase
 
     public PlotType PlotType { get; set; }
 
-    public Qlarissa.Infrastructure.DB.Entities.Settings.Bounds? Bounds { get; set; }
+    public Bounds? Bounds { get; set; }
 
     public static GraphSettingsBase FromDomainEntity(Domain.Settings.Graph.GraphSettingBase domainEntity, string userId) => domainEntity switch
     {
@@ -47,7 +47,7 @@ public abstract class GraphSettingsBase<TGraphSettings> : GraphSettingsBase
         UserId = userId;
         DataSource = (GraphDataSource)domainEntity.DataSource;
         PlotType = (PlotType)domainEntity.PlotType;
-        Bounds = Qlarissa.Infrastructure.DB.Entities.Settings.Bounds.FromDomainEntity(domainEntity.Bounds);
+        Bounds = Bounds.FromDomainEntity(domainEntity.Bounds);
     }
 
     public override void UpdateFromDbEntity(GraphSettingsBase dbEntity)
@@ -56,7 +56,7 @@ public abstract class GraphSettingsBase<TGraphSettings> : GraphSettingsBase
 
         Bounds = dbEntity.Bounds is null
             ? null
-            : new Qlarissa.Infrastructure.DB.Entities.Settings.Bounds
+            : new Bounds
             {
                 StartDate = dbEntity.Bounds.StartDate,
                 EndDate = dbEntity.Bounds.EndDate,

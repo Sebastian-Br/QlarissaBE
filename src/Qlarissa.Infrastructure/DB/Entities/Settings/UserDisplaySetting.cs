@@ -6,7 +6,7 @@ namespace Qlarissa.Infrastructure.DB.Entities.Settings;
 public sealed class UserDisplaySetting
 {
     public string UserId { get; set; } = string.Empty;
-    public Qlarissa.Domain.Settings.DeviceProfile DeviceProfile { get; set; }
+    public Domain.Settings.DeviceProfile DeviceProfile { get; set; }
     public string Key { get; set; } = string.Empty;
     public string Value { get; set; } = string.Empty;
 }

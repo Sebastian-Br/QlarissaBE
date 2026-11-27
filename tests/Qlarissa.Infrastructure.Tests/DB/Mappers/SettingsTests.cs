@@ -29,7 +29,7 @@ public sealed class SettingsTests
             UserId = "user-123",
             DataSource = GraphDataSource.Security,
             AsTotalReturn = true,
-            Bounds = new Qlarissa.Infrastructure.DB.Entities.Settings.Bounds { StartDate = new DateOnly(2024, 1, 1) }
+            Bounds = new Infrastructure.DB.Entities.Settings.Bounds { StartDate = new DateOnly(2024, 1, 1) }
         };
 
         var domainEntity = dbEntity.ToDomainEntity() as Domain.Settings.Graph.SecurityGraphSettings;
@@ -68,7 +68,7 @@ public sealed class SettingsTests
             UserId = "user-789",
             DataSource = GraphDataSource.DividendPayouts,
             IsSynchronizedWithSecurityGraph = false,
-            Bounds = new Qlarissa.Infrastructure.DB.Entities.Settings.Bounds { EndDate = new DateOnly(2024, 1, 1) }
+            Bounds = new Infrastructure.DB.Entities.Settings.Bounds { EndDate = new DateOnly(2024, 1, 1) }
         };
 
         var domainEntity = dbEntity.ToDomainEntity();

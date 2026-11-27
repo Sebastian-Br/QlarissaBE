@@ -9,7 +9,7 @@ public sealed class SecurityGraphSettings : GraphSettingsBase<Domain.Settings.Gr
         if (domainEntity == null)
             return;
 
-        base.FromDomainEntity(domainEntity);
+        FromDomainEntity(domainEntity);
         AsTotalReturn = domainEntity.AsTotalReturn;
     }
 

@@ -15,7 +15,7 @@ public class Bounds
 
     public double? End { get; set; }
 
-    public Qlarissa.Domain.Settings.Bounds ToDomainEntity() => new()
+    public Domain.Settings.Bounds ToDomainEntity() => new()
     {
         StartDate = StartDate,
         EndDate = EndDate,
@@ -23,7 +23,7 @@ public class Bounds
         End = End
     };
 
-    public static Bounds? FromDomainEntity(Qlarissa.Domain.Settings.Bounds? domainEntity) =>
+    public static Bounds? FromDomainEntity(Domain.Settings.Bounds? domainEntity) =>
         domainEntity is null ? null : new()
     {
         StartDate = domainEntity.StartDate,

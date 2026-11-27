@@ -10,5 +10,5 @@ public sealed record DisplaySettingsSnapshot(
 public sealed record DisplaySettingChange(string Key, string? Value);
 
 public sealed record SyncDisplaySettingsRequest(
-    Qlarissa.Domain.Settings.DeviceProfile DeviceProfile,
+    Domain.Settings.DeviceProfile DeviceProfile,
     IReadOnlyList<DisplaySettingChange> Changes);

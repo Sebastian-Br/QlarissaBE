@@ -9,7 +9,7 @@ public sealed class CryptoCurrency : PubliclyTradedSecurityBase
     public static CryptoCurrency FromDomainEntity(Domain.Securities.CryptoCurrency domainEntity)
     {
         CryptoCurrency cryptoCurrency = new();
-        PubliclyTradedSecurityBase.FromDomainEntity(domainEntity, cryptoCurrency);
+        FromDomainEntity(domainEntity, cryptoCurrency);
         cryptoCurrency.MarketCapitalization = domainEntity.MarketCapitalization;
         return cryptoCurrency;
     }
