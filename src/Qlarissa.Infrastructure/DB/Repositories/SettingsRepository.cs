@@ -31,6 +31,7 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
     public async Task<IEnumerable<Domain.Settings.Graph.GraphSettingBase>> GetGraphSettingsAsync(string userId)
     {
         var dbEntities = await _context.GraphSettings
+                                    .AsNoTracking()
                                     .Where(x => x.UserId == userId)
                                     .ToListAsync();
 
@@ -40,6 +41,7 @@ public sealed class SettingsRepository(ApplicationDbContext context) : ISettings
     public async Task<Domain.Settings.Graph.GraphSettingBase> GetGraphSettingAsync(string userId, Domain.Settings.Graph.GraphDataSource graphSetting)
     {
         var dbEntity = await _context.GraphSettings
+            .AsNoTracking()
             .FirstAsync(x => x.UserId == userId && (int)x.DataSource == (int)graphSetting);
 
         return dbEntity.ToDomainEntity();
