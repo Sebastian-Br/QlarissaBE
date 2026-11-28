@@ -102,7 +102,7 @@ public class SecurityModelsTests
         Assert.Equal(domainEntity.Currency.Id, apiModel.Currency.Id);
         Assert.Equal(domainEntity.Currency.Symbol, apiModel.Currency.Symbol);
         Assert.Equal(domainEntity.Currency.Name, apiModel.Currency.Name);
-        Assert.Equal((int)domainEntity.SecurityType, (int)apiModel.SecurityType);
+        Assert.Equal(domainEntity.SecurityType, apiModel.SecurityType);
         Assert.Equal(domainEntity.ExchangeName, apiModel.ExchangeName);
         Assert.Equal(domainEntity.ExchangeShortName, apiModel.ExchangeShortName);
         Assert.Equal(domainEntity.Symbol, apiModel.Symbol);
@@ -169,7 +169,7 @@ public class SecurityModelsTests
         Assert.Equal(domainEntity.Currency.Id, apiModel.Currency.Id);
         Assert.Equal(domainEntity.Currency.Symbol, apiModel.Currency.Symbol);
         Assert.Equal(domainEntity.Currency.Name, apiModel.Currency.Name);
-        Assert.Equal((int)domainEntity.SecurityType, (int)apiModel.SecurityType);
+        Assert.Equal(domainEntity.SecurityType, apiModel.SecurityType);
         Assert.Equal(domainEntity.ExchangeName, apiModel.ExchangeName);
         Assert.Equal(domainEntity.ExchangeShortName, apiModel.ExchangeShortName);
         Assert.Equal(domainEntity.Symbol, apiModel.Symbol);

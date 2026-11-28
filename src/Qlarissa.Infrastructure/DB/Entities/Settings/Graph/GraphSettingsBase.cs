@@ -7,9 +7,9 @@ public abstract class GraphSettingsBase
 {
     public string UserId { get; set; } = string.Empty;
 
-    public GraphDataSource DataSource { get; set; }
+    public Domain.Settings.Graph.GraphDataSource DataSource { get; set; }
 
-    public PlotType PlotType { get; set; }
+    public Domain.Settings.Graph.PlotType PlotType { get; set; }
 
     public Bounds? Bounds { get; set; }
 
@@ -36,8 +36,8 @@ public abstract class GraphSettingsBase<TGraphSettings> : GraphSettingsBase
     {
         return new TGraphSettings
         {
-            DataSource = (Domain.Settings.Graph.GraphDataSource)DataSource,
-            PlotType = (Domain.Settings.Graph.PlotType)PlotType,
+            DataSource = DataSource,
+            PlotType = PlotType,
             Bounds = Bounds?.ToDomainEntity()
         };
     }
@@ -45,8 +45,8 @@ public abstract class GraphSettingsBase<TGraphSettings> : GraphSettingsBase
     protected virtual void FromDomainEntity(TGraphSettings domainEntity, string userId)
     {
         UserId = userId;
-        DataSource = (GraphDataSource)domainEntity.DataSource;
-        PlotType = (PlotType)domainEntity.PlotType;
+        DataSource = domainEntity.DataSource;
+        PlotType = domainEntity.PlotType;
         Bounds = Bounds.FromDomainEntity(domainEntity.Bounds);
     }
 

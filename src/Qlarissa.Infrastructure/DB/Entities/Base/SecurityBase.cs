@@ -15,7 +15,7 @@ public class SecurityBase
 
     public Currency Currency { get; set; }
 
-    public SecurityType SecurityType { get; set; }
+    public Domain.Securities.Base.SecurityType SecurityType { get; set; }
 
     protected static void FromDomainEntity(Domain.Securities.Base.SecurityBase domainEntity, SecurityBase dbEntity)
     {
@@ -23,7 +23,7 @@ public class SecurityBase
         dbEntity.Name = domainEntity.Name;
         dbEntity.ShortName = domainEntity.ShortName;
         dbEntity.CurrencyId = domainEntity.Currency.Id; // When adding a security, the currency must already exist in the database.
-        dbEntity.SecurityType = (SecurityType)domainEntity.SecurityType;
+        dbEntity.SecurityType = domainEntity.SecurityType;
     }
 
     protected static void ToDomainEntity(Domain.Securities.Base.SecurityBase domainEntity, SecurityBase dbEntity)
@@ -31,7 +31,7 @@ public class SecurityBase
         domainEntity.Id = dbEntity.Id;
         domainEntity.Name = dbEntity.Name;
         domainEntity.Currency = dbEntity.Currency.ToDomainEntity();
-        domainEntity.SecurityType = (Domain.Securities.Base.SecurityType)dbEntity.SecurityType;
+        domainEntity.SecurityType = dbEntity.SecurityType;
         domainEntity.ShortName = dbEntity.ShortName;
     }
 }

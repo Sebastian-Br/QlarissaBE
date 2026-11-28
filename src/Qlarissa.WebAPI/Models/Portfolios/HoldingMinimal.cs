@@ -1,12 +1,10 @@
-﻿using Qlarissa.WebAPI.Models.Security.Base;
-
-namespace Qlarissa.WebAPI.Models.Portfolios;
+﻿namespace Qlarissa.WebAPI.Models.Portfolios;
 
 public class HoldingMinimal
 {
     public int Id { get; set; }
 
-    public SecurityType SecurityType { get; set; }
+    public Domain.Securities.Base.SecurityType SecurityType { get; set; }
 
     public int SecurityId { get; set; }
 
@@ -19,7 +17,7 @@ public class HoldingMinimal
         return new HoldingMinimal
         {
             Id = domainEntity.Id,
-            SecurityType = (SecurityType)domainEntity.SecurityType,
+            SecurityType = domainEntity.SecurityType,
             SecurityId = domainEntity.SecurityId,
             SecurityName = domainEntity.SecurityName,
             Quantity = domainEntity.Amount

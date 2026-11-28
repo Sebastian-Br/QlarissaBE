@@ -25,14 +25,14 @@ public class SettingsTests
     {
         var apiModel = new DividendPayoutGraphSettings
         {
-            DataSource = GraphDataSource.DividendPayouts,
+            DataSource = Domain.Settings.Graph.GraphDataSource.DividendPayouts,
             IsSynchronizedWithSecurityGraph = false,
             Bounds = new Models.Settings.Bounds { StartDate = new DateOnly(2024, 1, 1) }
         };
 
         var domainEntity = apiModel.ToDomainEntity();
 
-        Assert.Equal(apiModel.DataSource, (GraphDataSource)domainEntity.DataSource);
+        Assert.Equal(apiModel.DataSource, domainEntity.DataSource);
         Assert.Equal(apiModel.IsSynchronizedWithSecurityGraph, domainEntity.IsSynchronizedWithSecurityGraph);
         Assert.Equal(apiModel.Bounds?.StartDate, domainEntity.Bounds?.StartDate);
     }
@@ -51,7 +51,7 @@ public class SettingsTests
         var apiModel = GraphSettingsBase.FromDomainEntity(domainEntity) as DividendPayoutGraphSettings;
 
         Assert.NotNull(apiModel);
-        Assert.Equal(domainEntity.DataSource, (Domain.Settings.Graph.GraphDataSource)apiModel.DataSource);
+        Assert.Equal(domainEntity.DataSource, apiModel.DataSource);
         Assert.Equal(domainEntity.IsSynchronizedWithSecurityGraph, apiModel.IsSynchronizedWithSecurityGraph);
         Assert.Equal(domainEntity.Bounds?.StartDate, apiModel.Bounds?.StartDate);
     }
@@ -61,14 +61,14 @@ public class SettingsTests
     {
         var apiModel = new SecurityGraphSettings
         {
-            DataSource = GraphDataSource.Security,
+            DataSource = Domain.Settings.Graph.GraphDataSource.Security,
             AsTotalReturn = true,
             Bounds = new Models.Settings.Bounds { EndDate = new DateOnly(2025, 1, 1) }
         };
 
         var domainEntity = apiModel.ToDomainEntity();
 
-        Assert.Equal(apiModel.DataSource, (GraphDataSource)domainEntity.DataSource);
+        Assert.Equal(apiModel.DataSource, domainEntity.DataSource);
         Assert.Equal(apiModel.AsTotalReturn, domainEntity.AsTotalReturn);
         Assert.Equal(apiModel.Bounds?.EndDate, domainEntity.Bounds?.EndDate);
     }
@@ -87,7 +87,7 @@ public class SettingsTests
         var apiModel = GraphSettingsBase.FromDomainEntity(domainEntity) as SecurityGraphSettings;
 
         Assert.NotNull(apiModel);
-        Assert.Equal(domainEntity.DataSource, (Domain.Settings.Graph.GraphDataSource)apiModel.DataSource);
+        Assert.Equal(domainEntity.DataSource, apiModel.DataSource);
         Assert.Equal(domainEntity.AsTotalReturn, apiModel.AsTotalReturn);
         Assert.Equal(domainEntity.Bounds?.EndDate, apiModel.Bounds?.EndDate);
     }

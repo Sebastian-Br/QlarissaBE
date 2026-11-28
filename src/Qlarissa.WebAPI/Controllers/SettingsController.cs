@@ -31,12 +31,12 @@ public sealed class SettingsController(
 
     [HttpGet]
     public async Task<ActionResult<GraphSettingsBase>> GetGraphSettingAsync(
-        [FromQuery] GraphDataSource graphSetting)
+        [FromQuery] Domain.Settings.Graph.GraphDataSource graphSetting)
     {
         var user = await _userManager.GetAsync(User);
         var graphSettings = await _settingsManager.GetGraphSettingAsync(
             user.Value.Id,
-            (Domain.Settings.Graph.GraphDataSource)graphSetting);
+            graphSetting);
         return Ok(GraphSettingsBase.FromDomainEntity(graphSettings));
     }
 

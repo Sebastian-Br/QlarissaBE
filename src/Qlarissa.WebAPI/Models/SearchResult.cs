@@ -1,6 +1,4 @@
-﻿using Qlarissa.WebAPI.Models.Security.Base;
-
-namespace Qlarissa.WebAPI.Models;
+﻿namespace Qlarissa.WebAPI.Models;
 
 public class SearchResult
 {
@@ -10,7 +8,7 @@ public class SearchResult
 
     public string Symbol { get; set; } = string.Empty;
 
-    public SecurityType SecurityType { get; set; }
+    public Domain.Securities.Base.SecurityType SecurityType { get; set; }
 
     public string Exchange { get; set; } = string.Empty;
 
@@ -23,7 +21,7 @@ public class SearchResult
             Id = domainSearchResult.Id,
             Name = domainSearchResult.Name,
             Symbol = domainSearchResult.Symbol,
-            SecurityType = (SecurityType)domainSearchResult.SecurityType,
+            SecurityType = domainSearchResult.SecurityType,
             Exchange = domainSearchResult.Exchange,
             ExchangeShortName = domainSearchResult.ExchangeShortName
         };

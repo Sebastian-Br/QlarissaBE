@@ -10,7 +10,7 @@ public abstract class SecurityBase
 
     public Currency Currency { get; set; }
 
-    public SecurityType SecurityType { get; set; }
+    public Domain.Securities.Base.SecurityType SecurityType { get; set; }
 
     protected static void FromDomainEntity(Domain.Securities.Base.SecurityBase domainEntity, SecurityBase webApiModel)
     {
@@ -18,6 +18,6 @@ public abstract class SecurityBase
         webApiModel.Name = domainEntity.Name;
         webApiModel.ShortName = domainEntity.ShortName;
         webApiModel.Currency = Currency.FromDomainEntity(domainEntity.Currency);
-        webApiModel.SecurityType = (SecurityType)domainEntity.SecurityType;
+        webApiModel.SecurityType = domainEntity.SecurityType;
     }
 }

@@ -23,7 +23,7 @@ public class SearchBarControllerTests
         Assert.Equal(domainEntity.Id, apiModel.Id);
         Assert.Equal(domainEntity.Name, apiModel.Name);
         Assert.Equal(domainEntity.Symbol, apiModel.Symbol);
-        Assert.Equal((int)domainEntity.SecurityType, (int)apiModel.SecurityType);
+        Assert.Equal(domainEntity.SecurityType, apiModel.SecurityType);
         Assert.Equal(domainEntity.Exchange, apiModel.Exchange);
         Assert.Equal(domainEntity.ExchangeShortName, apiModel.ExchangeShortName);
     }

@@ -3,13 +3,13 @@
 namespace Qlarissa.WebAPI.Models.Settings.Graph;
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "DataSource")]
-[JsonDerivedType(typeof(SecurityGraphSettings), (int)GraphDataSource.Security)]
-[JsonDerivedType(typeof(DividendPayoutGraphSettings), (int)GraphDataSource.DividendPayouts)]
+[JsonDerivedType(typeof(SecurityGraphSettings), (int)Domain.Settings.Graph.GraphDataSource.Security)]
+[JsonDerivedType(typeof(DividendPayoutGraphSettings), (int)Domain.Settings.Graph.GraphDataSource.DividendPayouts)]
 public abstract class GraphSettingsBase
 {
-    public GraphDataSource DataSource { get; set; }
+    public Domain.Settings.Graph.GraphDataSource DataSource { get; set; }
 
-    public PlotType PlotType { get; set; }
+    public Domain.Settings.Graph.PlotType PlotType { get; set; }
 
     public Bounds? Bounds { get; set; }
 
@@ -34,8 +34,8 @@ public class GraphSettingsBase<TGraphSettings> : GraphSettingsBase where TGraphS
 
     internal virtual void FromDomainEntity(TGraphSettings domainEntity)
     {
-        DataSource = (GraphDataSource)domainEntity.DataSource;
-        PlotType = (PlotType)domainEntity.PlotType;
+        DataSource = domainEntity.DataSource;
+        PlotType = domainEntity.PlotType;
         Bounds = Bounds.FromDomainEntity(domainEntity.Bounds);
     }
 }

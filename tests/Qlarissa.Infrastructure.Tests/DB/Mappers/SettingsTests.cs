@@ -27,7 +27,7 @@ public sealed class SettingsTests
         var dbEntity = new SecurityGraphSettings
         {
             UserId = "user-123",
-            DataSource = GraphDataSource.Security,
+            DataSource = Domain.Settings.Graph.GraphDataSource.Security,
             AsTotalReturn = true,
             Bounds = new Infrastructure.DB.Entities.Settings.Bounds { StartDate = new DateOnly(2024, 1, 1) }
         };
@@ -35,7 +35,7 @@ public sealed class SettingsTests
         var domainEntity = dbEntity.ToDomainEntity() as Domain.Settings.Graph.SecurityGraphSettings;
 
         Assert.NotNull(domainEntity);
-        Assert.Equal((Domain.Settings.Graph.GraphDataSource)dbEntity.DataSource, domainEntity.DataSource);
+        Assert.Equal(dbEntity.DataSource, domainEntity.DataSource);
         Assert.Equal(dbEntity.AsTotalReturn, domainEntity.AsTotalReturn);
         Assert.Equal(dbEntity.Bounds?.StartDate, domainEntity.Bounds?.StartDate);
     }
@@ -55,7 +55,7 @@ public sealed class SettingsTests
 
         Assert.NotNull(dbEntity);
         Assert.Equal("user-456", dbEntity.UserId);
-        Assert.Equal((GraphDataSource)domainEntity.DataSource, dbEntity.DataSource);
+        Assert.Equal(domainEntity.DataSource, dbEntity.DataSource);
         Assert.Equal(domainEntity.AsTotalReturn, dbEntity.AsTotalReturn);
         Assert.Equal(domainEntity.Bounds?.StartDate, dbEntity.Bounds?.StartDate);
     }
@@ -66,7 +66,7 @@ public sealed class SettingsTests
         var dbEntity = new DividendPayoutGraphSettings
         {
             UserId = "user-789",
-            DataSource = GraphDataSource.DividendPayouts,
+            DataSource = Domain.Settings.Graph.GraphDataSource.DividendPayouts,
             IsSynchronizedWithSecurityGraph = false,
             Bounds = new Infrastructure.DB.Entities.Settings.Bounds { EndDate = new DateOnly(2024, 1, 1) }
         };
@@ -74,7 +74,7 @@ public sealed class SettingsTests
         var domainEntity = dbEntity.ToDomainEntity();
 
         Assert.NotNull(domainEntity);
-        Assert.Equal((Domain.Settings.Graph.GraphDataSource)dbEntity.DataSource, domainEntity.DataSource);
+        Assert.Equal(dbEntity.DataSource, domainEntity.DataSource);
         Assert.Equal(dbEntity.IsSynchronizedWithSecurityGraph, domainEntity.IsSynchronizedWithSecurityGraph);
         Assert.Equal(dbEntity.Bounds?.EndDate, domainEntity.Bounds?.EndDate);
     }
@@ -94,7 +94,7 @@ public sealed class SettingsTests
 
         Assert.NotNull(dbEntity);
         Assert.Equal("user-101", dbEntity.UserId);
-        Assert.Equal((GraphDataSource)domainEntity.DataSource, dbEntity.DataSource);
+        Assert.Equal(domainEntity.DataSource, dbEntity.DataSource);
         Assert.Equal(domainEntity.IsSynchronizedWithSecurityGraph, dbEntity.IsSynchronizedWithSecurityGraph);
         Assert.Equal(domainEntity.Bounds?.EndDate, dbEntity.Bounds?.EndDate);
     }
